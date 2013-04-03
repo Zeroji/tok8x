@@ -24,7 +24,15 @@
 #include <stdint.h>
 #include <string.h> 
 
-// will contain data for program vars
+/* struct for storing tokens in linked list. for single-byte
+ * tokens, b_second will equal 0xFF */
+typedef struct token {
+	uint8_t b_first;
+	uint8_t b_second;
+	struct token *next;
+} token;
+
+/* will contain data for program vars */
 typedef struct variable {
 	uint16_t top;
 	uint16_t length;
