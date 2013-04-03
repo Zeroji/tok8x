@@ -65,8 +65,8 @@ void var_init(header *h) {
 }
 
 void header_init(header *h) {
-	//~ uint16_t i;
-	//~ uint8_t *p;
+	uint16_t i;
+	uint8_t *p;
 	
 	static uint8_t new_top[11]={0x2A, 0x2A, 0x54, 0x49, 0x38, 0x33, 0x46, 0x2A, 0x1A, 0x0A, 0x00};
 	memcpy(h->top, new_top, sizeof(new_top));
@@ -74,18 +74,16 @@ void header_init(header *h) {
 	memcpy(h->comment, new_comment, sizeof(new_comment));
 	h->length=0x1C; /* manually assign length for now */
 	
-	//~ /* the checksum is calculated by adding up all of the var's contents and chopping off the upper two bytes */ 
-	//~ p=(uint8_t)&(h->var);
-	//~ h->checksum=0;
-	//~ for(i=0; i<17; i++) {
-		//~ h->checksum+=(uint8_t)*(p+i);
-	//~ }
-	//~ p=h->var.data;
-	//~ for(i=0; i<17; i++) {
-		//~ h->checksum+=(uint8_t)*(p+i);
-	//~ }
-
-	/* set manually for now until i can get the above to work properly */
-	h->checksum=0x032D;
+	/* the checksum is calculated by adding up all of the var's contents and chopping off the upper two bytes */ 
+	p=(uint8_t*)&(h->var);
+	h->checksum=0;
+	for(i=0; i<17; i++) {
+		h->checksum+=p[i];
+	}
+		
+	p=h->var.data;
+	for(i=0; i<h->var.length; i++) {
+		h->checksum+=p[i];
+	}
 	
 }
