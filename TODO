@@ -1,1 +1,22 @@
-* everything, basically :P. at present, it just writes a test file with hard-coded values
+------------------[ DONE ]------------------
+* basic variable format
+* basic file writing
+
+------------------[ TODO ]------------------
+* dummy text input buffer with test text
+* text result buffer
+* test code for converting between the two
+		||
+		VV
+* implement full list of tokens (two parts:
+	two arrays with full list of token
+	values and then separate string luts
+	for each language, showing which lang
+	tokens map to which real tokens)
+		||
+		VV
+* read text input buffer from file
+		||
+		VV
+* argument flags and other misc features
+	(ignore comments flag, etc)
