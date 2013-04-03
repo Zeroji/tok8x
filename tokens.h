@@ -5,5 +5,5 @@
 typedef struct token {
 	uint8_t b_first;
 	uint8_t b_second;
-	const char *name[];
-}
+	const char name[16];
+} token;

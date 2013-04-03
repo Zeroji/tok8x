@@ -1,6 +1,6 @@
 #include "tokens.h"
 
-static struct token t_axe[] = {
+token t_axe[] = {
 	{ 0x29, NONE, " " },
 	{ 0x3E, NONE, ":" },
 	{ 0x2B, NONE, "." },
@@ -20,3 +20,8 @@ static struct token t_axe[] = {
 	{ 0xAD, NONE, "getKey" }
 };
 
+token t_basic[] = {
+};
+
+token t_grammer[] = {
+};
