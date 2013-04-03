@@ -26,11 +26,11 @@
 
 /* struct for storing tokens in linked list. for single-byte
  * tokens, b_second will equal 0xFF */
-typedef struct token {
+typedef struct t_node {
 	uint8_t b_first;
 	uint8_t b_second;
-	struct token *next;
-} token;
+	struct t_node *next;
+} t_node;
 
 /* will contain data for program vars */
 typedef struct variable {
