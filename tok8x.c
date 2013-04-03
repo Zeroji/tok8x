@@ -72,7 +72,7 @@ void header_init(header *h) {
 	memcpy(h->top, new_top, sizeof(new_top));
 	static char new_comment[42]="made with tok8x                           ";
 	memcpy(h->comment, new_comment, sizeof(new_comment));
-	h->length=0x001C; /* manually assign length for now */
+	h->length=0x1C; /* manually assign length for now */
 	
 	//~ /* the checksum is calculated by adding up all of the var's contents and chopping off the upper two bytes */ 
 	//~ p=(uint8_t)&(h->var);
@@ -86,6 +86,6 @@ void header_init(header *h) {
 	//~ }
 
 	/* set manually for now until i can get the above to work properly */
-	h->checksum=0x0000032D;
+	h->checksum=0x032D;
 	
 }
