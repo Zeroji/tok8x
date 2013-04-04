@@ -20,12 +20,24 @@
  * 
  * 
  */
+#ifndef _TOK8X
 
 #include <stdint.h>
-#include <string.h> 
+#include <string.h>
+#include <stdio.h>
+
+#define NONE 0xFF
+
+/* struct for storing tokens in an lut. for single-byte
+ * tokens, b_second will equal NONE|0xFF */
+typedef struct token {
+	uint8_t b_first;
+	uint8_t b_second;
+	const char name[16];
+} token;
 
 /* struct for storing tokens in linked list. for single-byte
- * tokens, b_second will equal 0xFF */
+ * tokens, b_second will equal NONE|0xFF */
 typedef struct t_node {
 	uint8_t b_first;
 	uint8_t b_second;
@@ -53,3 +65,5 @@ typedef struct header {
 
 extern void header_init(header *p);
 extern void var_init(header *p);
+
+#endif

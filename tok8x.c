@@ -21,7 +21,6 @@
  * 
  */
 
-#include <stdio.h>
 #include "tok8x.h"
 
 int main(int argc, char **argv) {	
@@ -39,6 +38,7 @@ int main(int argc, char **argv) {
 	fwrite(h_point->top, 1, 11, of);
 	fwrite(h_point->comment, 1, 42, of);
 	fwrite(&(h_point->length), 1, 2, of);
+		/* writing data section here */
 		fwrite(&(h_point->var.top), 1, 2, of);
 		fwrite(&(h_point->var.length), 1, 2, of);
 		fwrite(&(h_point->var.type), 1, 1, of);
