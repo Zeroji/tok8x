@@ -6,11 +6,13 @@ SRC=tok8x.c \
 OBJ=$(patsubst %.c,%.o,$(SRC))
 BIN=tok8x
 
+TESTFILE=out.8xp
+
 all: compile build
 	
 compile:
-	gcc -Wall -c $(SRC)
-build:
-	gcc -Wall -o $(BIN) $(OBJ)
+	$(CC) $(CFLAGS) -c $(SRC)
+build: $(OBJ)
+	$(CC) $(CFLAGS) -o $(BIN) $(OBJ)
 clean:
-	rm -f $(OBJ) $(BIN)
+	rm -f $(OBJ) $(BIN) $(TESTFILE)
