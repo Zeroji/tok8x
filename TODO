@@ -1,6 +1,7 @@
 ------------------[ DONE ]------------------
 * basic variable format
 * basic file writing
+* dummy token list for testing purposes
 
 ------------------[ TODO ]------------------
 * dummy text input buffer with test text
