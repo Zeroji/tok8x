@@ -24,37 +24,124 @@
 #include "tok8x.h"
 
 int main(int argc, char **argv) {	
+	int i, bad_arg;
 	header h;
 	struct header *h_point=&h;
+	FILE *i_file;
+	FILE *o_file;
 	
-	//~ FILE *of;
+	/* input argument vars */
+	char *a_ifilename=NULL;
+	char *a_ofilename;
+	int a_ignore_comments=0;
+	int a_ignore_errors=0;
+	t_set a_t_set=BASIC;
+	
+	char *help_message="\noptions:\n -h\n   show this help dialogue\n\n -s <axe|basic|grammer>\n   define token set to be used\n\n -o <filename>\n   define file to be written (defaults to out.[txt|8xp])\n\n -i\n   ignore \"comments\" (lines beginning with a .)\n\n -f\n   ignore (skip over) strings that cannot be tokenised\n";
+	char *usage_message="usage: %s <filename> [options]\n";
+	
+/* ------------------[ INPUT PARSING ]------------------ */
+	
+	
+	i=1;
+	while(argv[i]){
+		bad_arg=1;
+		if(strncmp(argv[i], "-", 1)) {
+			if(a_ifilename)
+				break;
+			a_ifilename=argv[i];
+			bad_arg=0;
+			
+		}
+		
+		if( !(strncmp(argv[i], "-h", 2) && strncmp(argv[i], "--help", 6) )) {
+			printf(usage_message, argv[0]);
+			puts(help_message);
+			return 0;
+		}
+		
+		if( !(strncmp(argv[i], "-i", 2) )) {
+			a_ignore_comments=1;
+			bad_arg=0;
+		}
+		
+		if( !(strncmp(argv[i], "-f", 2) )) {
+			a_ignore_errors=1;
+			bad_arg=0;
+		}
+		
+		if( !(strncmp(argv[i], "-s", 2) )) {
+			if(argv[i+1]) {
+				i++;
+				if( !(strncmp(argv[i], "basic", 3) )) {
+					bad_arg=0;
+				}
+				if( !(strncmp(argv[i], "axe", 3) )) {
+					a_t_set=AXE;
+					bad_arg=0;
+				}
+				if( !(strncmp(argv[i], "grammer", 3) )) {
+					a_t_set=GRAMMER;
+					bad_arg=0;
+				}
+			}
+		}
+		
+		if( !(strncmp(argv[i], "-o", 2) )) {
+			if(argv[i+1]) {
+				i++;
+				if(strncmp(argv[i], "-", 1)) {
+					a_ofilename=argv[i];
+					bad_arg=0;
+				}
+			}
+		}
+		
+		if(bad_arg)
+			break;
+		i++;
+	}
+	
+	if(bad_arg) {
+		puts("err: bad option");
+		return 1;
+	}
+	
+	if(!a_ifilename) {
+		printf(usage_message, argv[0]);
+		return 1;
+	}
+	
+/* ------------------[ FILE READING ]------------------ */
+		
+	/* a dummy test buffer */
+	char *test_buf=" . ::->[]Full";
+	
 	
 	var_init(h_point);
 	header_init(h_point);
 	
-	/* a dummy test buffer */
-	char *test_buf=" . ::->[]Full";
 	
 	t_match(0, &test_buf, sizeof(test_buf), 0);
 	
 	
-	//~ of=fopen("out.8xp", "w");
+	//~ o_file=fopen("out.8xp", "w");
 	
 	//~ /* write var to file */
-	//~ fwrite(h_point->top, 1, 11, of);
-	//~ fwrite(h_point->comment, 1, 42, of);
-	//~ fwrite(&(h_point->length), 1, 2, of);
+	//~ fwrite(h_point->top, 1, 11, o_file);
+	//~ fwrite(h_point->comment, 1, 42, o_file);
+	//~ fwrite(&(h_point->length), 1, 2, o_file);
 		//~ /* writing data section here */
-		//~ fwrite(&(h_point->var.top), 1, 2, of);
-		//~ fwrite(&(h_point->var.length), 1, 2, of);
-		//~ fwrite(&(h_point->var.type), 1, 1, of);
-		//~ fwrite(&(h_point->var.name), 1, 9, of);
-		//~ fwrite(&(h_point->var.archived), 1, 1, of);
-		//~ fwrite(&(h_point->var.length2), 1, 2, of);
-		//~ fwrite(h_point->var.data, 1, h_point->var.length, of);
-	//~ fwrite(&(h_point->checksum), 1, 2, of);
+		//~ fwrite(&(h_point->var.top), 1, 2, o_file);
+		//~ fwrite(&(h_point->var.length), 1, 2, o_file);
+		//~ fwrite(&(h_point->var.type), 1, 1, o_file);
+		//~ fwrite(&(h_point->var.name), 1, 9, o_file);
+		//~ fwrite(&(h_point->var.archived), 1, 1, o_file);
+		//~ fwrite(&(h_point->var.length2), 1, 2, o_file);
+		//~ fwrite(h_point->var.data, 1, h_point->var.length, o_file);
+	//~ fwrite(&(h_point->checksum), 1, 2, o_file);
 		
-	//~ fclose(of);
+	//~ fclose(o_file);
 	
 	return 0;
 }

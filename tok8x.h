@@ -28,6 +28,12 @@
 
 #define NONE 0xFF
 
+typedef enum t_set {
+	BASIC,
+	AXE,
+	GRAMMER
+} t_set;
+
 /* struct for storing tokens in an lut. for single-byte
  * tokens, b_second will equal NONE */
 typedef struct token {
@@ -71,6 +77,5 @@ extern token* tokenise(char *buffer);
 /* this one will be stuck over int tokens.h to
  * make it private later, after i'm done testing */
 token t_match(int set, char *buffer[], const int buffer_size, const int cursor);
-
 
 #endif

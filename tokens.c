@@ -1,5 +1,11 @@
 #include "tokens.h"
 
+/* i should probably be using trees here
+ * to speed up search times, but meh */
+
+token t_basic[] = {
+};
+
 token t_axe[] = {
 	{ 0x29, NONE, " " },
 	{ 0x3E, NONE, ":" },
@@ -20,21 +26,18 @@ token t_axe[] = {
 	{ 0xAD, NONE, "getKey" }
 };
 
-token t_basic[] = {
-};
-
 token t_grammer[] = {
 };
 
 token *t_lists[] = {
-	t_axe,
 	t_basic,
+	t_axe,
 	t_grammer
 };
 
 int t_list_lengths[] = {
-	(int)(sizeof(t_axe)/sizeof(token)),
 	(int)(sizeof(t_basic)/sizeof(token)),
+	(int)(sizeof(t_axe)/sizeof(token)),
 	(int)(sizeof(t_grammer)/sizeof(token))
 };
 
