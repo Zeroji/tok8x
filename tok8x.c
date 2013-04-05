@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
 	
 	/* input argument vars */
 	char *a_ifilename=NULL;
-	char *a_ofilename;
+	char *a_ofilename=NULL;
 	int a_ignore_comments=0;
 	int a_ignore_errors=0;
 	t_set a_t_set=BASIC;
@@ -143,25 +143,30 @@ int main(int argc, char **argv) {
 	header_init(h_point);
 	
 	t_match(0, &i_buffer, sizeof(i_buffer), 0);
-		
-	//~ o_file=fopen("out.8xp", "w");
 	
-	//~ /* write var to file */
-	//~ fwrite(h_point->top, 1, 11, o_file);
-	//~ fwrite(h_point->comment, 1, 42, o_file);
-	//~ fwrite(&(h_point->length), 1, 2, o_file);
-		//~ /* writing data section here */
-		//~ fwrite(&(h_point->var.top), 1, 2, o_file);
-		//~ fwrite(&(h_point->var.length), 1, 2, o_file);
-		//~ fwrite(&(h_point->var.type), 1, 1, o_file);
-		//~ fwrite(&(h_point->var.name), 1, 9, o_file);
-		//~ fwrite(&(h_point->var.archived), 1, 1, o_file);
-		//~ fwrite(&(h_point->var.length2), 1, 2, o_file);
-		//~ fwrite(h_point->var.data, 1, h_point->var.length, o_file);
-	//~ fwrite(&(h_point->checksum), 1, 2, o_file);
-		
-	//~ fclose(o_file);
+	//~ if(a_ofilename==NULL) {
+		/* simply print the file's contents here */
+	//~ } else {
+		/* open a file and write to it */
 	
+		//~ o_file=fopen("out.8xp", "w");
+		
+		//~ /* write var to file */
+		//~ fwrite(h_point->top, 1, 11, o_file);
+		//~ fwrite(h_point->comment, 1, 42, o_file);
+		//~ fwrite(&(h_point->length), 1, 2, o_file);
+			//~ /* writing data section here */
+			//~ fwrite(&(h_point->var.top), 1, 2, o_file);
+			//~ fwrite(&(h_point->var.length), 1, 2, o_file);
+			//~ fwrite(&(h_point->var.type), 1, 1, o_file);
+			//~ fwrite(&(h_point->var.name), 1, 9, o_file);
+			//~ fwrite(&(h_point->var.archived), 1, 1, o_file);
+			//~ fwrite(&(h_point->var.length2), 1, 2, o_file);
+			//~ fwrite(h_point->var.data, 1, h_point->var.length, o_file);
+		//~ fwrite(&(h_point->checksum), 1, 2, o_file);
+			
+		//~ fclose(o_file);
+	//~ }
 	
 	free(i_buffer);
 
