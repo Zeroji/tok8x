@@ -27,28 +27,31 @@ int main(int argc, char **argv) {
 	header h;
 	struct header *h_point=&h;
 	
-	FILE *of;
+	//~ FILE *of;
 	
 	var_init(h_point);
 	header_init(h_point);
 	
-	of=fopen("out.8xp", "w");
+	list_all(0);
 	
-	/* write var to file */
-	fwrite(h_point->top, 1, 11, of);
-	fwrite(h_point->comment, 1, 42, of);
-	fwrite(&(h_point->length), 1, 2, of);
-		/* writing data section here */
-		fwrite(&(h_point->var.top), 1, 2, of);
-		fwrite(&(h_point->var.length), 1, 2, of);
-		fwrite(&(h_point->var.type), 1, 1, of);
-		fwrite(&(h_point->var.name), 1, 9, of);
-		fwrite(&(h_point->var.archived), 1, 1, of);
-		fwrite(&(h_point->var.length2), 1, 2, of);
-		fwrite(h_point->var.data, 1, h_point->var.length, of);
-	fwrite(&(h_point->checksum), 1, 2, of);
+	//~ of=fopen("out.8xp", "w");
+	
+	//~ /* write var to file */
+	//~ fwrite(h_point->top, 1, 11, of);
+	//~ fwrite(h_point->comment, 1, 42, of);
+	//~ fwrite(&(h_point->length), 1, 2, of);
+		//~ /* writing data section here */
+		//~ fwrite(&(h_point->var.top), 1, 2, of);
+		//~ fwrite(&(h_point->var.length), 1, 2, of);
+		//~ fwrite(&(h_point->var.type), 1, 1, of);
+		//~ fwrite(&(h_point->var.name), 1, 9, of);
+		//~ fwrite(&(h_point->var.archived), 1, 1, of);
+		//~ fwrite(&(h_point->var.length2), 1, 2, of);
+		//~ fwrite(h_point->var.data, 1, h_point->var.length, of);
+	//~ fwrite(&(h_point->checksum), 1, 2, of);
 		
-	fclose(of);
+	//~ fclose(of);
+	
 	return 0;
 }
 

@@ -1,27 +1,11 @@
 #include "tok8x.h"
+#include "tokens.h"
 
-token t_axe[] = {
-	{ 0x29, NONE, " " },
-	{ 0x3E, NONE, ":" },
-	{ 0x2B, NONE, "." },
-	{ 0x04, NONE, "->" },
-	{ 0x06, NONE, "[" },
-	{ 0x07, NONE, "]" },
-	{ 0x08, NONE, "{" },
-	{ 0x09, NONE, "}" },
-	{ 0x0A, NONE, "^^r" },
-	{ 0x0B, NONE, "^^o" },
-	{ 0x0C, NONE, "^^-1" },
-	{ 0xBB, 0x66, "DiagnosticOn" },
-	{ 0xBB, 0x67, "DiagnosticOff" },
-	{ 0x75, NONE, "Full" },
-	{ 0x66, NONE, "Normal" },
-	{ 0xD8, NONE, "Pause" },
-	{ 0xAD, NONE, "getKey" }
-};
+void list_all(int set) {
+	int i;
+	
+	for(i=0; i<t_list_lengths[set]; i++) {
+		printf("(%u, %u, %s)\n", t_lists[set][i].b_first, t_lists[set][i].b_second, t_lists[set][i].name);
+	}
 
-token t_basic[] = {
-};
-
-token t_grammer[] = {
-};
+}

@@ -65,5 +65,6 @@ typedef struct header {
 
 extern void header_init(header *p);
 extern void var_init(header *p);
+extern void list_all();
 
 #endif
