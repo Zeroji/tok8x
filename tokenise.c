@@ -8,8 +8,7 @@
  * gracefully (reporting the line where the error occured) */
 token t_match(int set, char *buffer[], const int buffer_size, const int cursor) {
 	token t_return_err={NONE, NONE, "err: token not found"};
-	
-	
+		
 	/* match a token here */
 	/* find the shortest complete token match for a substring in buffer which
 	 * begins at the current cursor position */

@@ -1,9 +1,10 @@
 CC=gcc
 CFLAGS=-Wall
 
-SRC=tok8x.c \
+SRC=tokens.c \
 	tokenise.c \
-	detokenise.c
+	detokenise.c \
+	tok8x.c
 OBJ=$(patsubst %.c,%.o,$(SRC))
 BIN=tok8x
 
