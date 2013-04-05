@@ -1,3 +1,5 @@
+#ifndef _TOKENS
+
 token t_axe[] = {
 	{ 0x29, NONE, " " },
 	{ 0x3E, NONE, ":" },
@@ -35,3 +37,33 @@ int t_list_lengths[] = {
 	(int)(sizeof(t_basic)/sizeof(token)),
 	(int)(sizeof(t_grammer)/sizeof(token))
 };
+
+/* list of values for determining, when converting
+ * from tokens to plaintext, if the second byte
+ * should be considered */
+uint8_t t_2byte_indicators[] = {
+	/* Matrices */
+	0x5C,
+	/* Lists */
+	0x5D,
+	/* Equations */
+	0x5E,
+	/* Pictures */
+	0x60,
+	/* GDBs */
+	0x61,
+	/* Strings */
+	0xAA,
+	/* Statistics */
+	0x62,
+	/* Window and Finance */
+	0x63,
+	/* Graph Format */
+	0x7E,
+	/* Miscellaneous */
+	0xBB,
+	/* 84+ only */
+	0xEF
+}
+
+#endif

@@ -29,7 +29,7 @@
 #define NONE 0xFF
 
 /* struct for storing tokens in an lut. for single-byte
- * tokens, b_second will equal NONE|0xFF */
+ * tokens, b_second will equal NONE */
 typedef struct token {
 	uint8_t b_first;
 	uint8_t b_second;
@@ -37,7 +37,7 @@ typedef struct token {
 } token;
 
 /* struct for storing tokens in linked list. for single-byte
- * tokens, b_second will equal NONE|0xFF */
+ * tokens, b_second will equal NONE */
 typedef struct t_node {
 	uint8_t b_first;
 	uint8_t b_second;
