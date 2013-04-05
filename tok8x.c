@@ -32,7 +32,11 @@ int main(int argc, char **argv) {
 	var_init(h_point);
 	header_init(h_point);
 	
-	list_all(0);
+	/* a dummy test buffer */
+	char *test_buf=" . ::->[]Full";
+	
+	t_match(0, &test_buf, sizeof(test_buf), 0);
+	
 	
 	//~ of=fopen("out.8xp", "w");
 	

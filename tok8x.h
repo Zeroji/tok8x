@@ -33,7 +33,7 @@
 typedef struct token {
 	uint8_t b_first;
 	uint8_t b_second;
-	const char name[16];
+	const char name[20];
 } token;
 
 /* struct for storing tokens in linked list. for single-byte
@@ -65,6 +65,12 @@ typedef struct header {
 
 extern void header_init(header *p);
 extern void var_init(header *p);
-extern void list_all();
+
+extern token* tokenise(char *buffer);
+
+/* this one will be stuck over int tokens.h to
+ * make it private later, after i'm done testing */
+token t_match(int set, char *buffer[], const int buffer_size, const int cursor);
+
 
 #endif
