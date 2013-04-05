@@ -22,6 +22,7 @@
  */
 #ifndef _TOK8X
 
+#include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>

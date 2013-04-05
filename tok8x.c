@@ -25,9 +25,12 @@
 
 int main(int argc, char **argv) {	
 	int i, bad_arg;
+	uint8_t tempbyte;
+	uint32_t if_size;
 	header h;
 	struct header *h_point=&h;
 	FILE *i_file;
+	char *i_buffer;
 	FILE *o_file;
 	
 	/* input argument vars */
@@ -40,8 +43,7 @@ int main(int argc, char **argv) {
 	char *help_message="\noptions:\n -h\n   show this help dialogue\n\n -s <axe|basic|grammer>\n   define token set to be used\n\n -o <filename>\n   define file to be written (defaults to out.[txt|8xp])\n\n -i\n   ignore \"comments\" (lines beginning with a .)\n\n -f\n   ignore (skip over) strings that cannot be tokenised\n";
 	char *usage_message="usage: %s <filename> [options]\n";
 	
-/* ------------------[ INPUT PARSING ]------------------ */
-	
+/* ----------------------[ INPUT PARSING ]---------------------- */
 	
 	i=1;
 	while(argv[i]){
@@ -112,19 +114,36 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 	
-/* ------------------[ FILE READING ]------------------ */
+/* ----------------------[ FILE READING ]---------------------- */
+	
+	i_file=fopen(a_ifilename, "r");
+	if(!i_file) {
+		printf("err: could not read \"%s\"\n", a_ifilename);
+		return 1;
+	}
+	
+	fseek(i_file, 0, SEEK_END);
+	if_size=ftell(i_file);
+	rewind(i_file);
+	
+	if(if_size>0x800000) {
+		printf("err: %s is obcenely large\n", a_ifilename);
+		fclose(i_file);
+		return 1;
+	}
+	
+	
+	i_buffer=(char*)malloc(if_size);
+	fread(i_buffer, 1, if_size, i_file);
+	
+	fclose(i_file);
 		
-	/* a dummy test buffer */
-	char *test_buf=" . ::->[]Full";
-	
-	
+	/* a dummy test buffer */	
 	var_init(h_point);
 	header_init(h_point);
 	
-	
-	t_match(0, &test_buf, sizeof(test_buf), 0);
-	
-	
+	t_match(0, &i_buffer, sizeof(i_buffer), 0);
+		
 	//~ o_file=fopen("out.8xp", "w");
 	
 	//~ /* write var to file */
@@ -143,6 +162,9 @@ int main(int argc, char **argv) {
 		
 	//~ fclose(o_file);
 	
+	
+	free(i_buffer);
+
 	return 0;
 }
 
