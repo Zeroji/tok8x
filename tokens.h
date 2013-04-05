@@ -1,4 +1,7 @@
+
 #ifndef _TOKENS
+
+#include "tok8x.h"
 
 token t_axe[] = {
 	{ 0x29, NONE, " " },
@@ -64,6 +67,6 @@ uint8_t t_2byte_indicators[] = {
 	0xBB,
 	/* 84+ only */
 	0xEF
-}
+};
 
 #endif

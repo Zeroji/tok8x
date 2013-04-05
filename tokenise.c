@@ -1,4 +1,3 @@
-#include "tok8x.h"
 #include "tokens.h"
 
 /* passing back a token here will make fetching the proper return value a
