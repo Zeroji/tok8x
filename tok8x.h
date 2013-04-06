@@ -26,6 +26,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
+#include <ctype.h>
 
 #define NONE 0xFF
 
@@ -40,7 +41,7 @@ typedef enum t_set {
 typedef struct token {
 	uint8_t b_first;
 	uint8_t b_second;
-	const char name[20];
+	char name[20];
 } token;
 
 /* struct for storing tokens in linked list. for single-byte
@@ -77,6 +78,6 @@ extern token* tokenise(char *buffer);
 
 /* this one will be stuck over int tokens.h to
  * make it private later, after i'm done testing */
-token t_match(int set, char *buffer[], const int buffer_size, const int cursor);
+token* t_match(int set, char buffer[], const int buffer_size, const int cursor);
 
 #endif

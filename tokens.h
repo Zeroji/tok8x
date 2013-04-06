@@ -3,7 +3,7 @@
 
 #include "tok8x.h"
 
-/* stick functions private to tokenise and
- * detokenise here */
+extern int t_list_lengths[];
+extern token *t_lists[];
 
 #endif

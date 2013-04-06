@@ -24,14 +24,13 @@
 #include "tok8x.h"
 
 int main(int argc, char **argv) {	
-	int i, bad_arg;
-	uint8_t tempbyte;
+	uint32_t i, j, bad_arg;
 	uint32_t if_size;
 	header h;
 	struct header *h_point=&h;
 	FILE *i_file;
 	char *i_buffer;
-	FILE *o_file;
+	//~ FILE *o_file;
 	
 	/* input argument vars */
 	char *a_ifilename=NULL;
@@ -75,6 +74,9 @@ int main(int argc, char **argv) {
 		if( !(strncmp(argv[i], "-s", 2) )) {
 			if(argv[i+1]) {
 				i++;
+				/* convert it to lowercase, so things like "Axe" will be recognised */
+				for(j=0; argv[i][j]; j++)
+					argv[i][j]=tolower(argv[i][j]);
 				if( !(strncmp(argv[i], "basic", 3) )) {
 					bad_arg=0;
 				}
@@ -123,7 +125,7 @@ int main(int argc, char **argv) {
 	}
 	
 	fseek(i_file, 0, SEEK_END);
-	if_size=ftell(i_file);
+	if_size=ftell(i_file)-1;
 	rewind(i_file);
 	
 	if(if_size>0x800000) {
@@ -137,12 +139,17 @@ int main(int argc, char **argv) {
 	fread(i_buffer, 1, if_size, i_file);
 	
 	fclose(i_file);
-		
-	/* a dummy test buffer */	
-	var_init(h_point);
-	header_init(h_point);
 	
-	t_match(0, &i_buffer, sizeof(i_buffer), 0);
+	/* testing */
+	token test_token;
+	for(i=0; i<if_size; i++) {
+		memcpy(&test_token, t_match(a_t_set, i_buffer, if_size, i), sizeof(token));
+		puts(test_token.name);
+	}
+	
+	
+	//~ var_init(h_point);
+	//~ header_init(h_point);
 	
 	//~ if(a_ofilename==NULL) {
 		/* simply print the file's contents here */
