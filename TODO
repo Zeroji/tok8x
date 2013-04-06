@@ -2,22 +2,7 @@
 * basic variable format
 * basic file writing
 * dummy token list for testing purposes
-
-------------------[ TODO ]------------------
 * dummy text input buffer with test text
-
-* text result buffer (use a linked list of
-	t_nodes for dynamic resizing)
-
-* test code for converting between the two
-		||
-		VV
-
-* implement full list of tokens (two parts:
-	two arrays with full list of token
-	values and then separate string luts
-	for each language, showing which lang
-	tokens map to which real tokens)
 		||
 		VV
 
@@ -25,7 +10,32 @@
 		||
 		VV
 
+* text result buffer (use a linked list of
+* t_nodes for dynamic resizing)
+		||
+		VV
+
+* code for converting between the two
+		||
+		VV
+
+------------------[ TODO ]------------------
+
+* full file-writing capabilities
+		||
+		VV
+
+* implement full list of tokens (two parts:
+* two arrays with full list of token
+* values and then separate string luts
+* for each language, showing which lang
+* tokens map to which real tokens)
+		||
+		VV
+
 * argument flags and other misc features
-	(ignore comments flag, etc)
+* (ignore comments flag, etc)
+		||
+		VV
 
 * implement program to plaintext? 

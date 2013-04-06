@@ -32,6 +32,7 @@ int main(int argc, char **argv) {
 	char *i_buffer;
 	FILE *o_file;
 	t_node *o_buffer;
+	t_node *traverse;
 	
 	/* input argument vars */
 	char *a_ifilename=NULL;
@@ -136,7 +137,7 @@ int main(int argc, char **argv) {
 	rewind(i_file);
 	
 	if(if_size>0x800000) {
-		printf("err: \"%s\" is obscenely large\n", a_ifilename);
+		printf("err: bad input file \"%s\"\n", a_ifilename);
 		fclose(i_file);
 		return 1;
 	}
@@ -155,34 +156,25 @@ int main(int argc, char **argv) {
 		return 0;
 	} else {
 		o_buffer=tokenise(a_t_set, i_buffer, if_size, a_ignore_comments, a_ignore_errors);
-		if( !o_buffer )
+		if( !o_buffer ) {
+			free(i_buffer);
 			return 1;
-		puts("");
-		t_node *traverse=o_buffer;
-		while(traverse->next) {
-			printf("%s", traverse->name);
-			traverse=traverse->next;
 		}
-		puts("");
-		free_list(o_buffer);
-		free(i_buffer);
-		return 0;
 	}
 	
 	
 /* ----------------------[ FILE WRITING ]---------------------- */
 	
 	
-	var_init(h_point, a_archived);
-	header_init(h_point);
-	
-	if(a_ofilename==NULL) {
+	var_init(h_point, o_buffer, a_archived);
+	header_init(h_point, o_buffer);
+
+	if(a_ofilename == NULL) {
 		/* simply print the file's contents here */
 	} else {
 		/* open a file and write to it */
-	
 		o_file=fopen("out.8xp", "w");
-		
+
 		/* write var to file */
 		fwrite(h_point->top, 1, 11, o_file);
 		fwrite(h_point->comment, 1, 42, o_file);
@@ -194,30 +186,38 @@ int main(int argc, char **argv) {
 			fwrite(&(h_point->var.name), 1, 9, o_file);
 			fwrite(&(h_point->var.archived), 1, 1, o_file);
 			fwrite(&(h_point->var.length2), 1, 2, o_file);
-			fwrite(h_point->var.data, 1, h_point->var.length, o_file);
+			fwrite(&(h_point->var.length3), 1, 2, o_file);
+				/* write data contents here */
+				traverse=o_buffer;
+				while(traverse) {
+					fwrite(&(traverse->b_first), 1, 1, o_file);
+					if(traverse->b_second != NONE)
+						fwrite(&(traverse->b_second), 1, 1, o_file);
+					traverse=traverse->next;
+				}
 		fwrite(&(h_point->checksum), 1, 2, o_file);
 			
 		fclose(o_file);
 	}
 	
+	free_list(o_buffer);
 	free(i_buffer);
 
 	return 0;
 }
 
-void var_init(header *h, uint8_t a_archived) {
-	h->var.top=0x0B;
-	h->var.length=0x0B; /* manually assign length for now. this will always be the header's length entry - 0x11 */
+void var_init(header *h, t_node *list_head, uint8_t a_archived) {
+	h->var.top=0x0D;
+	h->var.length=get_list_length(list_head)+0x02;
 	h->var.type=0x05; /* manually assign to program type */
 	static char new_name[9]={0x4E, 0x41, 0x4D, 0x45, 0x00, 0x00, 0x00, 0x00, 0x00}; /* manually assigned to "NAME" */
 	memcpy(h->var.name, new_name, sizeof(new_name));
 	h->var.archived=a_archived;
 	h->var.length2=h->var.length;
-	static uint8_t new_data[11]={0x09, 0x00, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39}; /* manually assign var data for now */
-	h->var.data=&new_data[0];
+	h->var.length3=h->var.length-0x02;
 }
 
-void header_init(header *h) {
+void header_init(header *h, t_node *list_head) {
 	uint16_t i;
 	uint8_t *p;
 	
@@ -225,26 +225,41 @@ void header_init(header *h) {
 	memcpy(h->top, new_top, sizeof(new_top));
 	static char new_comment[42]="made with tok8x                           ";
 	memcpy(h->comment, new_comment, sizeof(new_comment));
-	h->length=0x1C; /* manually assign length for now */
+	h->length=get_list_length(list_head)+0x13;
 	
 	/* the checksum is calculated by adding up all of the var's contents and chopping off the upper two bytes */ 
 	p=(uint8_t*)&(h->var);
 	h->checksum=0;
-	for(i=0; i<17; i++) {
+	for(i=0; i<19; i++) {
 		h->checksum+=p[i];
 	}
-		
-	p=h->var.data;
-	for(i=0; i<h->var.length; i++) {
-		h->checksum+=p[i];
+	
+	t_node *traverse=list_head;
+	while(traverse) {	
+		h->checksum+=traverse->b_first;
+		if(traverse->b_second != NONE)
+			h->checksum+=traverse->b_second;
+		traverse=traverse->next;
 	}
+	
 }
 
 void free_list(t_node *list_head) {
 	t_node *temp;
 	while(list_head) {
-		temp=list_head->next;
-		free(list_head);
-		list_head=temp;
+		temp=list_head;
+		list_head=list_head->next;
+		free(temp);
 	}
+}
+
+uint16_t get_list_length(t_node *list_head) {
+	uint16_t r_length=0;
+	while(list_head) {
+		if(list_head->b_second != NONE)
+			r_length++;
+		list_head=list_head->next;
+		r_length++;
+	}
+	return r_length;
 }

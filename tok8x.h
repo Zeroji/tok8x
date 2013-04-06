@@ -61,7 +61,9 @@ typedef struct variable {
 	uint8_t name[9]; /* only 8 bytes allowed. last must be 0 */
 	uint8_t archived; /* 0x00 if unarchived, 0x80 if archived */
 	uint16_t length2; /* a duplicate of length */
-	uint8_t *data;
+	uint16_t length3; /* this one is the length that is always
+						* kept at the beginning of the file wherever 
+						* it happens to be in RAM */
 } variable;
 
 typedef struct header {
@@ -72,12 +74,13 @@ typedef struct header {
 	uint32_t checksum;
 } header;
 
-extern void header_init(header *p);
-extern void var_init(header *p, uint8_t a_archived);
+extern void header_init(header *p, t_node *list_head);
+extern void var_init(header *p, t_node *list_head, uint8_t a_archived);
 
 extern t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int ignore_comments, int ignore_errors);
 extern token* detokenise(char *buffer);
 
 extern void free_list(t_node *list_head);
+extern uint16_t get_list_length(t_node *list_head);
 
 #endif

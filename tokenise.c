@@ -9,14 +9,13 @@ t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int ignore_
 			list_head=t_match(set, buffer, buffer_size, i);
 			if( !strcmp(list_head->name, "< err >") ) {
 				if(ignore_errors) {
-					printf("<%u>", i);
 					free(list_head);
 					list_head=NULL;
 					i++;
 					column++;
 				} else {
 					puts("err: unrecognised token at 0:0");
-					free_list(list_head);
+					free(list_head);
 					return NULL;
 				}
 			} else {
@@ -33,6 +32,7 @@ t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int ignore_
 			if( !strcmp(traverse->next->name, "< err >") ) {
 				if(ignore_errors) {
 					free(traverse->next);
+					traverse->next=NULL;
 					i++;
 					column++;
 				} else {
@@ -57,7 +57,6 @@ t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int ignore_
 t_node* t_match(int set, char buffer[], const uint32_t buffer_size, const int cursor) {
 	t_node *rp=malloc(sizeof(t_node));
 	strcpy(rp->name, "");
-
 	
 	/* match a token here */
 	/* find the longest complete token match for a substring in buffer which
