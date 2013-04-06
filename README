@@ -21,5 +21,5 @@ options:
  -i
 	ignore "comments" (lines beginning with a .) (NOT YET IMPLEMENTED)
 
- -s
-	use strict mode (do not ignore unparseable tokens)
+ -f
+	force (skip over any unmatched tokens rather than generating an error)

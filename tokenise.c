@@ -4,7 +4,7 @@
 t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int ignore_comments, int ignore_errors) {
 	uint32_t i=0, column=0, row=0;
 	t_node *list_head=NULL, *traverse;
-	while(i <= buffer_size) {
+	while(i < buffer_size) {
 		if(!list_head) {
 			list_head=t_match(set, buffer, buffer_size, i);
 			if( !strcmp(list_head->name, "< err >") ) {

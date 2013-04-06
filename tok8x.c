@@ -38,12 +38,12 @@ int main(int argc, char **argv) {
 	char *a_ifilename=NULL;
 	char *a_ofilename=NULL;
 	int a_ignore_comments=0;
-	int a_ignore_errors=1;
+	int a_ignore_errors=0;
 	uint8_t a_archived=0x00;
 	t_set a_t_set=BASIC;
 	char a_internal_name[9]={0x41, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 	
-	char *help_message="\noptions:\n -h\n   show this help dialogue\n\n -t <axe|basic|grammer>\n   define token set to be used\n\n -o <filename>\n   define file to be written (defaults to out.[txt|8xp])\n\n -n <name>\n   define on-calc name (warning: does not check name validity)\n\n -a\n   generate archived program\n\n -i\n   ignore \"comments\" (lines beginning with a .)\n\n -s\n   use strict mode (do not ignore unparseable tokens)\n";
+	char *help_message="\noptions:\n -h\n   show this help dialogue\n\n -t <axe|basic|grammer>\n   define token set to be used\n\n -o <filename>\n   define file to be written (defaults to out.[txt|8xp])\n\n -n <name>\n   define on-calc name (warning: does not check name validity)\n\n -a\n   generate archived program\n\n -i\n   ignore \"comments\" (lines beginning with a .)\n\n -f\n   force (skip over any unmatched tokens rather than generating an error)\n";
 	char *usage_message="usage: %s <filename> [options]\n";
 	
 /* ----------------------[ INPUT PARSING ]---------------------- */
@@ -70,8 +70,8 @@ int main(int argc, char **argv) {
 			bad_arg=0;
 		}
 		
-		if( !(strncmp(argv[i], "-s", 2) )) {
-			a_ignore_errors=0;
+		if( !(strncmp(argv[i], "-f", 2) )) {
+			a_ignore_errors=1;
 			bad_arg=0;
 		}
 		
