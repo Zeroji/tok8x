@@ -49,6 +49,7 @@ typedef struct token {
 typedef struct t_node {
 	uint8_t b_first;
 	uint8_t b_second;
+	char name[20];
 	struct t_node *next;
 } t_node;
 
@@ -72,12 +73,11 @@ typedef struct header {
 } header;
 
 extern void header_init(header *p);
-extern void var_init(header *p);
+extern void var_init(header *p, uint8_t a_archived);
 
-extern token* tokenise(char *buffer);
+extern t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int ignore_comments, int ignore_errors);
+extern token* detokenise(char *buffer);
 
-/* this one will be stuck over int tokens.h to
- * make it private later, after i'm done testing */
-token* t_match(int set, char buffer[], const int buffer_size, const int cursor);
+extern void free_list(t_node *list_head);
 
 #endif

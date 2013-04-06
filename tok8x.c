@@ -30,16 +30,18 @@ int main(int argc, char **argv) {
 	struct header *h_point=&h;
 	FILE *i_file;
 	char *i_buffer;
-	//~ FILE *o_file;
+	FILE *o_file;
+	t_node *o_buffer;
 	
 	/* input argument vars */
 	char *a_ifilename=NULL;
 	char *a_ofilename=NULL;
 	int a_ignore_comments=0;
-	int a_ignore_errors=0;
+	int a_ignore_errors=1;
+	uint8_t a_archived=0x00;
 	t_set a_t_set=BASIC;
 	
-	char *help_message="\noptions:\n -h\n   show this help dialogue\n\n -s <axe|basic|grammer>\n   define token set to be used\n\n -o <filename>\n   define file to be written (defaults to out.[txt|8xp])\n\n -i\n   ignore \"comments\" (lines beginning with a .)\n\n -f\n   ignore (skip over) strings that cannot be tokenised\n";
+	char *help_message="\noptions:\n -h\n   show this help dialogue\n\n -t <axe|basic|grammer>\n   define token set to be used\n\n -o <filename>\n   define file to be written (defaults to out.[txt|8xp])\n\n -a\n   generate archived program\n\n -i\n   ignore \"comments\" (lines beginning with a .)\n\n -s\n   use strict mode (do not ignore unparseable tokens)\n";
 	char *usage_message="usage: %s <filename> [options]\n";
 	
 /* ----------------------[ INPUT PARSING ]---------------------- */
@@ -66,12 +68,17 @@ int main(int argc, char **argv) {
 			bad_arg=0;
 		}
 		
-		if( !(strncmp(argv[i], "-f", 2) )) {
-			a_ignore_errors=1;
+		if( !(strncmp(argv[i], "-s", 2) )) {
+			a_ignore_errors=0;
 			bad_arg=0;
 		}
 		
-		if( !(strncmp(argv[i], "-s", 2) )) {
+		if( !(strncmp(argv[i], "-a", 2) )) {
+			a_archived=0x80;
+			bad_arg=0;
+		}
+		
+		if( !(strncmp(argv[i], "-t", 2) )) {
 			if(argv[i+1]) {
 				i++;
 				/* convert it to lowercase, so things like "Axe" will be recognised */
@@ -129,7 +136,7 @@ int main(int argc, char **argv) {
 	rewind(i_file);
 	
 	if(if_size>0x800000) {
-		printf("err: %s is obcenely large\n", a_ifilename);
+		printf("err: \"%s\" is obscenely large\n", a_ifilename);
 		fclose(i_file);
 		return 1;
 	}
@@ -139,54 +146,72 @@ int main(int argc, char **argv) {
 	fread(i_buffer, 1, if_size, i_file);
 	
 	fclose(i_file);
+
+/* ----------------------[ FILE PARSING ]---------------------- */
 	
-	/* testing */
-	token test_token;
-	for(i=0; i<if_size; i++) {
-		memcpy(&test_token, t_match(a_t_set, i_buffer, if_size, i), sizeof(token));
-		puts(test_token.name);
+	if( !strncmp(i_buffer, "**TI83F*", 8) ) {
+		puts("this is an 8X program!");
+		/* do detokenising stuff here! */
+		return 0;
+	} else {
+		o_buffer=tokenise(a_t_set, i_buffer, if_size, a_ignore_comments, a_ignore_errors);
+		if( !o_buffer )
+			return 1;
+		puts("");
+		t_node *traverse=o_buffer;
+		while(traverse->next) {
+			printf("%s", traverse->name);
+			traverse=traverse->next;
+		}
+		puts("");
+		free_list(o_buffer);
+		free(i_buffer);
+		return 0;
 	}
 	
 	
-	//~ var_init(h_point);
-	//~ header_init(h_point);
+/* ----------------------[ FILE WRITING ]---------------------- */
 	
-	//~ if(a_ofilename==NULL) {
+	
+	var_init(h_point, a_archived);
+	header_init(h_point);
+	
+	if(a_ofilename==NULL) {
 		/* simply print the file's contents here */
-	//~ } else {
+	} else {
 		/* open a file and write to it */
 	
-		//~ o_file=fopen("out.8xp", "w");
+		o_file=fopen("out.8xp", "w");
 		
-		//~ /* write var to file */
-		//~ fwrite(h_point->top, 1, 11, o_file);
-		//~ fwrite(h_point->comment, 1, 42, o_file);
-		//~ fwrite(&(h_point->length), 1, 2, o_file);
-			//~ /* writing data section here */
-			//~ fwrite(&(h_point->var.top), 1, 2, o_file);
-			//~ fwrite(&(h_point->var.length), 1, 2, o_file);
-			//~ fwrite(&(h_point->var.type), 1, 1, o_file);
-			//~ fwrite(&(h_point->var.name), 1, 9, o_file);
-			//~ fwrite(&(h_point->var.archived), 1, 1, o_file);
-			//~ fwrite(&(h_point->var.length2), 1, 2, o_file);
-			//~ fwrite(h_point->var.data, 1, h_point->var.length, o_file);
-		//~ fwrite(&(h_point->checksum), 1, 2, o_file);
+		/* write var to file */
+		fwrite(h_point->top, 1, 11, o_file);
+		fwrite(h_point->comment, 1, 42, o_file);
+		fwrite(&(h_point->length), 1, 2, o_file);
+			/* writing data section here */
+			fwrite(&(h_point->var.top), 1, 2, o_file);
+			fwrite(&(h_point->var.length), 1, 2, o_file);
+			fwrite(&(h_point->var.type), 1, 1, o_file);
+			fwrite(&(h_point->var.name), 1, 9, o_file);
+			fwrite(&(h_point->var.archived), 1, 1, o_file);
+			fwrite(&(h_point->var.length2), 1, 2, o_file);
+			fwrite(h_point->var.data, 1, h_point->var.length, o_file);
+		fwrite(&(h_point->checksum), 1, 2, o_file);
 			
-		//~ fclose(o_file);
-	//~ }
+		fclose(o_file);
+	}
 	
 	free(i_buffer);
 
 	return 0;
 }
 
-void var_init(header *h) {
+void var_init(header *h, uint8_t a_archived) {
 	h->var.top=0x0B;
 	h->var.length=0x0B; /* manually assign length for now. this will always be the header's length entry - 0x11 */
 	h->var.type=0x05; /* manually assign to program type */
 	static char new_name[9]={0x4E, 0x41, 0x4D, 0x45, 0x00, 0x00, 0x00, 0x00, 0x00}; /* manually assigned to "NAME" */
 	memcpy(h->var.name, new_name, sizeof(new_name));
-	h->var.archived=0x00; /* our variable will not be archived */
+	h->var.archived=a_archived;
 	h->var.length2=h->var.length;
 	static uint8_t new_data[11]={0x09, 0x00, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39}; /* manually assign var data for now */
 	h->var.data=&new_data[0];
@@ -213,5 +238,13 @@ void header_init(header *h) {
 	for(i=0; i<h->var.length; i++) {
 		h->checksum+=p[i];
 	}
-	
+}
+
+void free_list(t_node *list_head) {
+	t_node *temp;
+	while(list_head) {
+		temp=list_head->next;
+		free(list_head);
+		list_head=temp;
+	}
 }

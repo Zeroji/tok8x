@@ -4,9 +4,11 @@
  * to speed up search times, but meh */
 
 token t_basic[] = {
+	{ 0x3F, NONE, "\n" }
 };
 
 token t_axe[] = {
+	{ 0x3F, NONE, "\n" },
 	{ 0x29, NONE, " " },
 	{ 0x3E, NONE, ":" },
 	{ 0x2B, NONE, "." },
@@ -27,6 +29,7 @@ token t_axe[] = {
 };
 
 token t_grammer[] = {
+	{ 0x3F, NONE, "\n" }
 };
 
 token *t_lists[] = {
