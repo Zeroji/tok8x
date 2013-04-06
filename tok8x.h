@@ -75,7 +75,7 @@ typedef struct header {
 } header;
 
 extern void header_init(header *p, t_node *list_head);
-extern void var_init(header *p, t_node *list_head, uint8_t a_archived);
+extern void var_init(header *p, t_node *list_head, char *a_name, uint8_t a_archived);
 
 extern t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int ignore_comments, int ignore_errors);
 extern token* detokenise(char *buffer);

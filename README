@@ -2,6 +2,20 @@
 convert between plaintext files and tokenised
 files for the TI8x series of calculators
 
-planned features include multiple dialects
-(TI-BASIC, Axe, Grammer, etc) and a few other
-small things (like piping straight to stdout)
+options:
+ -h
+	display help dialogue
+    
+ -t <axe|basic|grammer>
+	define token set to be used
+	
+ -o <filename>
+	define file to be written (defaults to out.[txt|8xp])
+ -n <name>
+	define on-calc name (warning: does not check name validity)
+ -a
+	generate archived program
+ -i
+	ignore "comments" (lines beginning with a .) (NOT YET IMPLEMENTED)
+ -s
+	use strict mode (do not ignore unparseable tokens)

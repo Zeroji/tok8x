@@ -19,11 +19,11 @@
 		||
 		VV
 
-------------------[ TODO ]------------------
-
 * full file-writing capabilities
 		||
 		VV
+
+------------------[ TODO ]------------------
 
 * implement full list of tokens (two parts:
 * two arrays with full list of token
@@ -38,4 +38,4 @@
 		||
 		VV
 
-* implement program to plaintext? 
+* implement program to plaintext

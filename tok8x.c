@@ -41,8 +41,9 @@ int main(int argc, char **argv) {
 	int a_ignore_errors=1;
 	uint8_t a_archived=0x00;
 	t_set a_t_set=BASIC;
+	char a_internal_name[9]={0x41, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 	
-	char *help_message="\noptions:\n -h\n   show this help dialogue\n\n -t <axe|basic|grammer>\n   define token set to be used\n\n -o <filename>\n   define file to be written (defaults to out.[txt|8xp])\n\n -a\n   generate archived program\n\n -i\n   ignore \"comments\" (lines beginning with a .)\n\n -s\n   use strict mode (do not ignore unparseable tokens)\n";
+	char *help_message="\noptions:\n -h\n   show this help dialogue\n\n -t <axe|basic|grammer>\n   define token set to be used\n\n -o <filename>\n   define file to be written (defaults to out.[txt|8xp])\n\n -n <name>\n   define on-calc name (warning: does not check name validity)\n\n -a\n   generate archived program\n\n -i\n   ignore \"comments\" (lines beginning with a .)\n\n -s\n   use strict mode (do not ignore unparseable tokens)\n";
 	char *usage_message="usage: %s <filename> [options]\n";
 	
 /* ----------------------[ INPUT PARSING ]---------------------- */
@@ -109,6 +110,18 @@ int main(int argc, char **argv) {
 			}
 		}
 		
+		if( !(strncmp(argv[i], "-n", 2) )) {
+			if(argv[i+1]) {
+				i++;
+				if(strncmp(argv[i], "-", 1)) {
+					if(strlen(argv[i]) > 8)
+						argv[i][8]=0;
+					strcpy(&(a_internal_name[0]), argv[i]);
+					bad_arg=0;
+				}
+			}
+		}
+		
 		if(bad_arg)
 			break;
 		i++;
@@ -125,7 +138,7 @@ int main(int argc, char **argv) {
 	}
 	
 /* ----------------------[ FILE READING ]---------------------- */
-	
+		
 	i_file=fopen(a_ifilename, "r");
 	if(!i_file) {
 		printf("err: could not read \"%s\"\n", a_ifilename);
@@ -166,7 +179,7 @@ int main(int argc, char **argv) {
 /* ----------------------[ FILE WRITING ]---------------------- */
 	
 	
-	var_init(h_point, o_buffer, a_archived);
+	var_init(h_point, o_buffer, &(a_internal_name[0]), a_archived);
 	header_init(h_point, o_buffer);
 
 	if(a_ofilename == NULL) {
@@ -206,12 +219,13 @@ int main(int argc, char **argv) {
 	return 0;
 }
 
-void var_init(header *h, t_node *list_head, uint8_t a_archived) {
+void var_init(header *h, t_node *list_head, char *a_name, uint8_t a_archived) {
 	h->var.top=0x0D;
 	h->var.length=get_list_length(list_head)+0x02;
 	h->var.type=0x05; /* manually assign to program type */
-	static char new_name[9]={0x4E, 0x41, 0x4D, 0x45, 0x00, 0x00, 0x00, 0x00, 0x00}; /* manually assigned to "NAME" */
-	memcpy(h->var.name, new_name, sizeof(new_name));
+	//~ static char new_name[9]={0x4E, 0x41, 0x4D, 0x45, 0x00, 0x00, 0x00, 0x00, 0x00}; /* manually assigned to "NAME" */
+	//~ memcpy(h->var.name, new_name, sizeof(new_name));
+	strcpy((char*)h->var.name, a_name);
 	h->var.archived=a_archived;
 	h->var.length2=h->var.length;
 	h->var.length3=h->var.length-0x02;
