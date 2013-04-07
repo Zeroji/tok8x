@@ -1,5 +1,5 @@
 /*
- * tok8x.h
+ * tok8x
  * 
  * Copyright 2013 shmibs <shmibs@gmail.com>
  * 
@@ -20,6 +20,7 @@
  * 
  * 
  */
+ 
 #ifndef _TOK8X
 
 #include <stdlib.h>
