@@ -163,11 +163,19 @@ int main(int argc, char **argv) {
 
 /* ----------------------[ FILE PARSING ]---------------------- */
 	
+	
+	
 	if( !strncmp(i_buffer, "**TI83F*", 8) ) {
+
+/* ---------------------[ 8X PROG WRITING ]-------------------- */
+
 		puts("this is an 8X program!");
 		/* do detokenising stuff here! */
 		return 0;
 	} else {
+		
+		/* pre-processor directives here */
+		
 		o_buffer=tokenise(a_t_set, i_buffer, if_size, a_ignore_comments, a_ignore_errors);
 		if( !o_buffer ) {
 			free(i_buffer);
@@ -176,7 +184,7 @@ int main(int argc, char **argv) {
 	}
 	
 	
-/* ----------------------[ FILE WRITING ]---------------------- */
+/* --------------------[ FLAT FILE WRITING ]------------------- */
 	
 	
 	var_init(h_point, o_buffer, &(a_internal_name[0]), a_archived);
@@ -184,6 +192,17 @@ int main(int argc, char **argv) {
 
 	if(a_ofilename == NULL) {
 		/* simply print the file's contents here */
+		for(i=0; i<74; i++) {
+			printf("%c", h_point->top[i]);
+		}
+		traverse=o_buffer;
+		while(traverse) {
+			printf("%c", traverse->b_first);
+			if(traverse->b_second != NONE)
+				printf("%c", traverse->b_second);
+			traverse=traverse->next;
+		}
+		printf("%c%c", h_point->top[76], h_point->top[77]);
 	} else {
 		/* open a file and write to it */
 		o_file=fopen("out.8xp", "w");
@@ -223,8 +242,6 @@ void var_init(header *h, t_node *list_head, char *a_name, uint8_t a_archived) {
 	h->var.top=0x0D;
 	h->var.length=get_list_length(list_head)+0x02;
 	h->var.type=0x05; /* manually assign to program type */
-	//~ static char new_name[9]={0x4E, 0x41, 0x4D, 0x45, 0x00, 0x00, 0x00, 0x00, 0x00}; /* manually assigned to "NAME" */
-	//~ memcpy(h->var.name, new_name, sizeof(new_name));
 	strcpy((char*)h->var.name, a_name);
 	h->var.archived=a_archived;
 	h->var.length2=h->var.length;
