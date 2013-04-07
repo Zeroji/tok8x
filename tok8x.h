@@ -42,7 +42,7 @@ typedef enum t_set {
 typedef struct token {
 	uint8_t b_first;
 	uint8_t b_second;
-	char name[20];
+	char name[16];
 } token;
 
 /* struct for storing tokens in linked list. for single-byte
@@ -50,7 +50,7 @@ typedef struct token {
 typedef struct t_node {
 	uint8_t b_first;
 	uint8_t b_second;
-	char name[20];
+	char name[16];
 	struct t_node *next;
 } t_node;
 
@@ -59,12 +59,12 @@ typedef struct variable {
 	uint16_t top;
 	uint16_t length;
 	uint8_t type;
-	uint8_t name[9]; /* only 8 bytes allowed. last must be 0 */
+	uint8_t name[9];  /* only 8 bytes allowed. last must be 0 */
 	uint8_t archived; /* 0x00 if unarchived, 0x80 if archived */
 	uint16_t length2; /* a duplicate of length */
 	uint16_t length3; /* this one is the length that is always
-						* kept at the beginning of the file wherever 
-						* it happens to be in RAM */
+					   * kept at the beginning of the file wherever 
+					   * it happens to be in RAM */
 } variable;
 
 typedef struct header {
@@ -79,7 +79,7 @@ extern void header_init(header *p, t_node *list_head);
 extern void var_init(header *p, t_node *list_head, char *a_name, uint8_t a_archived);
 
 extern t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int ignore_comments, int ignore_errors);
-extern token* detokenise(char *buffer);
+extern t_node* detokenise(int set, char buffer[], const uint32_t buffer_size);
 
 extern void free_list(t_node *list_head);
 extern uint16_t get_list_length(t_node *list_head);
