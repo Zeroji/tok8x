@@ -12,16 +12,11 @@
 
 ------------------[ TODO ]------------------
 
-* implement full list of tokens (two parts:
-* two arrays with full list of token
-* values and then separate string luts
-* for each language, showing which lang
-* tokens map to which real tokens)
+* implement full list of tokens
 		||
 		VV
 
-* argument flags and other misc features
-* (ignore comments flag, etc)
+* ignore comments flag
 		||
 		VV
 

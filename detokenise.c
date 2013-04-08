@@ -6,8 +6,9 @@
  * for a match in t_lists[set], so i'm saving it
  * for last */
 t_node* detokenise(int set, char buffer[], const uint32_t buffer_size) {
-	uint32_t i, column=0, row=0;;
+	uint32_t i, column=0, row=0;
 	t_node *list_head=NULL, *traverse;
+	int flag;
 	for(i=74; i<buffer_size-1; i++) {
 		if(!list_head) {
 			list_head=match_token(set, buffer, buffer_size, i);
@@ -42,6 +43,22 @@ t_node* detokenise(int set, char buffer[], const uint32_t buffer_size) {
 		}
 		if(traverse->b_second != NONE)
 			i++;
+	}
+	/* convert spaces at beginnings of lines to tabs
+	 * for easier reading */
+	traverse=list_head;
+	flag=0;
+	while(traverse) {
+		if(traverse->b_first == 0x3f)
+			flag=1;
+		traverse=traverse->next;
+		if(traverse && flag) {
+			if(traverse->b_first == 0x29) {
+				strcpy(traverse->name, "\t");
+			} else {
+				flag=0;
+			}
+		}
 	}
 	return list_head;
 }
