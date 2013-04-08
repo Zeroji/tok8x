@@ -216,8 +216,10 @@ int main(int argc, char **argv) {
 	if(a_ofilename == NULL) {
 		if(operation_type_flag) {
 			/* simply print the file's contents here */
-			for(i=0; i<74; i++) {
+			for(i=0; i<76; i++) {
 				printf("%c", h_point->top[i]);
+				if(i==52 || i==70)
+					i++;
 			}
 		}
 		traverse=o_buffer;
