@@ -7,16 +7,12 @@ t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int ignore_
 	while(i < buffer_size) {
 		if(!list_head) {
 			list_head=match_string(set, buffer, buffer_size, i);
-			
-			/* check if there is a longer match in the BASIC
-			 * set, and, if so, use that instead */
+			/* if there is no match in the current set, check
+			 * the default BASIC set instead */
 			if(set != 0) {
 				temp=match_string(0, buffer, buffer_size, i);
 				if(temp) {
 					if(!list_head) {
-						list_head=temp;
-					} else if( strlen(temp->name) > strlen(list_head->name) ) {
-						free(list_head);
 						list_head=temp;
 					} else {
 						free(temp);
@@ -48,9 +44,6 @@ t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int ignore_
 				temp=match_string(0, buffer, buffer_size, i);
 				if(temp) {
 					if(!traverse->next) {
-						traverse=temp;
-					} else if( strlen(temp->name) > strlen(traverse->next->name) ) {
-						free(traverse->next);
 						traverse->next=temp;
 					} else {
 						free(temp);

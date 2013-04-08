@@ -40,48 +40,48 @@ int main(int argc, char **argv) {
 			
 		}
 		
-		if( !(strncmp(argv[i], "-h", 2) && strncmp(argv[i], "--help", 6) )) {
+		if( !(strcmp(argv[i], "-h") && strcmp(argv[i], "--help") )) {
 			printf(usage_message, argv[0]);
 			puts(help_message);
 			return 0;
 		}
 		
-		if( !(strncmp(argv[i], "-i", 2) )) {
+		if( !(strcmp(argv[i], "-i") )) {
 			a_ignore_comments=1;
 			bad_arg=0;
 		}
 		
-		if( !(strncmp(argv[i], "-f", 2) )) {
+		if( !(strcmp(argv[i], "-f") )) {
 			a_ignore_errors=1;
 			bad_arg=0;
 		}
 		
-		if( !(strncmp(argv[i], "-a", 2) )) {
+		if( !(strcmp(argv[i], "-a") )) {
 			a_archived=0x80;
 			bad_arg=0;
 		}
 		
-		if( !(strncmp(argv[i], "-t", 2) )) {
+		if( !(strcmp(argv[i], "-t") )) {
 			if(argv[i+1]) {
 				i++;
 				/* convert it to lowercase, so things like "Axe" will be recognised */
 				for(j=0; argv[i][j]; j++)
 					argv[i][j]=tolower(argv[i][j]);
-				if( !(strncmp(argv[i], "basic", 3) )) {
+				if( !(strcmp(argv[i], "basic") )) {
 					bad_arg=0;
 				}
-				if( !(strncmp(argv[i], "axe", 3) )) {
+				if( !(strcmp(argv[i], "axe") )) {
 					a_t_set=AXE;
 					bad_arg=0;
 				}
-				if( !(strncmp(argv[i], "grammer", 3) )) {
+				if( !(strcmp(argv[i], "grammer") )) {
 					a_t_set=GRAMMER;
 					bad_arg=0;
 				}
 			}
 		}
 		
-		if( !(strncmp(argv[i], "-o", 2) )) {
+		if( !(strcmp(argv[i], "-o") )) {
 			if(argv[i+1]) {
 				i++;
 				if(strncmp(argv[i], "-", 1)) {
@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
 			}
 		}
 		
-		if( !(strncmp(argv[i], "-n", 2) )) {
+		if( !(strcmp(argv[i], "-n") )) {
 			if(argv[i+1]) {
 				i++;
 				if(strncmp(argv[i], "-", 1)) {
