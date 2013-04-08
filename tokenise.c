@@ -3,19 +3,33 @@
 /* build a linked list from token matches */
 t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int ignore_comments, int ignore_errors) {
 	uint32_t i=0, column=0, row=0;
-	t_node *list_head=NULL, *traverse;
+	t_node *list_head=NULL, *traverse, *temp;
 	while(i < buffer_size) {
 		if(!list_head) {
 			list_head=match_string(set, buffer, buffer_size, i);
-			if( !strcmp(list_head->name, "< err >") ) {
+			
+			/* check if there is a longer match in the BASIC
+			 * set, and, if so, use that instead */
+			if(set != 0) {
+				temp=match_string(0, buffer, buffer_size, i);
+				if(temp) {
+					if(!list_head) {
+						list_head=temp;
+					} else if( strlen(temp->name) > strlen(list_head->name) ) {
+						free(list_head);
+						list_head=temp;
+					} else {
+						free(temp);
+					}
+				}
+			}
+			
+			if(!list_head) {
 				if(ignore_errors) {
-					free(list_head);
-					list_head=NULL;
 					i++;
 					column++;
 				} else {
 					puts("0:0: err: unrecognised token");
-					free(list_head);
 					return NULL;
 				}
 			} else {
@@ -29,10 +43,23 @@ t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int ignore_
 			}
 		} else {
 			traverse->next=match_string(set, buffer, buffer_size, i);
-			if( !strcmp(traverse->next->name, "< err >") ) {
+			
+			if(set != 0) {
+				temp=match_string(0, buffer, buffer_size, i);
+				if(temp) {
+					if(!traverse->next) {
+						traverse=temp;
+					} else if( strlen(temp->name) > strlen(traverse->next->name) ) {
+						free(traverse->next);
+						traverse->next=temp;
+					} else {
+						free(temp);
+					}
+				}
+			}
+			
+			if(!traverse->next) {
 				if(ignore_errors) {
-					free(traverse->next);
-					traverse->next=NULL;
 					i++;
 					column++;
 				} else {
@@ -84,9 +111,10 @@ t_node* match_string(int set, char buffer[], const uint32_t buffer_size, const i
 		}
 	}
 	
-	if(!match)
-		strcpy(rp->name, "< err >");
-	rp->next=NULL;
+	if(!match) {
+		free(rp);
+		return NULL;
+	}
 	 
 	return rp;
 }
