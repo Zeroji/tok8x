@@ -6,7 +6,7 @@ t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int ignore_
 	t_node *list_head=NULL, *traverse;
 	while(i < buffer_size) {
 		if(!list_head) {
-			list_head=t_match(set, buffer, buffer_size, i);
+			list_head=match_string(set, buffer, buffer_size, i);
 			if( !strcmp(list_head->name, "< err >") ) {
 				if(ignore_errors) {
 					free(list_head);
@@ -14,7 +14,7 @@ t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int ignore_
 					i++;
 					column++;
 				} else {
-					puts("err: unrecognised token at 0:0");
+					puts("0:0: err: unrecognised token");
 					free(list_head);
 					return NULL;
 				}
@@ -28,7 +28,7 @@ t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int ignore_
 				}
 			}
 		} else {
-			traverse->next=t_match(set, buffer, buffer_size, i);
+			traverse->next=match_string(set, buffer, buffer_size, i);
 			if( !strcmp(traverse->next->name, "< err >") ) {
 				if(ignore_errors) {
 					free(traverse->next);
@@ -54,7 +54,7 @@ t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int ignore_
 	return list_head;
 }
 
-t_node* t_match(int set, char buffer[], const uint32_t buffer_size, const int cursor) {
+t_node* match_string(int set, char buffer[], const uint32_t buffer_size, const int cursor) {
 	t_node *rp=malloc(sizeof(t_node));
 	strcpy(rp->name, "");
 	

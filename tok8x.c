@@ -150,7 +150,6 @@ int main(int argc, char **argv) {
 
 /* ---------------------[ 8X PROG WRITING ]-------------------- */
 
-		puts("this is an 8X program!");
 		operation_type_flag=0;
 		o_buffer=detokenise(a_t_set, i_buffer, if_size);
 		
@@ -182,9 +181,13 @@ int main(int argc, char **argv) {
 		}
 		traverse=o_buffer;
 		while(traverse) {
+			if(operation_type_flag) {
 			printf("%c", traverse->b_first);
 			if(traverse->b_second != NONE)
 				printf("%c", traverse->b_second);
+			} else {
+				printf("%s", traverse->name);
+			}
 			traverse=traverse->next;
 		}
 		if(operation_type_flag) {
@@ -192,7 +195,7 @@ int main(int argc, char **argv) {
 		}
 	} else {
 		/* open a file and write to it */
-		o_file=fopen("out.8xp", "w");
+		o_file=fopen(a_ofilename, "w");
 		
 		if(operation_type_flag) {
 			/* write header to file */
@@ -212,9 +215,13 @@ int main(int argc, char **argv) {
 		/* write data contents here */
 		traverse=o_buffer;
 		while(traverse) {
-			fwrite(&(traverse->b_first), 1, 1, o_file);
-			if(traverse->b_second != NONE)
-			fwrite(&(traverse->b_second), 1, 1, o_file);
+			if(operation_type_flag) {
+				fwrite(&(traverse->b_first), 1, 1, o_file);
+				if(traverse->b_second != NONE)
+				fwrite(&(traverse->b_second), 1, 1, o_file);
+			} else {
+				fwrite(&(traverse->name), 1, strlen(traverse->name), o_file);
+			}
 			traverse=traverse->next;
 		}
 		
