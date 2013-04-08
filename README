@@ -9,8 +9,11 @@ options:
  -t <axe|basic|grammer>
 	define token set to be used
 
+ -i <filename>
+	define file to be read
+
  -o <filename>
-	define file to be written (defaults to out.[txt|8xp])
+	define file to be written (write to stdout by default)
 
  -n <name>
 	define on-calc name (warning: does not check name validity)
@@ -18,8 +21,12 @@ options:
  -a
 	generate archived program
 
- -i
+ -c
 	ignore "comments" (lines beginning with a .) (NOT YET IMPLEMENTED)
 
  -f
 	force (skip over any unmatched tokens rather than generating an error)
+
+running with only a string as an argument yields
+a single token lookup in the following format:
+"<token name>":<token set>:<token number>

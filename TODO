@@ -3,25 +3,12 @@
 * basic file writing
 * dummy token list for testing purposes
 * dummy text input buffer with test text
-		||
-		VV
-
 * read text input buffer from file
-		||
-		VV
-
 * text result buffer (use a linked list of
 * t_nodes for dynamic resizing)
-		||
-		VV
-
 * code for converting between the two
-		||
-		VV
-
 * full file-writing capabilities
-		||
-		VV
+* implement program to plaintext
 
 ------------------[ TODO ]------------------
 
@@ -35,10 +22,6 @@
 
 * argument flags and other misc features
 * (ignore comments flag, etc)
-		||
-		VV
-
-* implement program to plaintext
 		||
 		VV
 

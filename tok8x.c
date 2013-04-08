@@ -16,6 +16,7 @@ int main(int argc, char **argv) {
 	/* input argument vars */
 	char *a_ifilename=NULL;
 	char *a_ofilename=NULL;
+	char *a_token=NULL;
 	int a_ignore_comments=0; /* axe one line comments start with \n., grammer with // 
 								axe multi-line comments use ... (be sure to ignore
 								conditional comments (...If, ...!If, ...Else ) */
@@ -24,8 +25,8 @@ int main(int argc, char **argv) {
 	t_set a_t_set=BASIC;
 	char a_internal_name[9]={0x41, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 	
-	char *help_message="\noptions:\n -h\n   show this help dialogue\n\n -t <axe|basic|grammer>\n   define token set to be used\n\n -o <filename>\n   define file to be written (defaults to out.[txt|8xp])\n\n -n <name>\n   define on-calc name (warning: does not check name validity)\n\n -a\n   generate archived program\n\n -i\n   ignore \"comments\" (lines beginning with a .)\n\n -f\n   force (skip over any unmatched tokens rather than generating an error)\n";
-	char *usage_message="usage: %s <filename> [options]\n";
+	char *help_message="\noptions:\n -h\n   show this help dialogue\n\n -t <axe|basic|grammer>\n   define token set to be used\n\n -i <filename>\n   define file to be read from\n\n -o <filename>\n   define file to be written (defaults to out.[txt|8xp])\n\n -n <name>\n   define on-calc name (warning: does not check name validity)\n\n -a\n   generate archived program\n\n -c\n   ignore comments\n\n -f\n   force (skip over any unmatched tokens rather than generating an error)\n";
+	char *usage_message="usage:\n %s -i <filename> [options]\n %s <token name>\n";
 	
 /* ----------------------[ INPUT PARSING ]---------------------- */
 	
@@ -33,11 +34,10 @@ int main(int argc, char **argv) {
 	while(argv[i]){
 		bad_arg=1;
 		if(strncmp(argv[i], "-", 1)) {
-			if(a_ifilename)
+			if(a_token)
 				break;
-			a_ifilename=argv[i];
+			a_token=argv[i];
 			bad_arg=0;
-			
 		}
 		
 		if( !(strcmp(argv[i], "-h") && strcmp(argv[i], "--help") )) {
@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
 			return 0;
 		}
 		
-		if( !(strcmp(argv[i], "-i") )) {
+		if( !(strcmp(argv[i], "-c") )) {
 			a_ignore_comments=1;
 			bad_arg=0;
 		}
@@ -91,6 +91,16 @@ int main(int argc, char **argv) {
 			}
 		}
 		
+		if( !(strcmp(argv[i], "-i") )) {
+			if(argv[i+1]) {
+				i++;
+				if(strncmp(argv[i], "-", 1)) {
+					a_ifilename=argv[i];
+					bad_arg=0;
+				}
+			}
+		}
+		
 		if( !(strcmp(argv[i], "-n") )) {
 			if(argv[i+1]) {
 				i++;
@@ -113,10 +123,41 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 	
-	if(!a_ifilename) {
+	if(!a_ifilename && !a_token) {
 		printf(usage_message, argv[0]);
 		return 1;
 	}
+	
+/* if just a string was passed, try to find a token match! */
+	if(a_token) {
+		for(i=0; i<3; i++) {
+			traverse=match_string(i, a_token, strlen(a_token), 0);
+			if(traverse) {
+				if(o_buffer)
+					free(o_buffer);
+				o_buffer=traverse;
+				j=i;
+			}
+		}
+		if(!o_buffer) {
+			printf("\"%s\" not found", a_token);
+			return 0;
+		}
+		printf("\"%s\":%s:", o_buffer->name, set_names[j]);
+		if(o_buffer->b_first < 16)
+			printf("0");
+		printf("%X", o_buffer->b_first);
+		if(o_buffer->b_second != NONE) {
+			if(o_buffer->b_second < 16)
+				printf("0");
+			printf("%X", o_buffer->b_second);
+		}
+		puts("");
+		free(o_buffer);
+		
+		return 0;
+	}
+	
 	
 /* ----------------------[ FILE READING ]---------------------- */
 		

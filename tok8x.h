@@ -87,4 +87,6 @@ extern t_node* match_token(int set, char buffer[], const uint32_t buffer_size, c
 extern void free_list(t_node *list_head);
 extern uint16_t get_list_length(t_node *list_head);
 
+extern const char* set_names[];
+
 #endif

@@ -318,6 +318,12 @@ token *t_lists[] = {
 	t_grammer
 };
 
+const char* set_names[] = {
+	"BASIC",
+	"Axe",
+	"Grammer"
+};
+
 int t_list_lengths[] = {
 	(int)(sizeof(t_basic)/sizeof(token)),
 	(int)(sizeof(t_axe)/sizeof(token)),
