@@ -21,8 +21,8 @@ options:
  -a
 	generate archived program
 
- -c
-	ignore "comments" (lines beginning with a .) (NOT YET IMPLEMENTED)
+ -s
+	strip excess data (comments, spaces, empty lines, etc)
 
  -f
 	force (skip over any unmatched tokens rather than generating an error)
