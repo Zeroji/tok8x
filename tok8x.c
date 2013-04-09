@@ -78,6 +78,10 @@ int main(int argc, char **argv) {
 					a_t_set=GRAMMER;
 					bad_arg=0;
 				}
+				if( !(strcmp(argv[i], "pretty") )) {
+					a_t_set=PRETTY;
+					bad_arg=0;
+				}
 			}
 		}
 		

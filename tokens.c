@@ -798,6 +798,34 @@ token t_axe[] = {
 	{ 0xF6, NONE, "LnReg" },
 	{ 0xFB, NONE, "port" }
 };
+
+token t_grammer[] = {
+	{ 0x03, NONE, ">lFactor" },
+	{ 0x14, NONE, "Insert(" },
+	{ 0x1B, NONE, "ClrPart" },
+	{ 0x1C, NONE, "RunPart" },
+	{ 0x1D, NONE, "AddPart(" },
+	{ 0x1E, NONE, "PartType(" },
+	{ 0x22, NONE, "Misc(" },
+	{ 0x2C, NONE, " underscore " },
+	{ 0x5F, NONE, "call " },
+	{ 0x9C, NONE, "Rect(" },
+	{ 0x9E, NONE, "Tile(" },
+	{ 0x9F, NONE, "Sprite(" },
+	{ 0xA0, NONE, "TileMap(" },
+	{ 0xA4, NONE, "Contrast(" },
+	{ 0xA7, NONE, "ShiftBuf(" },
+	{ 0xB1, NONE, "WriteB(" },
+	{ 0xB8, NONE, "Inv(" },
+	{ 0xB9, NONE, "WriteW(" },
+	{ 0xBF, NONE, "2^(" },
+	{ 0xDA, NONE, "GetInc(" },
+	{ 0xDE, NONE, "SetBuf(" },
+	{ 0xE0, NONE, "SetFont " },
+	{ 0xE7, NONE, "MakeVar(" },
+	{ 0xE8, NONE, "FindVar(" }
+};
+
 /* will contain non-editor friendly
  * representations of tokens for
  * prettier output */
@@ -810,26 +838,25 @@ token t_pretty[] = {
 	{ 0xBB, 0xA2, "Δ" }
 };
 
-token t_grammer[] = {
-
-};
-
 token *t_lists[] = {
 	t_basic,
 	t_axe,
-	t_grammer
+	t_grammer,
+	t_pretty
 };
 
 const char* set_names[] = {
 	"BASIC",
 	"Axe",
-	"Grammer"
+	"Grammer",
+	"BASIC"
 };
 
 int t_list_lengths[] = {
 	(int)(sizeof(t_basic)/sizeof(token)),
 	(int)(sizeof(t_axe)/sizeof(token)),
-	(int)(sizeof(t_grammer)/sizeof(token))
+	(int)(sizeof(t_grammer)/sizeof(token)),
+	(int)(sizeof(t_pretty)/sizeof(token))
 };
 
 /* list of values for determining, when converting

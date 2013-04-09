@@ -34,7 +34,8 @@
 typedef enum t_set {
 	BASIC,
 	AXE,
-	GRAMMER
+	GRAMMER,
+	PRETTY
 } t_set;
 
 /* struct for storing tokens in an lut. for single-byte
