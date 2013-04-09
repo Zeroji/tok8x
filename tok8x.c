@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
 	char *a_ifilename=NULL;
 	char *a_ofilename=NULL;
 	char *a_token=NULL;
-	int a_ignore_comments=0; /* axe one line comments start with \n., grammer with // 
+	int a_strip_cruft=0; /* axe one line comments start with \n., grammer with // 
 								axe multi-line comments use ... (be sure to ignore
 								conditional comments (...If, ...!If, ...Else ) */
 	int a_ignore_errors=0;
@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
 	t_set a_t_set=BASIC;
 	char a_internal_name[9]={0x41, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 	
-	char *help_message="\noptions:\n -h\n   show this help dialogue\n\n -t <axe|basic|grammer>\n   define token set to be used\n\n -i <filename>\n   define file to be read from\n\n -o <filename>\n   define file to be written (defaults to out.[txt|8xp])\n\n -n <name>\n   define on-calc name (warning: does not check name validity)\n\n -a\n   generate archived program\n\n -c\n   ignore comments\n\n -f\n   force (skip over any unmatched tokens rather than generating an error)\n";
+	char *help_message="\noptions:\n -h\n   show this help dialogue\n\n -t <axe|basic|grammer>\n   define token set to be used\n\n -i <filename>\n   define file to be read from\n\n -o <filename>\n   define file to be written (defaults to out.[txt|8xp])\n\n -n <name>\n   define on-calc name (warning: does not check name validity)\n\n -a\n   generate archived program\n\n -s\n   strip excess data (comments, spaces, empty lines, etc)\n\n -f\n   force (skip over any unmatched tokens rather than generating an error)\n";
 	char *usage_message="usage:\n %s -i <filename> [options]\n %s <token name>\n";
 	
 /* ----------------------[ INPUT PARSING ]---------------------- */
@@ -46,8 +46,8 @@ int main(int argc, char **argv) {
 			return 0;
 		}
 		
-		if( !(strcmp(argv[i], "-c") )) {
-			a_ignore_comments=1;
+		if( !(strcmp(argv[i], "-s") )) {
+			a_strip_cruft=1;
 			bad_arg=0;
 		}
 		
@@ -200,7 +200,7 @@ int main(int argc, char **argv) {
 		
 		/* pre-processor directives here */
 		
-		o_buffer=tokenise(a_t_set, i_buffer, if_size, a_ignore_comments, a_ignore_errors);
+		o_buffer=tokenise(a_t_set, i_buffer, if_size, a_strip_cruft, a_ignore_errors);
 	}
 	if( !o_buffer ) {
 		free(i_buffer);

@@ -1,7 +1,7 @@
 #include "tokens.h"
 
 /* build a linked list from token matches */
-t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int ignore_comments, int ignore_errors) {
+t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int strip_cruft, int ignore_errors) {
 	uint32_t i=0, column=0, row=0;
 	t_node *list_head=NULL, *traverse, *temp;
 	while(i < buffer_size) {
@@ -71,6 +71,53 @@ t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int ignore_
 			}
 		}
 	}
+	
+	/* make a second pass to remove cruft, including
+	 * leading spaces, empty lines, and comments */
+	
+	if(strip_cruft) {
+		traverse=list_head;
+		/* i=0 : currently outside of comment
+		 * 1=1 : currently inside a string
+		 * 1=2 : in axe one line comment
+		 * i=3 : in axe multiline comment
+		 * i=4 : in grammer comment */
+		i=0;
+		while(traverse) {
+			/* if the current token is a " */
+			if(traverse->b_first == 0x2A) {
+				if(i==0) {
+					i=1;
+				} else {
+					i=0;
+				}
+			}
+						
+			/* if not currently in a string */
+			if(i==0) {
+				if(traverse->next) {
+					/* if next token is at a space */
+					if(traverse->next->b_first == 0x29) {
+						temp=traverse->next;
+						traverse->next=traverse->next->next;
+						free(temp);
+					}
+					/* if next token is at an empty line */
+					if(traverse->next->next) {
+						if(traverse->next->b_first == 0x3F && traverse->next->next->b_first == 0x3F) {
+							temp=traverse->next;
+							traverse->next=traverse->next->next->next;
+							free(temp->next);
+							free(temp);
+						}
+					}						
+				}
+			}
+			traverse=traverse->next;
+		}
+	}
+	
+	
 	return list_head;
 }
 
@@ -99,7 +146,6 @@ t_node* match_string(int set, char buffer[], const uint32_t buffer_size, const i
 						strcpy(rp->name, t_lists[set][i].name);
 					}
 				}
-				
 			}
 		}
 	}

@@ -79,7 +79,7 @@ typedef struct header {
 extern void header_init(header *p, t_node *list_head);
 extern void var_init(header *p, t_node *list_head, char *a_name, uint8_t a_archived);
 
-extern t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int ignore_comments, int ignore_errors);
+extern t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int strip_cruft, int ignore_errors);
 extern t_node* detokenise(int set, char buffer[], const uint32_t buffer_size);
 
 extern t_node* match_string(int set, char buffer[], const uint32_t buffer_size, const int cursor);
