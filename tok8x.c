@@ -119,7 +119,7 @@ int main(int argc, char **argv) {
 	}
 	
 	if(bad_arg) {
-		puts("err: bad option");
+		fprintf(stderr, "err: bad option\n");
 		return 1;
 	}
 	
@@ -140,7 +140,7 @@ int main(int argc, char **argv) {
 			}
 		}
 		if(!o_buffer) {
-			printf("\"%s\" not found", a_token);
+			fprintf(stderr, "err: \"%s\" not found", a_token);
 			return 0;
 		}
 		printf("\"%s\":%s:", o_buffer->name, set_names[j]);
@@ -163,7 +163,7 @@ int main(int argc, char **argv) {
 		
 	i_file=fopen(a_ifilename, "r");
 	if(!i_file) {
-		printf("err: could not read \"%s\"\n", a_ifilename);
+		fprintf(stderr, "err: could not read \"%s\"\n", a_ifilename);
 		return 1;
 	}
 	
@@ -172,7 +172,7 @@ int main(int argc, char **argv) {
 	rewind(i_file);
 	
 	if(if_size>0x800000) {
-		puts("err: bad input file size");
+		fprintf(stderr, "err: bad input file size\n");
 		fclose(i_file);
 		return 1;
 	}
@@ -184,8 +184,6 @@ int main(int argc, char **argv) {
 	fclose(i_file);
 
 /* ----------------------[ FILE PARSING ]---------------------- */
-	
-	
 	
 	if( !strncmp(i_buffer, "**TI83F*", 8) ) {
 

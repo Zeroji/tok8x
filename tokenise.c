@@ -25,7 +25,7 @@ t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int ignore_
 					i++;
 					column++;
 				} else {
-					puts("0:0: err: unrecognised token");
+					fprintf(stderr, "0:0: err: unrecognised token\n");
 					return NULL;
 				}
 			} else {
@@ -56,7 +56,7 @@ t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int ignore_
 					i++;
 					column++;
 				} else {
-					printf("%u:%u: err: unrecognised token\n", row+1, column+1);
+					fprintf(stderr, "%u:%u: err: unrecognised token\n", row+1, column+1);
 					free_list(list_head);
 					return NULL;
 				}

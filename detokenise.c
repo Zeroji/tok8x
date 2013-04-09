@@ -15,7 +15,7 @@ t_node* detokenise(int set, char buffer[], const uint32_t buffer_size) {
 			if(!list_head && set !=0)
 				list_head=match_token(0, buffer, buffer_size, i);
 			if(!list_head) {
-				puts("0:0: err: unrecognised token");
+				fprintf(stderr, "0:0: err: unrecognised token\n");
 				free(list_head);
 				return NULL;
 			}
@@ -30,7 +30,7 @@ t_node* detokenise(int set, char buffer[], const uint32_t buffer_size) {
 			if(!traverse->next && set != 0)
 				traverse->next=match_token(0, buffer, buffer_size, i);
 			if(!traverse->next) {
-				printf("%u:%u: err: unrecognised token\n", row+1, column+1);
+				fprintf(stderr, "%u:%u: err: unrecognised token\n", row+1, column+1);
 				free_list(list_head);
 				return NULL;
 			}
