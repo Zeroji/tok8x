@@ -3,7 +3,7 @@
 /* build a linked list from token matches */
 t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int strip_cruft, int ignore_errors) {
 	uint32_t i=0, column=0, row=0;
-	t_node *list_head=NULL, *traverse, *temp;
+	t_node *list_head=NULL, *traverse, *temp, *temp2;
 	while(i < buffer_size) {
 		if(!list_head) {
 			list_head=match_string(set, buffer, buffer_size, i);
@@ -106,11 +106,68 @@ t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int strip_c
 					if(traverse->next->next) {
 						if(traverse->next->b_first == 0x3F && traverse->next->next->b_first == 0x3F) {
 							temp=traverse->next;
-							traverse->next=traverse->next->next->next;
-							free(temp->next);
+							traverse->next=traverse->next->next;
 							free(temp);
+						}						
+				
+						if(set == AXE) {
+							/* strip out one line comments, which begin with \n. and end with \n */
+							if(traverse->next->b_first == 0x3F && traverse->next->next->b_first == 0x3A) {
+								temp=traverse;
+								traverse=traverse->next;
+								while(traverse->next) {
+									temp2=traverse;
+									traverse=traverse->next;
+									free(temp2);
+									if(traverse->b_first == 0x3F) {
+										temp->next=traverse->next;
+										free(traverse);
+										traverse=temp;
+										break;
+									}
+								}
+							}
+							
+							//~ /* strip out multi-line comments, which begin with \n... and end with ...\n */
+							//~ if(traverse->next->b_first == 0x3F && traverse->next->next->b_first == 0xBB && traverse->next->next->b_second == 0xDB) {
+								//~ temp=traverse;
+								//~ traverse=traverse->next;
+								//~ while(traverse->next) {
+									//~ temp2=traverse;
+									//~ traverse=traverse->next;
+									//~ free(temp2);
+									//~ if(traverse->next->b_first == 0x3f && traverse->b_first == 0xBB && traverse->b_second == 0xDB) {
+										//~ temp->next=traverse->next->next;
+										//~ free(traverse->next);
+										//~ free(traverse);
+										//~ traverse=temp;
+										//~ break;
+									//~ }
+								//~ }
+							//~ }
+							//~ 
 						}
-					}						
+						
+						if(set == GRAMMER) {
+							/* strip out one line comments, which begin with // */
+							if(traverse->next->b_first == 0x83 && traverse->next->next->b_first == 0x83) {
+								temp=traverse;
+								traverse=traverse->next;
+								while(traverse->next) {
+									temp2=traverse;
+									traverse=traverse->next;
+									free(temp2);
+									if(traverse->b_first == 0x3F) {
+										temp->next=traverse->next;
+										free(traverse);
+										traverse=temp;
+										break;
+									}
+								}
+							}
+							
+						}
+					}
 				}
 			}
 			traverse=traverse->next;
