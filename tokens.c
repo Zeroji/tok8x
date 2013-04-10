@@ -853,7 +853,7 @@ token t_pretty[] = {
 	{ 0x5D, 0x03, "L₄" },
 	{ 0x5D, 0x04, "L₅" },
 	{ 0x5D, 0x05, "L₆" },
-	,
+	
 	{ 0x5E, 0x10, "Y₁" },
 	{ 0x5E, 0x11, "Y₂" },
 	{ 0x5E, 0x12, "Y₃" },
@@ -942,9 +942,3 @@ uint8_t t_2byte_indicators[] = {
 	/* 84+ only */
 	0xEF
 };
-r₁
-r₂
-r₃
-r₄
-r₅
-r₆
