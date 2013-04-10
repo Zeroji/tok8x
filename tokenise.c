@@ -128,24 +128,25 @@ t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int strip_c
 								}
 							}
 							
-							//~ /* strip out multi-line comments, which begin with \n... and end with ...\n */
-							//~ if(traverse->next->b_first == 0x3F && traverse->next->next->b_first == 0xBB && traverse->next->next->b_second == 0xDB) {
-								//~ temp=traverse;
-								//~ traverse=traverse->next;
-								//~ while(traverse->next) {
-									//~ temp2=traverse;
-									//~ traverse=traverse->next;
-									//~ free(temp2);
-									//~ if(traverse->next->b_first == 0x3f && traverse->b_first == 0xBB && traverse->b_second == 0xDB) {
-										//~ temp->next=traverse->next->next;
-										//~ free(traverse->next);
-										//~ free(traverse);
-										//~ traverse=temp;
-										//~ break;
-									//~ }
-								//~ }
-							//~ }
-							//~ 
+							/* strip out multi-line comments, which begin with \n... and end with ...\n */
+							if(traverse->next->b_first == 0x3F && traverse->next->next->b_first == 0xBB && traverse->next->next->b_second == 0xDB) {
+								temp=traverse;
+								traverse=traverse->next->next;
+								free(temp->next);
+								while(traverse->next) {
+									temp2=traverse;
+									traverse=traverse->next;
+									free(temp2);
+									if(traverse->next->b_first == 0x3f && traverse->b_first == 0xBB && traverse->b_second == 0xDB) {
+										temp->next=traverse->next->next;
+										free(traverse->next);
+										free(traverse);
+										traverse=temp;
+										break;
+									}
+								}
+							}
+							
 						}
 						
 						if(set == GRAMMER) {
