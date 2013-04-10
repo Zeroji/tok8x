@@ -10,7 +10,7 @@ t_node* detokenise(int set, char buffer[], const uint32_t buffer_size) {
 	t_node *list_head=NULL, *traverse;
 	int flag;
 	
-	for(i=0x4A; i<buffer_size-1; i++) {
+	for(i=0x4A /* jump straight to the data section */; i<buffer_size-1; i++) {
 		if(!list_head) {
 			list_head=match_token(set, buffer, buffer_size, i);
 			if(!list_head && set !=0)

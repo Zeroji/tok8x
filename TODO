@@ -1,30 +1,37 @@
 ------------------[ DONE ]------------------
 * basic variable format
+
 * basic file writing
+
 * dummy token list for testing purposes
+
 * dummy text input buffer with test text
+
 * read text input buffer from file
+
 * text result buffer (use a linked list of
 * t_nodes for dynamic resizing)
+
 * code for converting between the two
+
 * full file-writing capabilities
+
 * implement program to plaintext
 
-------------------[ TODO ]------------------
-
 * implement full list of tokens
-		||
-		VV
+
+* option to ignore comments and whitespace
+* when writing to program
+
+* complete pipeline support
+
+------------------[ TODO ]------------------
 
 * add a token set to mimic the actual
 * appearance as closely as possible (e.g.
 * using λ rather than lamdba)
 		||
-		VV
+		VV4
 
-* ignore comments flag
-		||
-		VV
-
-* add preprocessor directives (#include,
-* #define, and #if [#else] #end)
+* add preprocessor directives (##include,
+* ##define, and ##if [##else] ##end)
