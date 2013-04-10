@@ -9,7 +9,7 @@ t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int strip_c
 			list_head=match_string(set, buffer, buffer_size, i);
 			/* if there is no match in the current set, check
 			 * the default BASIC set instead */
-			if(set != 0) {
+			if(set != BASIC) {
 				temp=match_string(0, buffer, buffer_size, i);
 				if(temp) {
 					if(!list_head) {

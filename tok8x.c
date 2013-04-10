@@ -1,7 +1,7 @@
 #include "tok8x.h"
 
 int main(int argc, char **argv) {
-	uint32_t i, j, bad_arg;
+	uint32_t i, j, k, bad_arg;
 	uint32_t if_size;
 	char swapchar;
 	header h;
@@ -129,10 +129,6 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 	
-	//~ if(!a_ifilename && !a_token) {
-		//~ printf(usage_message, argv[0]);
-		//~ return 1;
-	//~ }
 	
 /* if just a string was passed, try to find a token match! */
 	if(a_token) {
@@ -164,7 +160,6 @@ int main(int argc, char **argv) {
 		return 0;
 	}
 	
-	
 /* ----------------------[ FILE READING ]---------------------- */
 		
 	/* are we reading from a file or from stdin? */
@@ -192,8 +187,34 @@ int main(int argc, char **argv) {
 			i_buffer=i_swapbuffer;
 		}
 		swapchar=getc(i_file);
-		i_buffer[if_size]=swapchar;
-		if_size++;
+		if(swapchar != EOF) {
+			i_buffer[if_size]=(uint8_t)swapchar;
+			if_size++;
+		}
+		/* check if the input is in .8xp format */
+		if( !strncmp(i_buffer, "**TI83F*", 8) && !(if_size-8) ) {
+			operation_type_flag=0;
+			for(j=0; j<45; j++) {
+				swapchar=getc(i_file);
+				i_buffer[if_size]=(uint8_t)swapchar;
+				if_size++;
+			}
+			swapchar=getc(i_file);
+			i_buffer[if_size]=(uint8_t)swapchar;
+			k=(uint8_t)swapchar;
+			if_size++;
+			swapchar=getc(i_file);
+			i_buffer[if_size]=(uint8_t)swapchar;
+			k+=((uint8_t)swapchar)*0x100;
+			if_size++;
+			
+			for(j=0; j<k+2; j++) {
+				swapchar=getc(i_file);
+				i_buffer[if_size]=(uint8_t)swapchar;
+				if_size++;
+			}
+			swapchar=EOF;
+		}
 		
 		if( !(if_size-0x80000) ) {
 			fprintf(stderr, "err: obscene input file size\n");
@@ -207,11 +228,12 @@ int main(int argc, char **argv) {
 
 /* ----------------------[ FILE PARSING ]---------------------- */
 	
-	if( !strncmp(i_buffer, "**TI83F*", 8) ) {
-
-/* ---------------------[ 8X PROG WRITING ]-------------------- */
-
-		operation_type_flag=0;
+	if( !operation_type_flag ) {
+		if(if_size < 74) {
+			fprintf(stderr, "err: invalid .8xp size\n");
+			free(i_buffer);
+			return 1;
+		}
 		o_buffer=detokenise(a_t_set, i_buffer, if_size);
 	} else {
 		
@@ -225,7 +247,7 @@ int main(int argc, char **argv) {
 	}
 	
 	
-/* --------------------[ FLAT FILE WRITING ]------------------- */
+/* ----------------------[ FILE WRITING ]--------------------- */
 	
 	if(operation_type_flag) {
 		var_init(h_point, o_buffer, &(a_internal_name[0]), a_archived);

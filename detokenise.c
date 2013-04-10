@@ -9,13 +9,17 @@ t_node* detokenise(int set, char buffer[], const uint32_t buffer_size) {
 	uint32_t i, column=0, row=0;
 	t_node *list_head=NULL, *traverse;
 	int flag;
-	for(i=74; i<buffer_size-1; i++) {
+	
+	for(i=0x4A; i<buffer_size-1; i++) {
 		if(!list_head) {
 			list_head=match_token(set, buffer, buffer_size, i);
 			if(!list_head && set !=0)
 				list_head=match_token(0, buffer, buffer_size, i);
 			if(!list_head) {
-				fprintf(stderr, "0:0: err: unrecognised token\n");
+				fprintf(stderr, "0:0: err: unrecognised token at \"");
+				if(buffer[i]<0x10)
+					fprintf(stderr, "0");
+				fprintf(stderr, "%X\"\n", buffer[i]);
 				free(list_head);
 				return NULL;
 			}
@@ -30,7 +34,10 @@ t_node* detokenise(int set, char buffer[], const uint32_t buffer_size) {
 			if(!traverse->next && set != 0)
 				traverse->next=match_token(0, buffer, buffer_size, i);
 			if(!traverse->next) {
-				fprintf(stderr, "%u:%u: err: unrecognised token\n", row+1, column+1);
+				fprintf(stderr, "%u:%u: err: unrecognised token at \"", row+1, column+1);
+				if(buffer[i]<0x10)
+					fprintf(stderr, "0");
+				fprintf(stderr, "%X\"\n", buffer[i]);
 				free_list(list_head);
 				return NULL;
 			}
