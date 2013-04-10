@@ -3,10 +3,12 @@
 int main(int argc, char **argv) {
 	uint32_t i, j, bad_arg;
 	uint32_t if_size;
+	char swapchar;
 	header h;
 	struct header *h_point=&h;
 	FILE *i_file;
-	char *i_buffer;
+	char *i_buffer=NULL;
+	char *i_swapbuffer;
 	FILE *o_file;
 	t_node *o_buffer;
 	t_node *traverse;
@@ -127,10 +129,10 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 	
-	if(!a_ifilename && !a_token) {
-		printf(usage_message, argv[0]);
-		return 1;
-	}
+	//~ if(!a_ifilename && !a_token) {
+		//~ printf(usage_message, argv[0]);
+		//~ return 1;
+	//~ }
 	
 /* if just a string was passed, try to find a token match! */
 	if(a_token) {
@@ -165,26 +167,42 @@ int main(int argc, char **argv) {
 	
 /* ----------------------[ FILE READING ]---------------------- */
 		
-	i_file=fopen(a_ifilename, "r");
-	if(!i_file) {
-		fprintf(stderr, "err: could not read \"%s\"\n", a_ifilename);
-		return 1;
+	/* are we reading from a file or from stdin? */
+	if(a_ifilename == NULL) {
+		i_file=stdin;
+	} else {
+		i_file=fopen(a_ifilename, "r");
+		if(!i_file) {
+			fprintf(stderr, "err: could not read \"%s\"\n", a_ifilename);
+			return 1;
+		}
 	}
 	
-	fseek(i_file, 0, SEEK_END);
-	if_size=ftell(i_file)-1;
-	rewind(i_file);
-	
-	if(if_size>0x800000) {
-		fprintf(stderr, "err: bad input file size\n");
-		fclose(i_file);
-		return 1;
-	}
-	
-	
-	i_buffer=(char*)malloc(if_size);
-	fread(i_buffer, 1, if_size, i_file);
-	
+	/* dynamic buffering of input file! (necessary for stdin) */
+	if_size=0;
+	do {
+		if( !(if_size%256) ) {
+			i_swapbuffer=realloc(i_buffer, sizeof(char)*(if_size+256));
+			if(i_swapbuffer == NULL) {
+				fprintf(stderr, "err: could not allocate memory\n");
+				free(i_buffer);
+				fclose(i_file);
+				return 1;
+			}
+			i_buffer=i_swapbuffer;
+		}
+		swapchar=getc(i_file);
+		i_buffer[if_size]=swapchar;
+		if_size++;
+		
+		if( !(if_size-0x80000) ) {
+			fprintf(stderr, "err: obscene input file size\n");
+			free(i_buffer);
+			fclose(i_file);
+			return 1;
+		}
+	} while(swapchar != EOF);
+	if_size--;
 	fclose(i_file);
 
 /* ----------------------[ FILE PARSING ]---------------------- */
@@ -195,7 +213,6 @@ int main(int argc, char **argv) {
 
 		operation_type_flag=0;
 		o_buffer=detokenise(a_t_set, i_buffer, if_size);
-		
 	} else {
 		
 		/* pre-processor directives here */
