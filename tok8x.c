@@ -154,7 +154,7 @@ int main(int argc, char **argv) {
 	if(a_token) {
 		traverse=a_token;
 		while(traverse) {
-			for(i=0; i<3; i++) {
+			for(i=0; i<4; i++) {
 				o_buffer=match_string(i, traverse->name, strlen(traverse->name), 0);
 				if(o_buffer) {
 					if( !strcmp(o_buffer->name, traverse->name) ) {
