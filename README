@@ -6,8 +6,9 @@ options:
  -h
 	display help dialogue
 
- -t <axe|basic|grammer>
-	define token set to be used
+ -t <axe|basic|grammer|pretty>
+	define token set to be used. "pretty" is the default token
+	set, but uses unicode approximations to mimic appearances
 
  -i <filename>
 	define file to be read
@@ -26,6 +27,9 @@ options:
 
  -f
 	force (skip over any unmatched tokens rather than generating an error)
+
+running without -i causes the program to read from stdin, and running
+without -o to write to stdout.
 
 running with only a string as an argument yields
 a single token lookup in the following format:

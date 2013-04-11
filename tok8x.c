@@ -232,6 +232,7 @@ int main(int argc, char **argv) {
 				if_size++;
 			}
 			swapchar=EOF;
+			if_size--;
 		}
 		
 		if( !(if_size-0x80000) ) {
@@ -241,7 +242,6 @@ int main(int argc, char **argv) {
 			return 1;
 		}
 	} while(swapchar != EOF);
-	if_size--;
 	fclose(i_file);
 
 /* ----------------------[ FILE PARSING ]---------------------- */
