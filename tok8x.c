@@ -2,12 +2,12 @@
 
 int main(int argc, char **argv) {
 	uint32_t i, j, k, bad_arg;
-	uint32_t if_size;
 	char swapchar;
 	header h;
 	struct header *h_point=&h;
 	FILE *i_file;
-	char *i_buffer=NULL;
+	buffer i_buffer;
+	i_buffer.dat=NULL;
 	char *i_swapbuffer;
 	FILE *o_file;
 	t_node *o_buffer;
@@ -192,75 +192,81 @@ int main(int argc, char **argv) {
 	}
 	
 	/* dynamic buffering of input file! (necessary for stdin) */
-	if_size=0;
+	i_buffer.size=0;
 	do {
-		if( !(if_size%256) ) {
-			i_swapbuffer=realloc(i_buffer, sizeof(char)*(if_size+256));
+		if( !(i_buffer.size%256) ) {
+			i_swapbuffer=realloc(i_buffer.dat, sizeof(char)*(i_buffer.size+256));
 			if(i_swapbuffer == NULL) {
 				fprintf(stderr, "err: could not allocate memory\n");
-				free(i_buffer);
+				free(i_buffer.dat);
 				fclose(i_file);
 				return 1;
 			}
-			i_buffer=i_swapbuffer;
+			i_buffer.dat=i_swapbuffer;
 		}
 		swapchar=getc(i_file);
 		if(swapchar != EOF) {
-			i_buffer[if_size]=(uint8_t)swapchar;
-			if_size++;
+			i_buffer.dat[i_buffer.size]=(uint8_t)swapchar;
+			i_buffer.size++;
 		}
 		/* check if the input is in .8xp format */
-		if( !strncmp(i_buffer, "**TI83F*", 8) && !(if_size-8) ) {
+		if( !strncmp(i_buffer.dat, "**TI83F*", 8) && !(i_buffer.size-8) ) {
 			operation_type_flag=0;
 			for(j=0; j<45; j++) {
 				swapchar=getc(i_file);
-				i_buffer[if_size]=(uint8_t)swapchar;
-				if_size++;
+				i_buffer.dat[i_buffer.size]=(uint8_t)swapchar;
+				i_buffer.size++;
 			}
 			swapchar=getc(i_file);
-			i_buffer[if_size]=(uint8_t)swapchar;
+			i_buffer.dat[i_buffer.size]=(uint8_t)swapchar;
 			k=(uint8_t)swapchar;
-			if_size++;
+			i_buffer.size++;
 			swapchar=getc(i_file);
-			i_buffer[if_size]=(uint8_t)swapchar;
+			i_buffer.dat[i_buffer.size]=(uint8_t)swapchar;
 			k+=((uint8_t)swapchar)*0x100;
-			if_size++;
+			i_buffer.size++;
 			
 			for(j=0; j<k+2; j++) {
 				swapchar=getc(i_file);
-				i_buffer[if_size]=(uint8_t)swapchar;
-				if_size++;
+				i_buffer.dat[i_buffer.size]=(uint8_t)swapchar;
+				i_buffer.size++;
 			}
 			swapchar=EOF;
-			if_size--;
+			i_buffer.size--;
 		}
 		
-		if( !(if_size-0x80000) ) {
+		if( !(i_buffer.size-0x80000) ) {
 			fprintf(stderr, "err: obscene input file size\n");
-			free(i_buffer);
+			free(i_buffer.dat);
 			fclose(i_file);
 			return 1;
 		}
 	} while(swapchar != EOF);
 	fclose(i_file);
+	i_swapbuffer=realloc(i_buffer.dat, sizeof(char)*i_buffer.size);
+	if(i_swapbuffer == NULL) {
+		fprintf(stderr, "err: could not allocate memory\n");
+		free(i_buffer.dat);
+		return 1;
+	}
 
 /* ----------------------[ FILE PARSING ]---------------------- */
 	
 	if( !operation_type_flag ) {
-		if(if_size < 74) {
+		if(i_buffer.size < 74) {
 			fprintf(stderr, "err: invalid .8xp size\n");
-			free(i_buffer);
+			free(i_buffer.dat);
 			return 1;
 		}
-		o_buffer=detokenise(a_t_set, i_buffer, if_size);
+		o_buffer=detokenise(a_t_set, i_buffer);
 	} else {
 		
 		/* pre-processor directives here */
 		
-		o_buffer=tokenise(a_t_set, i_buffer, if_size, a_strip_cruft, a_ignore_errors);
+		o_buffer=tokenise(a_t_set, i_buffer, a_strip_cruft, a_ignore_errors);
 	}
 	if( !o_buffer ) {
-		free(i_buffer);
+		free(i_buffer.dat);
 		return 1;
 	}
 	
@@ -335,7 +341,7 @@ int main(int argc, char **argv) {
 	}
 	
 	free_list(o_buffer);
-	free(i_buffer);
+	free(i_buffer.dat);
 
 	return 0;
 }

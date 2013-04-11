@@ -5,21 +5,21 @@
  * for the second byte as well and then searching
  * for a match in t_lists[set], so i'm saving it
  * for last */
-t_node* detokenise(int set, char buffer[], const uint32_t buffer_size) {
+t_node* detokenise(int set, buffer b) {
 	uint32_t i, column=0, row=0;
 	t_node *list_head=NULL, *traverse;
 	int flag;
 	
-	for(i=0x4A /* jump straight to the data section */; i<buffer_size-1; i++) {
+	for(i=0x4A /* jump straight to the data section */; i<b.size-1; i++) {
 		if(!list_head) {
-			list_head=match_token(set, buffer, buffer_size, i);
+			list_head=match_token(set, b.dat, b.size, i);
 			if(!list_head && set !=0)
-				list_head=match_token(0, buffer, buffer_size, i);
+				list_head=match_token(0, b.dat, b.size, i);
 			if(!list_head) {
 				fprintf(stderr, "0:0: err: unrecognised token at \"");
-				if(buffer[i]<0x10)
+				if(b.dat[i]<0x10)
 					fprintf(stderr, "0");
-				fprintf(stderr, "%X\"\n", buffer[i]);
+				fprintf(stderr, "%X\"\n", b.dat[i]);
 				free(list_head);
 				return NULL;
 			}
@@ -30,14 +30,14 @@ t_node* detokenise(int set, char buffer[], const uint32_t buffer_size) {
 			}
 			traverse=list_head;
 		} else {
-			traverse->next=match_token(set, buffer, buffer_size, i);
+			traverse->next=match_token(set, b.dat, b.size, i);
 			if(!traverse->next && set != 0)
-				traverse->next=match_token(0, buffer, buffer_size, i);
+				traverse->next=match_token(0, b.dat, b.size, i);
 			if(!traverse->next) {
 				fprintf(stderr, "%u:%u: err: unrecognised token at \"", row+1, column+1);
-				if(buffer[i]<0x10)
+				if(b.dat[i]<0x10)
 					fprintf(stderr, "0");
-				fprintf(stderr, "%X\"\n", buffer[i]);
+				fprintf(stderr, "%X\"\n", b.dat[i]);
 				free_list(list_head);
 				return NULL;
 			}
@@ -70,17 +70,17 @@ t_node* detokenise(int set, char buffer[], const uint32_t buffer_size) {
 	return list_head;
 }
 
-t_node* match_token(int set, char buffer[], const uint32_t buffer_size, const int cursor) {
+t_node* match_token(int set, char buff[], const uint32_t buff_size, const int cursor) {
 	int i;
 	t_node *rp=malloc(sizeof(t_node));
-	rp->b_first=buffer[cursor];
+	rp->b_first=buff[cursor];
 	rp->b_second=NONE;
 	
 	for(i=0; i<11; i++) {
 		if(rp->b_first == t_2byte_indicators[i]) {
-			if(cursor == buffer_size)
+			if(cursor == buff_size)
 				return NULL;
-			rp->b_second=buffer[cursor+1];
+			rp->b_second=buff[cursor+1];
 		}
 	}
 	

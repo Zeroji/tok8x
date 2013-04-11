@@ -31,6 +31,11 @@
 
 #define NONE 0xFF
 
+typedef struct buffer {
+	char *dat;
+	uint32_t size;
+} buffer;
+
 typedef enum t_set {
 	BASIC,
 	AXE,
@@ -79,8 +84,9 @@ typedef struct header {
 extern void header_init(header *p, t_node *list_head);
 extern void var_init(header *p, t_node *list_head, char *a_name, uint8_t a_archived);
 
-extern t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int strip_cruft, int ignore_errors);
-extern t_node* detokenise(int set, char buffer[], const uint32_t buffer_size);
+extern t_node* tokenise(int set, buffer b, int strip_cruft, int ignore_errors);
+extern t_node* detokenise(int set, buffer b);
+extern buffer include(buffer b);
 
 extern t_node* match_string(int set, char buffer[], const uint32_t buffer_size, const int cursor);
 extern t_node* match_token(int set, char buffer[], const uint32_t buffer_size, const int cursor);

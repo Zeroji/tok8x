@@ -1,16 +1,16 @@
 #include "tokens.h"
 
 /* build a linked list from token matches */
-t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int strip_cruft, int ignore_errors) {
+t_node* tokenise(int set, buffer b, int strip_cruft, int ignore_errors) {
 	uint32_t i=0, column=0, row=0;
 	t_node *list_head=NULL, *traverse, *temp, *temp2;
-	while(i < buffer_size) {
+	while(i < b.size) {
 		if(!list_head) {
-			list_head=match_string(set, buffer, buffer_size, i);
+			list_head=match_string(set, b.dat, b.size, i);
 			/* if there is no match in the current set, check
 			 * the default BASIC set instead */
 			if(set != BASIC) {
-				temp=match_string(0, buffer, buffer_size, i);
+				temp=match_string(0, b.dat, b.size, i);
 				if(temp) {
 					if(!list_head) {
 						list_head=temp;
@@ -38,10 +38,10 @@ t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int strip_c
 				}
 			}
 		} else {
-			traverse->next=match_string(set, buffer, buffer_size, i);
+			traverse->next=match_string(set, b.dat, b.size, i);
 			
 			if(set != 0) {
-				temp=match_string(0, buffer, buffer_size, i);
+				temp=match_string(0, b.dat, b.size, i);
 				if(temp) {
 					if(!traverse->next) {
 						traverse->next=temp;
@@ -179,22 +179,22 @@ t_node* tokenise(int set, char buffer[], const uint32_t buffer_size, int strip_c
 	return list_head;
 }
 
-t_node* match_string(int set, char buffer[], const uint32_t buffer_size, const int cursor) {
+t_node* match_string(int set, char buff[], const uint32_t buff_size, const int cursor) {
 	t_node *rp=malloc(sizeof(t_node));
 	strcpy(rp->name, "");
 	
 	/* match a token here */
 	/* find the longest complete token match for a substring in buffer which
 	 * begins at the current cursor position */
-	int i, match=0, length_left=buffer_size-cursor;
+	int i, match=0, length_left=buff_size-cursor;
 	for(i=0; i<t_list_lengths[set]; i++) {
 		/* if the first character matches */
-		if( !strncmp(&buffer[cursor], t_lists[set][i].name, 1) ) {
+		if( !strncmp(&buff[cursor], t_lists[set][i].name, 1) ) {
 			/* if the potential match isn't too long to fit in
 			 * what remains of the file */
 			if( strlen(t_lists[set][i].name) <= length_left ) {				
 				/* check if the two strings are actually equal */
-				if( !strncmp(&buffer[cursor], t_lists[set][i].name, strlen(t_lists[set][i].name)) ) {
+				if( !strncmp(&buff[cursor], t_lists[set][i].name, strlen(t_lists[set][i].name)) ) {
 					/* check if the length of the found string is greater than the one already present */
 					if( strlen(t_lists[set][i].name) > strlen(rp->name) ) {
 						/* we found a match! */
