@@ -88,8 +88,8 @@ extern t_node* tokenise(int set, buffer b, int strip_cruft, int ignore_errors);
 extern t_node* detokenise(int set, buffer b);
 extern buffer include(buffer b);
 
-extern t_node* match_string(int set, char buffer[], const uint32_t buffer_size, const int cursor);
-extern t_node* match_token(int set, char buffer[], const uint32_t buffer_size, const int cursor);
+extern t_node* match_string(int set, char buffer[], const uint32_t buffer_size, uint32_t cursor);
+extern t_node* match_token(int set, char buffer[], const uint32_t buffer_size, uint32_t cursor);
 
 extern void free_list(t_node *list_head);
 extern uint16_t get_list_length(t_node *list_head);

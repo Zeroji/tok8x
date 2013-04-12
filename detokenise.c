@@ -70,7 +70,7 @@ t_node* detokenise(int set, buffer b) {
 	return list_head;
 }
 
-t_node* match_token(int set, char buff[], const uint32_t buff_size, const int cursor) {
+t_node* match_token(int set, char buff[], const uint32_t buff_size, uint32_t cursor) {
 	int i;
 	t_node *rp=malloc(sizeof(t_node));
 	rp->b_first=buff[cursor];

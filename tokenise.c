@@ -179,7 +179,7 @@ t_node* tokenise(int set, buffer b, int strip_cruft, int ignore_errors) {
 	return list_head;
 }
 
-t_node* match_string(int set, char buff[], const uint32_t buff_size, const int cursor) {
+t_node* match_string(int set, char buff[], const uint32_t buff_size, uint32_t cursor) {
 	t_node *rp=malloc(sizeof(t_node));
 	strcpy(rp->name, "");
 	

@@ -232,7 +232,6 @@ int main(int argc, char **argv) {
 				i_buffer.size++;
 			}
 			swapchar=EOF;
-			i_buffer.size--;
 		}
 		
 		if( !(i_buffer.size-0x80000) ) {
@@ -243,6 +242,7 @@ int main(int argc, char **argv) {
 		}
 	} while(swapchar != EOF);
 	fclose(i_file);
+	i_buffer.size--;
 	i_swapbuffer=realloc(i_buffer.dat, sizeof(char)*i_buffer.size);
 	if(i_swapbuffer == NULL) {
 		fprintf(stderr, "err: could not allocate memory\n");
@@ -262,6 +262,9 @@ int main(int argc, char **argv) {
 	} else {
 		
 		/* pre-processor directives here */
+		i_buffer=include(i_buffer);
+		if(!i_buffer.dat)
+			return 1;
 		
 		o_buffer=tokenise(a_t_set, i_buffer, a_strip_cruft, a_ignore_errors);
 	}
