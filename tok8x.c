@@ -243,7 +243,6 @@ int main(int argc, char **argv) {
 	} while(swapchar != EOF);
 	fclose(i_file);
 	i_buffer.size--;
-	i_swapbuffer=realloc(i_buffer.dat, sizeof(char)*i_buffer.size);
 	if(i_swapbuffer == NULL) {
 		fprintf(stderr, "err: could not allocate memory\n");
 		free(i_buffer.dat);

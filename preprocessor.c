@@ -54,11 +54,6 @@ buffer include(buffer b) {
 			free(b.dat);
 			b.dat=swapbuff;
 			b.size=b.size+fsize-(s.end-j);
-			//~ puts("--------");
-			//~ for(j=0; j<b.size; j++) {
-				//~ printf("%c", b.dat[j]);
-			//~ }
-			//~ puts("--------");
 			fclose(f);
 		}
 	}
