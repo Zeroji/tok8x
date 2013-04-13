@@ -932,11 +932,25 @@ token t_pretty[] = {
 	{ 0xBB, 0xA6, "μ" },
 };
 
+/* preprocessor tokens, because it's actually
+ * easier to do the "preprocessing" post
+ * processing. don't forget to add in a
+ * -p option for defining an option to pass
+ * to ##if ##else ##end! */
+token t_preproc[] = {
+	{ NONE, NONE, "##include" },
+	{ NONE, NONE, "##define" },
+	{ NONE, NONE, "##if" },
+	{ NONE, NONE, "##else" },
+	{ NONE, NONE, "##end" },
+};
+
 token *t_lists[] = {
 	t_basic,
 	t_axe,
 	t_grammer,
-	t_pretty
+	t_pretty,
+	t_preproc
 };
 
 const char* set_names[] = {
@@ -950,7 +964,8 @@ int t_list_lengths[] = {
 	(int)(sizeof(t_basic)/sizeof(token)),
 	(int)(sizeof(t_axe)/sizeof(token)),
 	(int)(sizeof(t_grammer)/sizeof(token)),
-	(int)(sizeof(t_pretty)/sizeof(token))
+	(int)(sizeof(t_pretty)/sizeof(token)),
+	(int)(sizeof(t_preproc)/sizeof(token))
 };
 
 /* list of values for determining, when converting

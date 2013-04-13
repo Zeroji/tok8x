@@ -1,63 +1,12 @@
 #include "preprocessor.h"
 
-buffer include(buffer b) {
-	FILE *f;
-	char *swapbuff;
-	uint32_t i, j, fsize;
-	string s;
-	
-	/* because 11 is the minimum length of the ##include statement */
-	for(i=0; i<b.size-11; i++) {
-		if( !strncmp(&(b.dat[i]), "##include", 9) ) {
-			/* set a marker at the beginning of the ##include, so
-			 * we can successfully strip it out later */
-			j=i;
-			i+=9;
-			s=sstrlen(b, i);
-			if(s.length == 0){
-				fprintf(stderr, "err: incomplete include statement\n");
-				free(b.dat);
-				return b;
-			}
-			s.val=malloc(s.length);
-			if(s.val == NULL) {
-				fprintf(stderr, "err: could not allocate memory\n");
-				free(b.dat);
-				b.dat=NULL;
-				return b;
-			}
-			sscanf(&(b.dat[i]), "%s", s.val);
-			
-			f=fopen(s.val, "r");
-			if(!f) {
-				fprintf(stderr, "err: could not include \"%s\"\n", s.val);
-				free(b.dat);
-				b.dat=NULL;
-				return b;
-			}
-			
-			fseek(f, 0, SEEK_END);
-			fsize=ftell(f)-1;
-			rewind(f);
-			
-			if(fsize+b.size>0x800000) {
-				fprintf(stderr, "err: project too large\n");
-				fclose(f);
-				return b;
-			}
-			free(s.val);
-			
-			swapbuff=malloc(b.size+fsize);
-			memcpy(swapbuff, b.dat, j);
-			fread(&(swapbuff[j]), fsize, 1, f);
-			memcpy(&(swapbuff[j+fsize]), &(b.dat[s.end]), b.size-s.end);
-			free(b.dat);
-			b.dat=swapbuff;
-			b.size=b.size+fsize-(s.end-j);
-			fclose(f);
-		}
-	}
-	
+/* redo this, including AFTER tokenising the main file, so that
+ * line numbers actually make sense. make file paths relative to
+ * the main source file, too, rather than the program, and use
+ * "s to surround the name so that file names with spaces are
+ * understood */
+
+t_node* include(t_node* b) {
 	return b;
 }
 

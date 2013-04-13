@@ -6,18 +6,16 @@ t_node* tokenise(int set, buffer b, int strip_cruft, int ignore_errors) {
 	t_node *list_head=NULL, *traverse, *temp, *temp2;
 	while(i < b.size) {
 		if(!list_head) {
-			list_head=match_string(set, b.dat, b.size, i);
-			/* if there is no match in the current set, check
-			 * the default BASIC set instead */
-			if(set != BASIC) {
-				temp=match_string(0, b.dat, b.size, i);
-				if(temp) {
-					if(!list_head) {
-						list_head=temp;
-					} else {
-						free(temp);
-					}
-				}
+			list_head=match_string(PREPROC, b.dat, b.size, i);
+			/* check if the token is a preprocessor directive. if
+			 * not, check if it's in the defined set. if not, and
+			 * the set is not BASIC, check in BASIC */
+			if(!list_head) {
+				list_head=match_string(set, b.dat, b.size, i);
+			}
+			
+			if(!list_head && set != BASIC) {
+				list_head=match_string(BASIC, b.dat, b.size, i);
 			}
 			
 			if(!list_head) {
@@ -38,17 +36,14 @@ t_node* tokenise(int set, buffer b, int strip_cruft, int ignore_errors) {
 				}
 			}
 		} else {
-			traverse->next=match_string(set, b.dat, b.size, i);
+			traverse->next=match_string(PREPROC, b.dat, b.size, i);
 			
-			if(set != 0) {
-				temp=match_string(0, b.dat, b.size, i);
-				if(temp) {
-					if(!traverse->next) {
-						traverse->next=temp;
-					} else {
-						free(temp);
-					}
-				}
+			if(!traverse->next) {
+				traverse->next=match_string(set, b.dat, b.size, i);
+			}
+			
+			if(!traverse->next && set != BASIC) {
+				traverse->next=match_string(BASIC, b.dat, b.size, i);
 			}
 			
 			if(!traverse->next) {
