@@ -179,11 +179,31 @@ int main(int argc, char **argv) {
 	}
 	
 /* ----------------------[ FILE READING ]---------------------- */
-		
+	
 	/* are we reading from a file or from stdin? */
 	if(a_ifilename == NULL) {
 		i_file=stdin;
+		i_buffer.name=NULL;
+		i_buffer.bpath=NULL;
 	} else {
+		/* grab the path and base name of the main source file */
+		i_buffer.rpath=NULL;
+		i_swapbuffer=strrchr(a_ifilename, '/');
+		if(i_swapbuffer == NULL) {
+			i_buffer.name=malloc(sizeof(a_ifilename));
+			strcpy(i_buffer.name, a_ifilename);
+			i_buffer.bpath=NULL;
+		} else {
+			i_buffer.name=malloc(sizeof(a_ifilename)-(i_swapbuffer-a_ifilename)-1);
+			strcpy(i_buffer.name, i_swapbuffer+1);
+			i_buffer.bpath=malloc(i_swapbuffer-a_ifilename+1);
+			strncpy(i_buffer.bpath, a_ifilename, i_swapbuffer-a_ifilename+1);
+		}
+				
+		free(i_buffer.name);
+		free(i_buffer.bpath);
+		
+		
 		i_file=fopen(a_ifilename, "r");
 		if(!i_file) {
 			fprintf(stderr, "err: could not read \"%s\"\n", a_ifilename);

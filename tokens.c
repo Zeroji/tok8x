@@ -934,9 +934,10 @@ token t_pretty[] = {
 
 /* preprocessor tokens, because it's actually
  * easier to do the "preprocessing" post
- * processing. don't forget to add in a
- * -p option for defining an option to pass
- * to ##if ##else ##end! */
+ * processing(for things other than ##define.
+ * don't forget to add in a -p option for
+ * defining an option to pass to ##if ##else
+ * ##end! */
 token t_preproc[] = {
 	{ NONE, NONE, "##include" },
 	{ NONE, NONE, "##define" },

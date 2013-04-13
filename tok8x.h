@@ -32,6 +32,9 @@
 #define NONE 0xFF
 
 typedef struct buffer {
+	char *bpath;
+	char *rpath;
+	char *name;
 	char *dat;
 	uint32_t size;
 } buffer;
