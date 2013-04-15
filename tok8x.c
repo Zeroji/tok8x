@@ -150,7 +150,7 @@ int main(int argc, char **argv) {
 	}
 	
 	
-/* if just a string was passed, try to find a token match! */
+	/* if just a string was passed, try to find a token match! */
 	if(a_token) {
 		traverse=a_token;
 		while(traverse) {
@@ -167,9 +167,9 @@ int main(int argc, char **argv) {
 								printf("0");
 							printf("%X", o_buffer->b_second);
 						}
-						puts("");
+					puts("");
 					}
-					free(o_buffer);
+				free(o_buffer);
 				}
 			}
 			traverse=traverse->next;
@@ -185,6 +185,7 @@ int main(int argc, char **argv) {
 		i_file=stdin;
 		i_buffer.name=NULL;
 		i_buffer.bpath=NULL;
+		i_buffer.rpath=NULL;
 	} else {
 		/* grab the path and base name of the main source file */
 		i_buffer.rpath=NULL;
@@ -198,11 +199,7 @@ int main(int argc, char **argv) {
 			strcpy(i_buffer.name, i_swapbuffer+1);
 			i_buffer.bpath=malloc(i_swapbuffer-a_ifilename+1);
 			strncpy(i_buffer.bpath, a_ifilename, i_swapbuffer-a_ifilename+1);
-		}
-				
-		free(i_buffer.name);
-		free(i_buffer.bpath);
-		
+		}		
 		
 		i_file=fopen(a_ifilename, "r");
 		if(!i_file) {
@@ -285,7 +282,8 @@ int main(int argc, char **argv) {
 			//~ return 1;
 		
 		o_buffer=tokenise(a_t_set, i_buffer, a_strip_cruft, a_ignore_errors);
-
+		
+		
 		/* "pre-processor directives" here, post
 		 * the actual processing */
 
@@ -366,7 +364,13 @@ int main(int argc, char **argv) {
 	}
 	
 	free_list(o_buffer);
+	
+	free(i_buffer.name);
 	free(i_buffer.dat);
+	if(i_buffer.bpath)
+		free(i_buffer.bpath);
+	if(i_buffer.rpath)
+		free(i_buffer.rpath);
 
 	return 0;
 }

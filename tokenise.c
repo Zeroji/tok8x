@@ -23,7 +23,15 @@ t_node* tokenise(int set, buffer b, int strip_cruft, int ignore_errors) {
 					i++;
 					column++;
 				} else {
-					fprintf(stderr, "0:0: err: unrecognised token\n");
+					if(b.name) {
+						if(b.rpath) {
+							fprintf(stderr, "%s%s:1:1: err: unrecognised token\n", b.rpath, b.name);
+						} else {
+							fprintf(stderr, "%s:1:1: err: unrecognised token\n", b.name);
+						}
+					} else {
+						fprintf(stderr, "stdin:1:1: err: unrecognised token\n");
+					}
 					return NULL;
 				}
 			} else {
@@ -51,7 +59,15 @@ t_node* tokenise(int set, buffer b, int strip_cruft, int ignore_errors) {
 					i++;
 					column++;
 				} else {
-					fprintf(stderr, "%u:%u: err: unrecognised token\n", row+1, column+1);
+					if(b.name) {
+						if(b.rpath) {
+							fprintf(stderr, "%s%s:%u:%u: err: unrecognised token\n", b.rpath, b.name, row+1, column+1);
+						} else {
+							fprintf(stderr, "%s:%u:%u: err: unrecognised token\n", b.name, row+1, column+1);
+						}
+					} else {
+						fprintf(stderr, "stdin:%u:%u: err: unrecognised token\n", row+1, column+1);
+					}
 					free_list(list_head);
 					return NULL;
 				}
