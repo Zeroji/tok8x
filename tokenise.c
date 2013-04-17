@@ -3,7 +3,7 @@
 /* build a linked list from token matches */
 t_node* tokenise(int set, buffer b, int strip_cruft, int ignore_errors) {
 	uint32_t i=0, column=0, row=0;
-	t_node *list_head=NULL, *traverse, *temp, *temp2;
+	t_node *list_head=NULL, *trav, *temp, *temp2;
 	while(i < b.size) {
 		if(!list_head) {
 			list_head=match_string(PREPROC, b.dat, b.size, i);
@@ -35,26 +35,26 @@ t_node* tokenise(int set, buffer b, int strip_cruft, int ignore_errors) {
 					return NULL;
 				}
 			} else {
-				traverse=list_head;
-				i+=strlen(traverse->name);
-				column+=strlen(traverse->name);
-				if( !strcmp(traverse->name, "\n") ) {
+				trav=list_head;
+				i+=strlen(trav->name);
+				column+=strlen(trav->name);
+				if( !strcmp(trav->name, "\n") ) {
 					column=0;
 					row++;
 				}
 			}
 		} else {
-			traverse->next=match_string(PREPROC, b.dat, b.size, i);
+			trav->next=match_string(PREPROC, b.dat, b.size, i);
 			
-			if(!traverse->next) {
-				traverse->next=match_string(set, b.dat, b.size, i);
+			if(!trav->next) {
+				trav->next=match_string(set, b.dat, b.size, i);
 			}
 			
-			if(!traverse->next && set != BASIC) {
-				traverse->next=match_string(BASIC, b.dat, b.size, i);
+			if(!trav->next && set != BASIC) {
+				trav->next=match_string(BASIC, b.dat, b.size, i);
 			}
 			
-			if(!traverse->next) {
+			if(!trav->next) {
 				if(ignore_errors) {
 					i++;
 					column++;
@@ -72,10 +72,10 @@ t_node* tokenise(int set, buffer b, int strip_cruft, int ignore_errors) {
 					return NULL;
 				}
 			} else {
-				traverse=traverse->next;
-				i+=strlen(traverse->name);
-				column+=strlen(traverse->name);
-				if( !strcmp(traverse->name, "\n") ) {
+				trav=trav->next;
+				i+=strlen(trav->name);
+				column+=strlen(trav->name);
+				if( !strcmp(trav->name, "\n") ) {
 					column=0;
 					row++;
 				}
@@ -85,18 +85,17 @@ t_node* tokenise(int set, buffer b, int strip_cruft, int ignore_errors) {
 	
 	/* make a second pass to remove cruft, including
 	 * leading spaces, empty lines, and comments */
-	
 	if(strip_cruft) {
-		traverse=list_head;
+		trav=list_head;
 		/* i=0 : currently outside of comment
 		 * 1=1 : currently inside a string
 		 * 1=2 : in axe one line comment
 		 * i=3 : in axe multiline comment
 		 * i=4 : in grammer comment */
 		i=0;
-		while(traverse) {
+		while(trav) {
 			/* if the current token is a " */
-			if(traverse->b_first == 0x2A) {
+			if(trav->b_first == 0x2A) {
 				if(i==0) {
 					i=1;
 				} else {
@@ -106,53 +105,53 @@ t_node* tokenise(int set, buffer b, int strip_cruft, int ignore_errors) {
 						
 			/* if not currently in a string */
 			if(i==0) {
-				if(traverse->next) {
+				if(trav->next) {
 					/* if next token is at a space */
-					if(traverse->next->b_first == 0x29) {
-						temp=traverse->next;
-						traverse->next=traverse->next->next;
+					if(trav->next->b_first == 0x29) {
+						temp=trav->next;
+						trav->next=trav->next->next;
 						free(temp);
 					}
 					/* if next token is at an empty line */
-					if(traverse->next->next) {
-						if(traverse->next->b_first == 0x3F && traverse->next->next->b_first == 0x3F) {
-							temp=traverse->next;
-							traverse->next=traverse->next->next;
+					if(trav->next->next) {
+						if(trav->next->b_first == 0x3F && trav->next->next->b_first == 0x3F) {
+							temp=trav->next;
+							trav->next=trav->next->next;
 							free(temp);
 						}						
 				
 						if(set == AXE) {
 							/* strip out one line comments, which begin with \n. and end with \n */
-							if(traverse->next->b_first == 0x3F && traverse->next->next->b_first == 0x3A) {
-								temp=traverse;
-								traverse=traverse->next;
-								while(traverse->next) {
-									temp2=traverse;
-									traverse=traverse->next;
+							if(trav->next->b_first == 0x3F && trav->next->next->b_first == 0x3A) {
+								temp=trav;
+								trav=trav->next;
+								while(trav->next) {
+									temp2=trav;
+									trav=trav->next;
 									free(temp2);
-									if(traverse->b_first == 0x3F) {
-										temp->next=traverse->next;
-										free(traverse);
-										traverse=temp;
+									if(trav->b_first == 0x3F) {
+										temp->next=trav->next;
+										free(trav);
+										trav=temp;
 										break;
 									}
 								}
 							}
 							
 							/* strip out multi-line comments, which begin with \n... and end with ...\n */
-							if(traverse->next->b_first == 0x3F && traverse->next->next->b_first == 0xBB && traverse->next->next->b_second == 0xDB) {
-								temp=traverse;
-								traverse=traverse->next->next;
+							if(trav->next->b_first == 0x3F && trav->next->next->b_first == 0xBB && trav->next->next->b_second == 0xDB) {
+								temp=trav;
+								trav=trav->next->next;
 								free(temp->next);
-								while(traverse->next) {
-									temp2=traverse;
-									traverse=traverse->next;
+								while(trav->next) {
+									temp2=trav;
+									trav=trav->next;
 									free(temp2);
-									if(traverse->next->b_first == 0x3f && traverse->b_first == 0xBB && traverse->b_second == 0xDB) {
-										temp->next=traverse->next->next;
-										free(traverse->next);
-										free(traverse);
-										traverse=temp;
+									if(trav->next->b_first == 0x3f && trav->b_first == 0xBB && trav->b_second == 0xDB) {
+										temp->next=trav->next->next;
+										free(trav->next);
+										free(trav);
+										trav=temp;
 										break;
 									}
 								}
@@ -162,17 +161,17 @@ t_node* tokenise(int set, buffer b, int strip_cruft, int ignore_errors) {
 						
 						if(set == GRAMMER) {
 							/* strip out one line comments, which begin with // */
-							if(traverse->next->b_first == 0x83 && traverse->next->next->b_first == 0x83) {
-								temp=traverse;
-								traverse=traverse->next;
-								while(traverse->next) {
-									temp2=traverse;
-									traverse=traverse->next;
+							if(trav->next->b_first == 0x83 && trav->next->next->b_first == 0x83) {
+								temp=trav;
+								trav=trav->next;
+								while(trav->next) {
+									temp2=trav;
+									trav=trav->next;
 									free(temp2);
-									if(traverse->b_first == 0x3F) {
-										temp->next=traverse->next;
-										free(traverse);
-										traverse=temp;
+									if(trav->b_first == 0x3F) {
+										temp->next=trav->next;
+										free(trav);
+										trav=temp;
 										break;
 									}
 								}
@@ -182,10 +181,9 @@ t_node* tokenise(int set, buffer b, int strip_cruft, int ignore_errors) {
 					}
 				}
 			}
-			traverse=traverse->next;
+			trav=trav->next;
 		}
 	}
-	
 	
 	return list_head;
 }

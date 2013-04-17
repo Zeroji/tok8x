@@ -7,7 +7,7 @@
  * for last */
 t_node* detokenise(int set, buffer b) {
 	uint32_t i, column=0, row=0;
-	t_node *list_head=NULL, *traverse;
+	t_node *list_head=NULL, *trav;
 	int flag;
 	
 	for(i=0x4A /* jump straight to the data section */; i<b.size-1; i++) {
@@ -28,12 +28,12 @@ t_node* detokenise(int set, buffer b) {
 				column=0;
 				row++;
 			}
-			traverse=list_head;
+			trav=list_head;
 		} else {
-			traverse->next=match_token(set, b.dat, b.size, i);
-			if(!traverse->next && set != 0)
-				traverse->next=match_token(0, b.dat, b.size, i);
-			if(!traverse->next) {
+			trav->next=match_token(set, b.dat, b.size, i);
+			if(!trav->next && set != 0)
+				trav->next=match_token(0, b.dat, b.size, i);
+			if(!trav->next) {
 				fprintf(stderr, "%u:%u: err: unrecognised token at \"", row+1, column+1);
 				if(b.dat[i]<0x10)
 					fprintf(stderr, "0");
@@ -41,27 +41,28 @@ t_node* detokenise(int set, buffer b) {
 				free_list(list_head);
 				return NULL;
 			}
-			traverse=traverse->next;
+			trav=trav->next;
 			column++;
-			if(traverse->b_first == 0x3F) {
+			if(trav->b_first == 0x3F) {
 				column=0;
 				row++;
 			}
 		}
-		if(traverse->b_second != NONE)
+		if(trav->b_second != NONE)
 			i++;
 	}
+	
 	/* convert spaces at beginnings of lines to tabs
 	 * for easier reading */
-	traverse=list_head;
+	trav=list_head;
 	flag=0;
-	while(traverse) {
-		if(traverse->b_first == 0x3f)
+	while(trav) {
+		if(trav->b_first == 0x3f)
 			flag=1;
-		traverse=traverse->next;
-		if(traverse && flag) {
-			if(traverse->b_first == 0x29) {
-				strcpy(traverse->name, "\t");
+		trav=trav->next;
+		if(trav && flag) {
+			if(trav->b_first == 0x29) {
+				strcpy(trav->name, "\t");
 			} else {
 				flag=0;
 			}

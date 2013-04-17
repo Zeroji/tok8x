@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
 	char *i_swapbuffer;
 	FILE *o_file;
 	t_node *o_buffer;
-	t_node *traverse;
+	t_node *trav;
 	int operation_type_flag=1; /* set to "tokenising" as default. if we later find that the
 								* input was an 8x file, we'll set it to "detokenising" */
 	
@@ -38,10 +38,10 @@ int main(int argc, char **argv) {
 		if(strncmp(argv[i], "-", 1)) {
 			if( !(strlen(argv[i]) > 16) ) {
 				if(a_token) {
-					traverse->next=malloc(sizeof(t_node));
-					if(traverse->next) {
-						traverse=traverse->next;
-						strcpy(traverse->name, argv[i]);
+					trav->next=malloc(sizeof(t_node));
+					if(trav->next) {
+						trav=trav->next;
+						strcpy(trav->name, argv[i]);
 					} else {
 						fprintf(stderr, "err: could not allocate memory\n");
 						free_list(a_token);
@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
 				} else {
 					a_token=malloc(sizeof(t_node));
 					if(a_token) {
-						traverse=a_token;
+						trav=a_token;
 						strcpy(a_token->name, argv[i]);
 					} else {
 						fprintf(stderr, "err: could not allocate memory\n");
@@ -152,12 +152,12 @@ int main(int argc, char **argv) {
 	
 	/* if just a string was passed, try to find a token match! */
 	if(a_token) {
-		traverse=a_token;
-		while(traverse) {
+		trav=a_token;
+		while(trav) {
 			for(i=0; i<4; i++) {
-				o_buffer=match_string(i, traverse->name, strlen(traverse->name), 0);
+				o_buffer=match_string(i, trav->name, strlen(trav->name), 0);
 				if(o_buffer) {
-					if( !strcmp(o_buffer->name, traverse->name) ) {
+					if( !strcmp(o_buffer->name, trav->name) ) {
 						printf("\"%s\":%s:", o_buffer->name, set_names[i]);
 						if(o_buffer->b_first < 16)
 							printf("0");
@@ -172,7 +172,7 @@ int main(int argc, char **argv) {
 				free(o_buffer);
 				}
 			}
-			traverse=traverse->next;
+			trav=trav->next;
 		}
 		free_list(a_token);
 		return 0;
@@ -277,12 +277,7 @@ int main(int argc, char **argv) {
 		o_buffer=detokenise(a_t_set, i_buffer);
 	} else {
 		
-		//~ i_buffer=include(i_buffer);
-		//~ if(!i_buffer.dat)
-			//~ return 1;
-		
 		o_buffer=tokenise(a_t_set, i_buffer, a_strip_cruft, a_ignore_errors);
-		
 		
 		/* "pre-processor directives" here, post
 		 * the actual processing */
@@ -310,16 +305,16 @@ int main(int argc, char **argv) {
 					i++;
 			}
 		}
-		traverse=o_buffer;
-		while(traverse) {
+		trav=o_buffer;
+		while(trav) {
 			if(operation_type_flag) {
-			printf("%c", traverse->b_first);
-			if(traverse->b_second != NONE)
-				printf("%c", traverse->b_second);
+			printf("%c", trav->b_first);
+			if(trav->b_second != NONE)
+				printf("%c", trav->b_second);
 			} else {
-				printf("%s", traverse->name);
+				printf("%s", trav->name);
 			}
-			traverse=traverse->next;
+			trav=trav->next;
 		}
 		if(operation_type_flag) {
 			printf("%c%c", h_point->top[76], h_point->top[77]);
@@ -344,16 +339,16 @@ int main(int argc, char **argv) {
 		}
 		
 		/* write data contents here */
-		traverse=o_buffer;
-		while(traverse) {
+		trav=o_buffer;
+		while(trav) {
 			if(operation_type_flag) {
-				fwrite(&(traverse->b_first), 1, 1, o_file);
-				if(traverse->b_second != NONE)
-				fwrite(&(traverse->b_second), 1, 1, o_file);
+				fwrite(&(trav->b_first), 1, 1, o_file);
+				if(trav->b_second != NONE)
+				fwrite(&(trav->b_second), 1, 1, o_file);
 			} else {
-				fwrite(&(traverse->name), 1, strlen(traverse->name), o_file);
+				fwrite(&(trav->name), 1, strlen(trav->name), o_file);
 			}
-			traverse=traverse->next;
+			trav=trav->next;
 		}
 		
 		if(operation_type_flag) {
@@ -402,12 +397,12 @@ void header_init(header *h, t_node *list_head) {
 		h->checksum+=p[i];
 	}
 	
-	t_node *traverse=list_head;
-	while(traverse) {	
-		h->checksum+=traverse->b_first;
-		if(traverse->b_second != NONE)
-			h->checksum+=traverse->b_second;
-		traverse=traverse->next;
+	t_node *trav=list_head;
+	while(trav) {	
+		h->checksum+=trav->b_first;
+		if(trav->b_second != NONE)
+			h->checksum+=trav->b_second;
+		trav=trav->next;
 	}
 	
 }
