@@ -23,6 +23,7 @@ int main(int argc, char **argv) {
 								axe multi-line comments use ... (be sure to ignore
 								conditional comments (...If, ...!If, ...Else ) */
 	int a_ignore_errors=0;
+	int a_pretty=0;
 	uint8_t a_archived=0x00;
 	t_set a_t_set=BASIC;
 	char a_internal_name[9]={0x41, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
@@ -83,6 +84,11 @@ int main(int argc, char **argv) {
 			bad_arg=0;
 		}
 		
+		if( !(strcmp(argv[i], "-p") )) {
+			a_pretty=1;
+			bad_arg=0;
+		}
+		
 		if( !(strcmp(argv[i], "-t") )) {
 			if(argv[i+1]) {
 				i++;
@@ -98,10 +104,6 @@ int main(int argc, char **argv) {
 				}
 				if( !(strcmp(argv[i], "grammer") )) {
 					a_t_set=GRAMMER;
-					bad_arg=0;
-				}
-				if( !(strcmp(argv[i], "pretty") )) {
-					a_t_set=PRETTY;
 					bad_arg=0;
 				}
 			}
@@ -149,12 +151,15 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 	
+	/* use a pretty token set instead! */
+	if(a_pretty)
+		a_t_set=a_t_set+NUMBER_OF_SETS;
 	
 	/* if just a string was passed, try to find a token match! */
 	if(a_token) {
 		trav=a_token;
 		while(trav) {
-			for(i=0; i<4; i++) {
+			for(i=0; i<NUMBER_OF_SETS*2; i++) {
 				o_buffer=match_string(i, trav->name, strlen(trav->name), 0);
 				if(o_buffer) {
 					/* special check, necessary because i convert

@@ -18,8 +18,15 @@ t_node* detokenise(int set, buffer* b) {
 			
 			list_head=match_token(set, b->dat, b->size, i);
 			/* if it's not in the chosen set, check BASIC */
+			if(set>=NUMBER_OF_SETS) {
+				if(!list_head)
+					list_head=match_token(set-NUMBER_OF_SETS, b->dat, b->size, i);
+				if(!list_head && set !=PRETTY_BASIC)
+					list_head=match_token(PRETTY_BASIC, b->dat, b->size, i);
+			}
 			if(!list_head && set !=BASIC)
 				list_head=match_token(BASIC, b->dat, b->size, i);
+			
 			if(!list_head) {
 				/* error! token not found! */
 				if(b->name == NULL) {
@@ -49,8 +56,15 @@ t_node* detokenise(int set, buffer* b) {
 			
 			trav->next=match_token(set, b->dat, b->size, i);
 			/* if it's not in the chosen set, check BASIC */
+			if(set>=NUMBER_OF_SETS) {
+				if(!trav->next)
+					trav->next=match_token(set-NUMBER_OF_SETS, b->dat, b->size, i);
+				if(!trav->next && set != PRETTY_BASIC)
+					trav->next=match_token(PRETTY_BASIC, b->dat, b->size, i);
+			}
 			if(!trav->next && set != BASIC)
 				trav->next=match_token(BASIC, b->dat, b->size, i);
+			
 			if(!trav->next) {
 				/* error! token not found! */
 				if(b->name == NULL) {
