@@ -211,15 +211,9 @@ int main(int argc, char **argv) {
 	/* dynamic buffering of input file! (necessary for stdin) */
 	i_buffer.size=0;
 	do {
-		if( !(i_buffer.size%256) ) {
-			i_swapbuffer=realloc(i_buffer.dat, sizeof(char)*(i_buffer.size+256));
-			if(i_swapbuffer == NULL) {
-				fprintf(stderr, "err: could not allocate memory\n");
-				free(i_buffer.dat);
-				fclose(i_file);
-				return 1;
-			}
-			i_buffer.dat=i_swapbuffer;
+		if(!realloc_check(&i_buffer)) {
+			fclose(i_file);
+			return 1;
 		}
 		swapchar=getc(i_file);
 		if(swapchar != EOF) {
@@ -243,10 +237,14 @@ int main(int argc, char **argv) {
 			k+=((uint8_t)swapchar)*0x100;
 			i_buffer.size++;
 			
-			for(j=0; j<k+2; j++) {
+			for(j=0; j<k; j++) {
 				swapchar=getc(i_file);
 				i_buffer.dat[i_buffer.size]=(uint8_t)swapchar;
 				i_buffer.size++;
+				if(!realloc_check(&i_buffer)) {
+					fclose(i_file);
+					return 1;
+				}
 			}
 			swapchar=EOF;
 		}
@@ -259,20 +257,15 @@ int main(int argc, char **argv) {
 		}
 	} while(swapchar != EOF);
 	fclose(i_file);
-	if(i_swapbuffer == NULL) {
-		fprintf(stderr, "err: could not allocate memory\n");
-		free(i_buffer.dat);
-		return 1;
-	}
 	
-	/* this is for testing. print out the contents of our
-	 * new buffer */
-	for(i=0; i<i_buffer.size; i++) {
-		fprintf(stderr, "%X: ", i);
-		if((uint8_t)i_buffer.dat[i] < 0x10)
-			fprintf(stderr, "0");
-		fprintf(stderr, "%X\n", (uint8_t)i_buffer.dat[i]);
-	}
+	//~ /* testing */
+	//~ for(i=0; i<i_buffer.size; i++) {
+		//~ fprintf(stderr, "%X: ", i);
+		//~ if((uint8_t)i_buffer.dat[i] < 0x10)
+			//~ fprintf(stderr, "0");
+		//~ fprintf(stderr, "%X\n", (uint8_t)i_buffer.dat[i]);
+	//~ }
+	//~ /* gnitset */
 
 /* ----------------------[ FILE PARSING ]---------------------- */
 	
@@ -282,7 +275,7 @@ int main(int argc, char **argv) {
 			free(i_buffer.dat);
 			return 1;
 		}
-		o_buffer=detokenise(a_t_set, i_buffer);
+		o_buffer=detokenise(a_t_set, &i_buffer);
 	} else {
 		
 		o_buffer=tokenise(a_t_set, i_buffer, a_strip_cruft, a_ignore_errors);
@@ -433,4 +426,18 @@ uint16_t get_list_length(t_node *list_head) {
 		r_length++;
 	}
 	return r_length;
+}
+
+extern int realloc_check(buffer *b) {
+	char *bs;
+	if( !(b->size%2048) ) {
+		bs=realloc(b->dat, sizeof(char)*(b->size+2048));
+		if(bs == NULL) {
+			fprintf(stderr, "err: could not allocate memory. perhaps input is too large?\n");
+			free(b->dat);
+			return 0;
+		}
+		b->dat=bs;
+	}
+	return 1;
 }

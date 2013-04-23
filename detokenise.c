@@ -5,31 +5,37 @@
  * for the second byte as well and then searching
  * for a match in t_lists[set], so i'm saving it
  * for last */
-t_node* detokenise(int set, buffer b) {
+t_node* detokenise(int set, buffer* b) {
 	uint32_t i, column=0, row=0;
 	t_node *list_head=NULL, *trav;
 	int flag;
 	
-	for(i=0x4A /* jump straight to the data section */; i<b.size-1; i++) {
+	if(b == NULL)
+		return NULL;
+	
+	for(i=0x4A /* jump straight to the data section */; i<b->size; i++) {
 		if(!list_head) {
 			
-			list_head=match_token(set, b.dat, b.size, i);
-			if(!list_head && set !=0)
-				list_head=match_token(0, b.dat, b.size, i);
+			list_head=match_token(set, b->dat, b->size, i);
+			/* if it's not in the chosen set, check BASIC */
+			if(!list_head && set !=BASIC)
+				list_head=match_token(BASIC, b->dat, b->size, i);
 			if(!list_head) {
-				if(b.name == NULL) {
+				/* error! token not found! */
+				if(b->name == NULL) {
 					fprintf(stderr, "stdin");
 				} else {
-					if(b.rpath)
-						fprintf(stderr, "%s", b.rpath);
-					fprintf(stderr, "%s", b.name);
+					if(b->rpath)
+						fprintf(stderr, "%s", b->rpath);
+					fprintf(stderr, "%s", b->name);
 				}
-				fprintf(stderr, ":0:0: err: unrecognised token at \"");
-				if(b.dat[i]<0x10)
+				fprintf(stderr, ":0x4A:1:1 err: unrecognised token at \"");
+				if((uint8_t)b->dat[i]<0x10)
 					fprintf(stderr, "0");
-				fprintf(stderr, "%X\"\n", b.dat[i]);
+				fprintf(stderr, "%X\"\n", (uint8_t)b->dat[i]);
 				free(list_head);
 				return NULL;
+				/* end error */
 			}
 			column++;
 			if(list_head->b_first == 0x3F) {
@@ -40,33 +46,43 @@ t_node* detokenise(int set, buffer b) {
 			
 		} else {
 			
-			trav->next=match_token(set, b.dat, b.size, i);
-			if(!trav->next && set != 0)
-				trav->next=match_token(0, b.dat, b.size, i);
+			trav->next=match_token(set, b->dat, b->size, i);
+			/* if it's not in the chosen set, check BASIC */
+			if(!trav->next && set != BASIC)
+				trav->next=match_token(BASIC, b->dat, b->size, i);
 			if(!trav->next) {
-				if(b.name == NULL) {
+				/* error! token not found! */
+				if(b->name == NULL) {
 					fprintf(stderr, "stdin");
 				} else {
-					if(b.rpath)
-						fprintf(stderr, "%s", b.rpath);
-					fprintf(stderr, "%s", b.name);
+					if(b->rpath)
+						fprintf(stderr, "%s", b->rpath);
+					fprintf(stderr, "%s", b->name);
 				}
-				fprintf(stderr, ":0:0: err: unrecognised token at \"");
-				if(b.dat[i]<0x10)
+				fprintf(stderr, ":0x%X:%d:%d: err: unrecognised token at \"", i, row+1, column+1);
+				if((uint8_t)b->dat[i]<0x10)
 					fprintf(stderr, "0");
-				fprintf(stderr, "%X", b.dat[i]);
-				if(i<b.size) {
-					if(c_is_2byte(b.dat[i])) {
-						if(b.dat[i+1] != 0xFF) {
-							if(b.dat[i+1]<0x10)
+				fprintf(stderr, "%X", (uint8_t)b->dat[i]);
+				if(i<b->size) {
+					if(c_is_2byte(b->dat[i])) {
+						if((uint8_t)b->dat[i+1] != 0xFF) {
+							if((uint8_t)b->dat[i+1]<0x10)
 								fprintf(stderr, "0");
-							fprintf(stderr, "%X", b.dat[i+1]);
+							fprintf(stderr, "%X", (uint8_t)b->dat[i+1]);
 						}
 					}
 				}
 				fprintf(stderr, "\"\n");
 				free_list(list_head);
+				//~ /* testing */
+				//~ for(i=i-0x4a; i<b.size; i++) {
+					//~ if((uint8_t)b.dat[i]<0x10)
+						//~ fprintf(stderr, "0");
+					//~ fprintf(stderr, "%X\n", (uint8_t)b.dat[i]);
+				//~ }
+				//~ /* gnitset */
 				return NULL;
+				/* end error! */
 			}
 			trav=trav->next;
 			column++;
@@ -76,16 +92,19 @@ t_node* detokenise(int set, buffer b) {
 			}
 		}
 		
-		/* testing */
-		fprintf(stderr, "%X: ", i);
-		if( trav->b_first< 0x10)
-			fprintf(stderr, "0");
-		fprintf(stderr, "%X", trav->b_first);
-		if( trav->b_second< 0x10)
-			fprintf(stderr, "0");
-		fprintf(stderr, "%X\n", trav->b_second);
+		//~ /* testing */
+		//~ fprintf(stderr, "%X: ", i);
+		//~ if( trav->b_first< 0x10)
+			//~ fprintf(stderr, "0");
+		//~ fprintf(stderr, "%X\n", trav->b_first);
+		//~ if(c_is_2byte(trav->b_first)) {
+			//~ if( trav->b_second< 0x10)
+				//~ fprintf(stderr, "0");
+			//~ fprintf(stderr, "%X\n", trav->b_second);
+		//~ }
+		//~ /* gnitset */
 			
-		if(trav->b_second != NONE)
+		if(c_is_2byte(trav->b_first))
 			i++;
 	}
 	
@@ -111,13 +130,13 @@ t_node* detokenise(int set, buffer b) {
 t_node* match_token(int set, char buff[], const uint32_t buff_size, uint32_t cursor) {
 	int i;
 	t_node *rp=malloc(sizeof(t_node));
-	rp->b_first=buff[cursor];
+	rp->b_first=(uint8_t)buff[cursor];
 	rp->b_second=NONE;
 	
 	if(c_is_2byte(rp->b_first)) {
 		if(cursor == buff_size)
 			return NULL;
-		rp->b_second=buff[cursor+1];
+		rp->b_second=(uint8_t)buff[cursor+1];
 	}
 	
 	for(i=0; i<t_list_lengths[set]; i++) {
