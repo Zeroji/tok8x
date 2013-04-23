@@ -259,11 +259,19 @@ int main(int argc, char **argv) {
 		}
 	} while(swapchar != EOF);
 	fclose(i_file);
-	i_buffer.size--;
 	if(i_swapbuffer == NULL) {
 		fprintf(stderr, "err: could not allocate memory\n");
 		free(i_buffer.dat);
 		return 1;
+	}
+	
+	/* this is for testing. print out the contents of our
+	 * new buffer */
+	for(i=0; i<i_buffer.size; i++) {
+		fprintf(stderr, "%X: ", i);
+		if((uint8_t)i_buffer.dat[i] < 0x10)
+			fprintf(stderr, "0");
+		fprintf(stderr, "%X\n", (uint8_t)i_buffer.dat[i]);
 	}
 
 /* ----------------------[ FILE PARSING ]---------------------- */
