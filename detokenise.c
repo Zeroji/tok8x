@@ -12,11 +12,19 @@ t_node* detokenise(int set, buffer b) {
 	
 	for(i=0x4A /* jump straight to the data section */; i<b.size-1; i++) {
 		if(!list_head) {
+			
 			list_head=match_token(set, b.dat, b.size, i);
 			if(!list_head && set !=0)
 				list_head=match_token(0, b.dat, b.size, i);
 			if(!list_head) {
-				fprintf(stderr, "0:0: err: unrecognised token at \"");
+				if(b.name == NULL) {
+					fprintf(stderr, "stdin");
+				} else {
+					if(b.rpath)
+						fprintf(stderr, "%s", b.rpath);
+					fprintf(stderr, "%s", b.name);
+				}
+				fprintf(stderr, ":0:0: err: unrecognised token at \"");
 				if(b.dat[i]<0x10)
 					fprintf(stderr, "0");
 				fprintf(stderr, "%X\"\n", b.dat[i]);
@@ -29,15 +37,34 @@ t_node* detokenise(int set, buffer b) {
 				row++;
 			}
 			trav=list_head;
+			
 		} else {
+			
 			trav->next=match_token(set, b.dat, b.size, i);
 			if(!trav->next && set != 0)
 				trav->next=match_token(0, b.dat, b.size, i);
 			if(!trav->next) {
-				fprintf(stderr, "%u:%u: err: unrecognised token at \"", row+1, column+1);
+				if(b.name == NULL) {
+					fprintf(stderr, "stdin");
+				} else {
+					if(b.rpath)
+						fprintf(stderr, "%s", b.rpath);
+					fprintf(stderr, "%s", b.name);
+				}
+				fprintf(stderr, ":0:0: err: unrecognised token at \"");
 				if(b.dat[i]<0x10)
 					fprintf(stderr, "0");
-				fprintf(stderr, "%X\"\n", b.dat[i]);
+				fprintf(stderr, "%X", b.dat[i]);
+				if(i<b.size) {
+					if(c_is_2byte(b.dat[i])) {
+						if(b.dat[i+1] != 0xFF) {
+							if(b.dat[i+1]<0x10)
+								fprintf(stderr, "0");
+							fprintf(stderr, "%X", b.dat[i+1]);
+						}
+					}
+				}
+				fprintf(stderr, "\"\n");
 				free_list(list_head);
 				return NULL;
 			}
@@ -48,6 +75,16 @@ t_node* detokenise(int set, buffer b) {
 				row++;
 			}
 		}
+		
+		/* testing */
+		fprintf(stderr, "%X: ", i);
+		if( trav->b_first< 0x10)
+			fprintf(stderr, "0");
+		fprintf(stderr, "%X", trav->b_first);
+		if( trav->b_second< 0x10)
+			fprintf(stderr, "0");
+		fprintf(stderr, "%X\n", trav->b_second);
+			
 		if(trav->b_second != NONE)
 			i++;
 	}
@@ -77,12 +114,10 @@ t_node* match_token(int set, char buff[], const uint32_t buff_size, uint32_t cur
 	rp->b_first=buff[cursor];
 	rp->b_second=NONE;
 	
-	for(i=0; i<11; i++) {
-		if(rp->b_first == t_2byte_indicators[i]) {
-			if(cursor == buff_size)
-				return NULL;
-			rp->b_second=buff[cursor+1];
-		}
+	if(c_is_2byte(rp->b_first)) {
+		if(cursor == buff_size)
+			return NULL;
+		rp->b_second=buff[cursor+1];
 	}
 	
 	for(i=0; i<t_list_lengths[set]; i++) {
@@ -94,4 +129,17 @@ t_node* match_token(int set, char buff[], const uint32_t buff_size, uint32_t cur
 	
 	/* if no legitimate match was found, return NULL */
 	return NULL;
+}
+
+/* check if a byte indicates a 2byte token */
+extern int c_is_2byte(uint8_t b_first) {
+	int i;
+	
+	for(i=0; i<11; i++) {
+		if(b_first == t_2byte_indicators[i]) {
+			return 1;
+		}
+	}
+	
+	return 0;
 }
