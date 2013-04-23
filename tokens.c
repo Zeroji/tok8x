@@ -304,7 +304,7 @@ token t_basic[] = {
 	{ 0x70, NONE, "+" },
 	{ 0x71, NONE, "-" },
 	{ 0x72, NONE, "Ans" },
-	{ 0x73, NONE, "Fix" },
+	{ 0x73, NONE, "Fix " },
 	{ 0x74, NONE, "Horiz" },
 	{ 0x75, NONE, "Full" },
 	{ 0x76, NONE, "Func" },
