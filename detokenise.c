@@ -37,6 +37,7 @@ t_node* detokenise(int set, buffer* b) {
 				return NULL;
 				/* end error */
 			}
+			
 			column++;
 			if(list_head->b_first == 0x3F) {
 				column=0;
@@ -74,13 +75,6 @@ t_node* detokenise(int set, buffer* b) {
 				}
 				fprintf(stderr, "\"\n");
 				free_list(list_head);
-				//~ /* testing */
-				//~ for(i=i-0x4a; i<b.size; i++) {
-					//~ if((uint8_t)b.dat[i]<0x10)
-						//~ fprintf(stderr, "0");
-					//~ fprintf(stderr, "%X\n", (uint8_t)b.dat[i]);
-				//~ }
-				//~ /* gnitset */
 				return NULL;
 				/* end error! */
 			}
@@ -91,18 +85,6 @@ t_node* detokenise(int set, buffer* b) {
 				row++;
 			}
 		}
-		
-		//~ /* testing */
-		//~ fprintf(stderr, "%X: ", i);
-		//~ if( trav->b_first< 0x10)
-			//~ fprintf(stderr, "0");
-		//~ fprintf(stderr, "%X\n", trav->b_first);
-		//~ if(c_is_2byte(trav->b_first)) {
-			//~ if( trav->b_second< 0x10)
-				//~ fprintf(stderr, "0");
-			//~ fprintf(stderr, "%X\n", trav->b_second);
-		//~ }
-		//~ /* gnitset */
 			
 		if(c_is_2byte(trav->b_first))
 			i++;
@@ -111,11 +93,8 @@ t_node* detokenise(int set, buffer* b) {
 	/* convert spaces at beginnings of lines to tabs
 	 * for easier reading */
 	trav=list_head;
-	flag=0;
+	flag=1;
 	while(trav) {
-		if(trav->b_first == 0x3f)
-			flag=1;
-		trav=trav->next;
 		if(trav && flag) {
 			if(trav->b_first == 0x29) {
 				strcpy(trav->name, "\t");
@@ -123,7 +102,11 @@ t_node* detokenise(int set, buffer* b) {
 				flag=0;
 			}
 		}
+		if(trav->b_first == 0x3f)
+			flag=1;
+		trav=trav->next;
 	}
+	
 	return list_head;
 }
 
@@ -142,6 +125,9 @@ t_node* match_token(int set, char buff[], const uint32_t buff_size, uint32_t cur
 	for(i=0; i<t_list_lengths[set]; i++) {
 		if(rp->b_first == t_lists[set][i].b_first && rp->b_second == t_lists[set][i].b_second) {
 			strcpy(rp->name, t_lists[set][i].name);
+			/* special check to prevent reading ... as an ellipsis */
+			if( !strcmp(rp->name, "...") )
+				strcpy(rp->name, "\\...");
 			return rp;
 		}
 	}

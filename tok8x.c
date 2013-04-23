@@ -157,6 +157,12 @@ int main(int argc, char **argv) {
 			for(i=0; i<4; i++) {
 				o_buffer=match_string(i, trav->name, strlen(trav->name), 0);
 				if(o_buffer) {
+					/* special check, necessary because i convert
+					 * ... from source files to \... to prevent
+					 * they're becoming an ellipsis upon converting
+					 * back */
+					if( !strcmp(o_buffer->name, "\\...") )
+						strcpy(o_buffer->name, "...");
 					if( !strcmp(o_buffer->name, trav->name) ) {
 						printf("\"%s\":%s:", o_buffer->name, set_names[i]);
 						if(o_buffer->b_first < 16)
@@ -257,15 +263,6 @@ int main(int argc, char **argv) {
 		}
 	} while(swapchar != EOF);
 	fclose(i_file);
-	
-	/* testing */
-	//~ for(i=0; i<i_buffer.size; i++) {
-		//~ fprintf(stderr, "%X: ", i);
-		//~ if((uint8_t)i_buffer.dat[i] < 0x10)
-			//~ fprintf(stderr, "0");
-		//~ fprintf(stderr, "%X\n", (uint8_t)i_buffer.dat[i]);
-	//~ }
-	/* gnitset */
 
 /* ----------------------[ FILE PARSING ]---------------------- */
 	
