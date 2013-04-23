@@ -1,21 +1,21 @@
 #include "tokens.h"
 
 /* build a linked list from token matches */
-t_node* tokenise(int set, buffer b, int strip_cruft, int ignore_errors) {
+t_node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
 	uint32_t i=0, column=0, row=0;
 	t_node *list_head=NULL, *trav, *temp, *temp2;
-	while(i < b.size-1) {
+	while(i < b->size-1) {
 		if(!list_head) {
-			list_head=match_string(PREPROC, b.dat, b.size, i);
+			list_head=match_string(PREPROC, b->dat, b->size, i);
 			/* check if the token is a preprocessor directive. if
 			 * not, check if it's in the defined set. if not, and
 			 * the set is not BASIC, check in BASIC */
 			if(!list_head) {
-				list_head=match_string(set, b.dat, b.size, i);
+				list_head=match_string(set, b->dat, b->size, i);
 			}
 			
 			if(!list_head && set != BASIC) {
-				list_head=match_string(BASIC, b.dat, b.size, i);
+				list_head=match_string(BASIC, b->dat, b->size, i);
 			}
 			
 			if(!list_head) {
@@ -23,10 +23,10 @@ t_node* tokenise(int set, buffer b, int strip_cruft, int ignore_errors) {
 					i++;
 					column++;
 				} else {
-					if(b.name) {
-						if(b.rpath)
-							fprintf(stderr, "%s", b.rpath);
-						fprintf(stderr, "%s:1:1: err: unrecognised token\n", b.name);
+					if(b->name) {
+						if(b->rpath)
+							fprintf(stderr, "%s", b->rpath);
+						fprintf(stderr, "%s:1:1: err: unrecognised token\n", b->name);
 					} else {
 						fprintf(stderr, "stdin:1:1: err: unrecognised token\n");
 					}
@@ -42,14 +42,14 @@ t_node* tokenise(int set, buffer b, int strip_cruft, int ignore_errors) {
 				}
 			}
 		} else {
-			trav->next=match_string(PREPROC, b.dat, b.size, i);
+			trav->next=match_string(PREPROC, b->dat, b->size, i);
 			
 			if(!trav->next) {
-				trav->next=match_string(set, b.dat, b.size, i);
+				trav->next=match_string(set, b->dat, b->size, i);
 			}
 			
 			if(!trav->next && set != BASIC) {
-				trav->next=match_string(BASIC, b.dat, b.size, i);
+				trav->next=match_string(BASIC, b->dat, b->size, i);
 			}
 			
 			if(!trav->next) {
@@ -57,10 +57,10 @@ t_node* tokenise(int set, buffer b, int strip_cruft, int ignore_errors) {
 					i++;
 					column++;
 				} else {
-					if(b.name) {
-						if(b.rpath)
-							fprintf(stderr, "%s", b.rpath);
-						fprintf(stderr, "%s:%u:%u: err: unrecognised token\n", b.name, row+1, column+1);
+					if(b->name) {
+						if(b->rpath)
+							fprintf(stderr, "%s", b->rpath);
+						fprintf(stderr, "%s:%u:%u: err: unrecognised token\n", b->name, row+1, column+1);
 					} else {
 						fprintf(stderr, "stdin:%u:%u: err: unrecognised token\n", row+1, column+1);
 					}
