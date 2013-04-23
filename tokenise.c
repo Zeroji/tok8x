@@ -9,14 +9,21 @@ t_node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
 			list_head=match_string(PREPROC, b->dat, b->size, i);
 			/* check if the token is a preprocessor directive. if
 			 * not, check if it's in the defined set. if not, and
-			 * the set is not BASIC, check in BASIC */
+			 * the set is pretty, check in non-pretty. as a last
+			 * resort, check in basic */
 			if(!list_head) {
 				list_head=match_string(set, b->dat, b->size, i);
 			}
 			
-			if(!list_head && set != BASIC) {
-				list_head=match_string(BASIC, b->dat, b->size, i);
+			/* check for fallback versions */
+			if(set>=NUMBER_OF_SETS) {
+				if(!list_head)
+					list_head=match_string(set-NUMBER_OF_SETS, b->dat, b->size, i);
+				if(!list_head && set != PRETTY_BASIC)
+					list_head=match_string(PRETTY_BASIC, b->dat, b->size, i);
 			}
+			if(!list_head && set != BASIC)
+				list_head=match_string(BASIC, b->dat, b->size, i);
 			
 			if(!list_head) {
 				if(ignore_errors) {
@@ -48,9 +55,16 @@ t_node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
 				trav->next=match_string(set, b->dat, b->size, i);
 			}
 			
-			if(!trav->next && set != BASIC) {
-				trav->next=match_string(BASIC, b->dat, b->size, i);
+			if(set>=NUMBER_OF_SETS) {
+				if(!trav->next)
+					trav->next=match_string(set-NUMBER_OF_SETS, b->dat, b->size, i);
+				if(!trav->next && set != PRETTY_BASIC)
+					trav->next=match_string(PRETTY_BASIC, b->dat, b->size, i);
 			}
+			if(!trav->next && set != BASIC)
+				trav->next=match_string(BASIC, b->dat, b->size, i);
+				
+			
 			
 			if(!trav->next) {
 				if(ignore_errors) {

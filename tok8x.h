@@ -30,6 +30,7 @@
 #include <ctype.h>
 
 #define NONE 0xFF
+#define NUMBER_OF_SETS 3
 
 typedef struct buffer {
 	char *bpath;
@@ -43,7 +44,9 @@ typedef enum t_set {
 	BASIC,
 	AXE,
 	GRAMMER,
-	PRETTY,
+	PRETTY_BASIC,
+	PRETTY_AXE,
+	PRETTY_GRAMMER,
 	PREPROC
 } t_set;
 

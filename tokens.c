@@ -863,7 +863,7 @@ token t_grammer[] = {
 /* will contain non-editor friendly
  * representations of tokens for
  * prettier output */
-token t_pretty[] = {
+token t_pretty_basic[] = {
 	{ 0x01, NONE, "►DMS" },
 	{ 0x02, NONE, "►Dec" },
 	{ 0x03, NONE, "►Frac" },
@@ -939,6 +939,15 @@ token t_pretty[] = {
 	{ 0xBB, 0xA6, "μ" },
 };
 
+token t_pretty_axe[] = {
+	{ 0x01, NONE, "►Tok" },
+	{ 0x03, NONE, "►Char" },
+};
+
+token t_pretty_grammer[] = {
+	{ 0x03, NONE, "►lFactor" },
+};
+
 /* preprocessor tokens, because it's actually
  * easier to do the "preprocessing" post
  * processing(for things other than ##define.
@@ -957,7 +966,9 @@ token *t_lists[] = {
 	t_basic,
 	t_axe,
 	t_grammer,
-	t_pretty,
+	t_pretty_basic,
+	t_pretty_axe,
+	t_pretty_grammer,
 	t_preproc
 };
 
@@ -965,14 +976,18 @@ const char* set_names[] = {
 	"BASIC",
 	"Axe",
 	"Grammer",
-	"BASIC"
+	"BASIC",
+	"Axe",
+	"Grammer"
 };
 
 int t_list_lengths[] = {
 	(int)(sizeof(t_basic)/sizeof(token)),
 	(int)(sizeof(t_axe)/sizeof(token)),
 	(int)(sizeof(t_grammer)/sizeof(token)),
-	(int)(sizeof(t_pretty)/sizeof(token)),
+	(int)(sizeof(t_pretty_basic)/sizeof(token)),
+	(int)(sizeof(t_pretty_axe)/sizeof(token)),
+	(int)(sizeof(t_pretty_grammer)/sizeof(token)),
 	(int)(sizeof(t_preproc)/sizeof(token))
 };
 

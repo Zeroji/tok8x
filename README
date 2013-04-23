@@ -6,21 +6,24 @@ options:
  -h
 	display help dialogue
 
- -t <axe|basic|grammer|pretty>
-	define token set to be used. "pretty" is the default token
-	set, but uses unicode approximations to mimic appearances
+ -t <axe|basic|grammer>
+	define token set to be used.
 
  -i <filename>
-	define file to be read
+	define file to be read (defaults to stdin)
 
  -o <filename>
-	define file to be written (write to stdout by default)
+	define file to be written (defaults to stdout)
 
  -n <name>
 	define on-calc name (warning: does not check name validity)
 
  -a
 	generate archived program
+
+ -p
+	use "pretty" output (use unicode approximations that
+	more closely resemble the true appearances)
 
  -s
 	strip excess data (comments, spaces, empty lines, etc)
