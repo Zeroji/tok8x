@@ -4,7 +4,7 @@
 t_node* tokenise(int set, buffer b, int strip_cruft, int ignore_errors) {
 	uint32_t i=0, column=0, row=0;
 	t_node *list_head=NULL, *trav, *temp, *temp2;
-	while(i < b.size) {
+	while(i < b.size-1) {
 		if(!list_head) {
 			list_head=match_string(PREPROC, b.dat, b.size, i);
 			/* check if the token is a preprocessor directive. if

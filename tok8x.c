@@ -239,17 +239,17 @@ int main(int argc, char **argv) {
 			
 			for(j=0; j<k; j++) {
 				swapchar=getc(i_file);
-				i_buffer.dat[i_buffer.size]=(uint8_t)swapchar;
-				i_buffer.size++;
 				if(!realloc_check(&i_buffer)) {
 					fclose(i_file);
 					return 1;
 				}
+				i_buffer.dat[i_buffer.size]=(uint8_t)swapchar;
+				i_buffer.size++;
 			}
 			swapchar=EOF;
 		}
 		
-		if( !(i_buffer.size-0x80000) ) {
+		if(i_buffer.size>=0x80000) {
 			fprintf(stderr, "err: obscene input file size\n");
 			free(i_buffer.dat);
 			fclose(i_file);
@@ -258,14 +258,14 @@ int main(int argc, char **argv) {
 	} while(swapchar != EOF);
 	fclose(i_file);
 	
-	//~ /* testing */
+	/* testing */
 	//~ for(i=0; i<i_buffer.size; i++) {
 		//~ fprintf(stderr, "%X: ", i);
 		//~ if((uint8_t)i_buffer.dat[i] < 0x10)
 			//~ fprintf(stderr, "0");
 		//~ fprintf(stderr, "%X\n", (uint8_t)i_buffer.dat[i]);
 	//~ }
-	//~ /* gnitset */
+	/* gnitset */
 
 /* ----------------------[ FILE PARSING ]---------------------- */
 	
