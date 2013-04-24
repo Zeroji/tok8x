@@ -1,6 +1,6 @@
-------------------[ README ]------------------
-convert between plaintext files and tokenised
-files for the TI8x series of calculators
+---------------------[ README ]---------------------
+convert between plaintext files and tokenised files
+for the TI8x series of calculators
 
 options:
  -h
@@ -16,23 +16,23 @@ options:
 	define file to be written (defaults to stdout)
 
  -n <name>
-	define on-calc name (warning: does not check name validity)
+	define on-calc name (warning: does not check
+	name validity)
 
  -a
 	generate archived program
 
  -p
-	use "pretty" output (use unicode approximations that
-	more closely resemble the true appearances)
+	use "pretty" output (use unicode approximations
+	that more closely resemble the true appearances)
 
  -s
-	strip excess data (comments, spaces, empty lines, etc)
+	strip excess data (comments, spaces, empty
+	lines, etc)
 
  -f
-	force (skip over any unmatched tokens rather than generating an error)
-
-running without -i causes the program to read from stdin, and running
-without -o to write to stdout.
+	force (skip over any unmatched tokens rather
+	than generating an error)
 
 running with only a string as an argument yields
 a single token lookup in the following format:

@@ -1,10 +1,5 @@
 #include "tokens.h"
 
-/* this should be a fairly simple process of checking
- * in t_2byte_indicators to see if it should be looking
- * for the second byte as well and then searching
- * for a match in t_lists[set], so i'm saving it
- * for last */
 t_node* detokenise(int set, buffer* b) {
 	uint32_t i, column=0, row=0;
 	t_node *list_head=NULL, *trav;
