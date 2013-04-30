@@ -956,7 +956,6 @@ token t_pretty_grammer[] = {
  * ##end! */
 token t_preproc[] = {
 	{ NONE, NONE, "##include" },
-	{ NONE, NONE, "##define" },
 	{ NONE, NONE, "##if" },
 	{ NONE, NONE, "##else" },
 	{ NONE, NONE, "##end" },

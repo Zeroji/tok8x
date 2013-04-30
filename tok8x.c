@@ -280,7 +280,7 @@ int main(int argc, char **argv) {
 		o_buffer=detokenise(a_t_set, &i_buffer);
 	} else {
 		
-		o_buffer=tokenise(a_t_set, &i_buffer, a_strip_cruft, a_ignore_errors);
+		o_buffer=parse(a_t_set, &i_buffer, a_strip_cruft, a_ignore_errors);
 		
 		/* "pre-processor directives" here, post
 		 * the actual processing */

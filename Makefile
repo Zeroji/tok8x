@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=-Wall
 
 SRC=tokens.c \
-	preprocessor.c \
+	parse.c \
 	tokenise.c \
 	detokenise.c \
 	tok8x.c
