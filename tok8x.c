@@ -180,7 +180,7 @@ int main(int argc, char **argv) {
 						}
 					puts("");
 					}
-				free(o_buffer);
+				free_node(o_buffer);
 				}
 			}
 			trav=trav->next;
@@ -446,7 +446,7 @@ void free_node(node *n) {
 
 void free_list(node *list_head) {
 	node *temp;
-	if(list_head) {
+	while(list_head) {
 		temp=list_head;
 		list_head=list_head->next;
 		free_node(temp);
@@ -460,7 +460,8 @@ void free_buffer(buffer *b) {
 			free(b->bpath);
 		if(b->rpath != NULL)
 			free(b->rpath);
-		free(b->name);
+		if(b->name != NULL)
+			free(b->name);
 		free(b);
 	}
 }

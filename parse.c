@@ -12,14 +12,14 @@ node* parse(int set, buffer *b, int strip_cruft, int ignore_errors) {
 	if(!b) {
 		return NULL;
 	}
-	b=define(b);
+	//~ b=define(b);
 	if(!b)
 		return NULL;
 		
 	t=tokenise(set, b, strip_cruft, ignore_errors);
 	
-	t=conditional(t);
-	t=include(t);
+	//~ t=conditional(t);
+	//~ t=include(t);
 	
 	return t;
 }
