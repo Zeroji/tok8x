@@ -1,8 +1,8 @@
 #include "tokens.h"
 
-t_node* detokenise(int set, buffer* b) {
+node* detokenise(int set, buffer* b) {
 	uint32_t i, column=0, row=0;
-	t_node *list_head=NULL, *trav;
+	node *list_head=NULL, *trav;
 	int flag;
 	
 	if(b == NULL)
@@ -24,18 +24,14 @@ t_node* detokenise(int set, buffer* b) {
 			
 			if(!list_head) {
 				/* error! token not found! */
-				if(b->name == NULL) {
-					fprintf(stderr, "stdin");
-				} else {
-					if(b->rpath)
-						fprintf(stderr, "%s", b->rpath);
-					fprintf(stderr, "%s", b->name);
-				}
+				if(b->rpath)
+					fprintf(stderr, "%s", b->rpath);
+				fprintf(stderr, "%s", b->name);
 				fprintf(stderr, ":0x4A:1:1 err: unrecognised token at \"");
 				if((uint8_t)b->dat[i]<0x10)
 					fprintf(stderr, "0");
 				fprintf(stderr, "%X\"\n", (uint8_t)b->dat[i]);
-				free(list_head);
+				free_node(list_head);
 				return NULL;
 				/* end error */
 			}
@@ -62,13 +58,9 @@ t_node* detokenise(int set, buffer* b) {
 			
 			if(!trav->next) {
 				/* error! token not found! */
-				if(b->name == NULL) {
-					fprintf(stderr, "stdin");
-				} else {
-					if(b->rpath)
-						fprintf(stderr, "%s", b->rpath);
-					fprintf(stderr, "%s", b->name);
-				}
+				if(b->rpath)
+					fprintf(stderr, "%s", b->rpath);
+				fprintf(stderr, "%s", b->name);
 				fprintf(stderr, ":0x%X:%d:%d: err: unrecognised token at \"", i, row+1, column+1);
 				if((uint8_t)b->dat[i]<0x10)
 					fprintf(stderr, "0");
@@ -119,9 +111,9 @@ t_node* detokenise(int set, buffer* b) {
 	return list_head;
 }
 
-t_node* match_token(int set, char buff[], const uint32_t buff_size, uint32_t cursor) {
+node* match_token(int set, char buff[], const uint32_t buff_size, uint32_t cursor) {
 	int i;
-	t_node *rp=malloc(sizeof(t_node));
+	node *rp=malloc(sizeof(node));
 	rp->b_first=(uint8_t)buff[cursor];
 	rp->b_second=NONE;
 	
@@ -142,6 +134,8 @@ t_node* match_token(int set, char buff[], const uint32_t buff_size, uint32_t cur
 	}
 	
 	/* if no legitimate match was found, return NULL */
+	
+	free_node(rp);
 	return NULL;
 }
 

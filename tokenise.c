@@ -1,9 +1,9 @@
 #include "tokens.h"
 
 /* build a linked list from token matches */
-t_node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
+node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
 	uint32_t i=0, column=0, row=0;
-	t_node *list_head=NULL, *trav, *temp, *temp2;
+	node *list_head=NULL, *trav, *temp, *temp2;
 	while(i < b->size-1) {
 		if(!list_head) {
 			list_head=match_string(PREPROC, b->dat, b->size, i);
@@ -30,13 +30,9 @@ t_node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
 					i++;
 					column++;
 				} else {
-					if(b->name) {
-						if(b->rpath)
-							fprintf(stderr, "%s", b->rpath);
-						fprintf(stderr, "%s:1:1: err: unrecognised token\n", b->name);
-					} else {
-						fprintf(stderr, "stdin:1:1: err: unrecognised token\n");
-					}
+					if(b->rpath)
+						fprintf(stderr, "%s", b->rpath);
+					fprintf(stderr, "%s:1:1: err: unrecognised token\n", b->name);
 					return NULL;
 				}
 			} else {
@@ -71,13 +67,9 @@ t_node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
 					i++;
 					column++;
 				} else {
-					if(b->name) {
-						if(b->rpath)
-							fprintf(stderr, "%s", b->rpath);
-						fprintf(stderr, "%s:%u:%u: err: unrecognised token\n", b->name, row+1, column+1);
-					} else {
-						fprintf(stderr, "stdin:%u:%u: err: unrecognised token\n", row+1, column+1);
-					}
+					if(b->rpath)
+						fprintf(stderr, "%s", b->rpath);
+					fprintf(stderr, "%s:%u:%u: err: unrecognised token\n", b->name, row+1, column+1);
 					free_list(list_head);
 					return NULL;
 				}
@@ -120,14 +112,14 @@ t_node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
 					if(trav->next->b_first == 0x29) {
 						temp=trav->next;
 						trav->next=trav->next->next;
-						free(temp);
+						free_node(temp);
 					}
 					/* if next token is at an empty line */
 					if(trav->next->next) {
 						if(trav->next->b_first == 0x3F && trav->next->next->b_first == 0x3F) {
 							temp=trav->next;
 							trav->next=trav->next->next;
-							free(temp);
+							free_node(temp);
 						}						
 				
 						if(set == AXE) {
@@ -138,10 +130,10 @@ t_node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
 								while(trav->next) {
 									temp2=trav;
 									trav=trav->next;
-									free(temp2);
+									free_node(temp2);
 									if(trav->b_first == 0x3F) {
 										temp->next=trav->next;
-										free(trav);
+										free_node(trav);
 										trav=temp;
 										break;
 									}
@@ -152,15 +144,15 @@ t_node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
 							if(trav->next->b_first == 0x3F && trav->next->next->b_first == 0xBB && trav->next->next->b_second == 0xDB) {
 								temp=trav;
 								trav=trav->next->next;
-								free(temp->next);
+								free_node(temp->next);
 								while(trav->next) {
 									temp2=trav;
 									trav=trav->next;
-									free(temp2);
+									free_node(temp2);
 									if(trav->next->b_first == 0x3f && trav->b_first == 0xBB && trav->b_second == 0xDB) {
 										temp->next=trav->next->next;
-										free(trav->next);
-										free(trav);
+										free_node(trav->next);
+										free_node(trav);
 										trav=temp;
 										break;
 									}
@@ -177,10 +169,10 @@ t_node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
 								while(trav->next) {
 									temp2=trav;
 									trav=trav->next;
-									free(temp2);
+									free_node(temp2);
 									if(trav->b_first == 0x3F) {
 										temp->next=trav->next;
-										free(trav);
+										free_node(trav);
 										trav=temp;
 										break;
 									}
@@ -198,8 +190,8 @@ t_node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
 	return list_head;
 }
 
-t_node* match_string(int set, char buff[], const uint32_t buff_size, uint32_t cursor) {
-	t_node *rp=malloc(sizeof(t_node));
+node* match_string(int set, char buff[], const uint32_t buff_size, uint32_t cursor) {
+	node *rp=malloc(sizeof(node));
 	strcpy(rp->name, "");
 	
 	/* match a token here */
@@ -228,7 +220,7 @@ t_node* match_string(int set, char buff[], const uint32_t buff_size, uint32_t cu
 	}
 	
 	if(!match) {
-		free(rp);
+		free_node(rp);
 		return NULL;
 	}
 	 

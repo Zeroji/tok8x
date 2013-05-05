@@ -955,6 +955,7 @@ token t_pretty_grammer[] = {
  * defining an option to pass to ##if ##else
  * ##end! */
 token t_preproc[] = {
+	{ NONE, NONE, "##define" },
 	{ NONE, NONE, "##include" },
 	{ NONE, NONE, "##if" },
 	{ NONE, NONE, "##else" },

@@ -10,7 +10,7 @@
 * read text input buffer from file
 
 * text result buffer (use a linked list of
-* t_nodes for dynamic resizing)
+* nodes for dynamic resizing)
 
 * code for converting between the two
 

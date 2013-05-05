@@ -60,12 +60,13 @@ typedef struct token {
 
 /* struct for storing tokens in linked list. for single-byte
  * tokens, b_second will equal NONE */
-typedef struct t_node {
+typedef struct node {
 	uint8_t b_first;
 	uint8_t b_second;
+	char *val;
 	char name[16];
-	struct t_node *next;
-} t_node;
+	struct node *next;
+} node;
 
 /* will contain data for program vars */
 typedef struct variable {
@@ -88,20 +89,23 @@ typedef struct header {
 	uint32_t checksum;
 } header;
 
-extern void header_init(header *p, t_node *list_head);
-extern void var_init(header *p, t_node *list_head, char *a_name, uint8_t a_archived);
+extern void header_init(header *p, node *list_head);
+extern void var_init(header *p, node *list_head, char *a_name, uint8_t a_archived);
 
-extern t_node* parse(int set, buffer *b, int strip_cruft, int ignore_errors);
-extern t_node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors);
-extern t_node* detokenise(int set, buffer *b);
+extern node* parse(int set, buffer *b, int strip_cruft, int ignore_errors);
+extern node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors);
+extern node* detokenise(int set, buffer *b);
 
-extern t_node* match_string(int set, char buffer[], const uint32_t buffer_size, uint32_t cursor);
-extern t_node* match_token(int set, char buffer[], const uint32_t buffer_size, uint32_t cursor);
+extern node* match_string(int set, char buffer[], const uint32_t buffer_size, uint32_t cursor);
+extern node* match_token(int set, char buffer[], const uint32_t buffer_size, uint32_t cursor);
 
-extern void free_list(t_node *list_head);
-extern uint16_t get_list_length(t_node *list_head);
+extern uint16_t get_list_length(node *list_head);
 extern int realloc_check(buffer *b);
 
 extern const char* set_names[];
+
+extern void free_node(node *n);
+extern void free_list(node *list_head);
+extern void free_buffer(buffer *b);
 
 #endif

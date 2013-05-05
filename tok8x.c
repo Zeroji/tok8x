@@ -10,15 +10,15 @@ int main(int argc, char **argv) {
 	i_buffer.dat=NULL;
 	char *i_swapbuffer;
 	FILE *o_file;
-	t_node *o_buffer;
-	t_node *trav;
+	node *o_buffer;
+	node *trav;
 	int operation_type_flag=1; /* set to "tokenising" as default. if we later find that the
 								* input was an 8x file, we'll set it to "detokenising" */
 	
 	/* input argument vars */
 	char *a_ifilename=NULL;
 	char *a_ofilename=NULL;
-	t_node *a_token=NULL;
+	node *a_token=NULL;
 	int a_strip_cruft=0; /* axe one line comments start with \n., grammer with // 
 								axe multi-line comments use ... (be sure to ignore
 								conditional comments (...If, ...!If, ...Else ) */
@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
 		if(strncmp(argv[i], "-", 1)) {
 			if( !(strlen(argv[i]) > 16) ) {
 				if(a_token) {
-					trav->next=malloc(sizeof(t_node));
+					trav->next=malloc(sizeof(node));
 					if(trav->next) {
 						trav=trav->next;
 						strcpy(trav->name, argv[i]);
@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
 						return 1;
 					}
 				} else {
-					a_token=malloc(sizeof(t_node));
+					a_token=malloc(sizeof(node));
 					if(a_token) {
 						trav=a_token;
 						strcpy(a_token->name, argv[i]);
@@ -194,7 +194,7 @@ int main(int argc, char **argv) {
 	/* are we reading from a file or from stdin? */
 	if(a_ifilename == NULL) {
 		i_file=stdin;
-		i_buffer.name=NULL;
+		i_buffer.name="stdin";
 		i_buffer.bpath=NULL;
 		i_buffer.rpath=NULL;
 	} else {
@@ -214,7 +214,14 @@ int main(int argc, char **argv) {
 		
 		i_file=fopen(a_ifilename, "r");
 		if(!i_file) {
-			fprintf(stderr, "err: could not read \"%s\"\n", a_ifilename);
+			fprintf(stderr, "err: could not read \"");
+			if(i_buffer.bpath != NULL)
+				fprintf(stderr, "%s", i_buffer.bpath);
+			if(i_buffer.rpath != NULL)
+				fprintf(stderr, "%s", i_buffer.rpath);
+			fprintf(stderr, "%s\"\n", i_buffer.name);
+			
+			free_buffer(&i_buffer);
 			return 1;
 		}
 	}
@@ -262,7 +269,7 @@ int main(int argc, char **argv) {
 		
 		if(i_buffer.size>=0x80000) {
 			fprintf(stderr, "err: obscene input file size\n");
-			free(i_buffer.dat);
+			free_buffer(&i_buffer);
 			fclose(i_file);
 			return 1;
 		}
@@ -274,7 +281,7 @@ int main(int argc, char **argv) {
 	if( !operation_type_flag ) {
 		if(i_buffer.size < 74) {
 			fprintf(stderr, "err: invalid .8xp size\n");
-			free(i_buffer.dat);
+			free_buffer(&i_buffer);
 			return 1;
 		}
 		o_buffer=detokenise(a_t_set, &i_buffer);
@@ -287,7 +294,7 @@ int main(int argc, char **argv) {
 
 	}
 	if( !o_buffer ) {
-		free(i_buffer.dat);
+		free_buffer(&i_buffer);
 		return 1;
 	}
 	
@@ -362,18 +369,12 @@ int main(int argc, char **argv) {
 	}
 	
 	free_list(o_buffer);
-	
-	free(i_buffer.name);
-	free(i_buffer.dat);
-	if(i_buffer.bpath)
-		free(i_buffer.bpath);
-	if(i_buffer.rpath)
-		free(i_buffer.rpath);
+	free_buffer(&i_buffer);
 
 	return 0;
 }
 
-void var_init(header *h, t_node *list_head, char *a_name, uint8_t a_archived) {
+void var_init(header *h, node *list_head, char *a_name, uint8_t a_archived) {
 	h->var.top=0x0D;
 	h->var.length=get_list_length(list_head)+0x02;
 	h->var.type=0x05; /* manually assign to program type */
@@ -383,7 +384,7 @@ void var_init(header *h, t_node *list_head, char *a_name, uint8_t a_archived) {
 	h->var.length3=h->var.length-0x02;
 }
 
-void header_init(header *h, t_node *list_head) {
+void header_init(header *h, node *list_head) {
 	uint16_t i;
 	uint8_t *p;
 	
@@ -400,7 +401,7 @@ void header_init(header *h, t_node *list_head) {
 		h->checksum+=p[i];
 	}
 	
-	t_node *trav=list_head;
+	node *trav=list_head;
 	while(trav) {	
 		h->checksum+=trav->b_first;
 		if(trav->b_second != NONE)
@@ -410,16 +411,7 @@ void header_init(header *h, t_node *list_head) {
 	
 }
 
-void free_list(t_node *list_head) {
-	t_node *temp;
-	while(list_head) {
-		temp=list_head;
-		list_head=list_head->next;
-		free(temp);
-	}
-}
-
-uint16_t get_list_length(t_node *list_head) {
+uint16_t get_list_length(node *list_head) {
 	uint16_t r_length=0;
 	while(list_head) {
 		if(list_head->b_second != NONE)
@@ -430,16 +422,45 @@ uint16_t get_list_length(t_node *list_head) {
 	return r_length;
 }
 
-extern int realloc_check(buffer *b) {
+int realloc_check(buffer *b) {
 	char *bs;
 	if( !(b->size%2048) ) {
 		bs=realloc(b->dat, sizeof(char)*(b->size+2048));
 		if(bs == NULL) {
 			fprintf(stderr, "err: could not allocate memory. perhaps input is too large?\n");
-			free(b->dat);
+			free_buffer(b);
 			return 0;
 		}
 		b->dat=bs;
 	}
 	return 1;
+}
+
+void free_node(node *n) {
+	if(n != NULL) {
+		if(n->val != NULL)
+			free(n->val);
+		free(n);
+	}
+}
+
+void free_list(node *list_head) {
+	node *temp;
+	if(list_head) {
+		temp=list_head;
+		list_head=list_head->next;
+		free_node(temp);
+	}
+}
+
+void free_buffer(buffer *b) {
+	if(b != NULL) {
+		free(b->dat);
+		if(b->bpath != NULL)
+			free(b->bpath);
+		if(b->rpath != NULL)
+			free(b->rpath);
+		free(b->name);
+		free(b);
+	}
 }

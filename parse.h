@@ -1,12 +1,7 @@
 #include "tok8x.h"
 
-typedef struct string {
-	uint32_t start;
-	uint32_t length;
-	char *val;
-	uint32_t end;
-} string;
-
 extern buffer* define(buffer *b);
-extern t_node* include(t_node *t);
-extern t_node* conditional(t_node *t);
+extern node* include(node *t);
+extern node* conditional(node *t);
+
+extern node* get_word(buffer *b, uint32_t *i, uint32_t row, uint32_t column, const char *opname);
