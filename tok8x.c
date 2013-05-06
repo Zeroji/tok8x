@@ -1,12 +1,15 @@
 #include "tok8x.h"
 
 int main(int argc, char **argv) {
-	uint32_t i, j, k, bad_arg;
+	uint32_t i, j, bad_arg;
 	char swapchar;
 	header h;
 	struct header *h_point=&h;
 	FILE *i_file;
 	buffer i_buffer;
+	i_buffer.bpath=NULL;
+	i_buffer.rpath=NULL;
+	i_buffer.name=NULL;
 	i_buffer.dat=NULL;
 	char *i_swapbuffer;
 	FILE *o_file;
@@ -196,16 +199,12 @@ int main(int argc, char **argv) {
 	if(a_ifilename == NULL) {
 		i_file=stdin;
 		i_buffer.name="stdin";
-		i_buffer.bpath=NULL;
-		i_buffer.rpath=NULL;
 	} else {
 		/* grab the path and base name of the main source file */
-		i_buffer.rpath=NULL;
 		i_swapbuffer=strrchr(a_ifilename, '/');
 		if(i_swapbuffer == NULL) {
 			i_buffer.name=malloc(sizeof(a_ifilename));
 			strcpy(i_buffer.name, a_ifilename);
-			i_buffer.bpath=NULL;
 		} else {
 			i_buffer.name=malloc(sizeof(a_ifilename)-(i_swapbuffer-a_ifilename)-1);
 			strcpy(i_buffer.name, i_swapbuffer+1);
@@ -227,54 +226,95 @@ int main(int argc, char **argv) {
 		}
 	}
 	
-	/* dynamic buffering of input file! (necessary for stdin) */
+	/* grab the first 8 chars to check if the input is an .8xp */
 	i_buffer.size=0;
-	do {
-		if(!realloc_check(&i_buffer)) {
-			fclose(i_file);
+	i_swapbuffer=malloc(8);
+	if(i_swapbuffer == NULL) {
+		fprintf(stderr, "err: could not allocate memory\n");
+		free_buffer(&i_buffer);
+		free(i_swapbuffer);
+		return 1;
+	}
+	
+	for(i=0; i<8; i++) {
+		swapchar=getc(i_file);
+		i_swapbuffer[i]=(uint8_t)swapchar;
+	}
+	
+	i_buffer.dat=malloc(8);
+	if(i_buffer.dat == NULL) {
+		fprintf(stderr, "err: could not allocate memory\n");
+		free_buffer(&i_buffer);
+		free(i_swapbuffer);
+		return 1;
+	}
+	memcpy(i_buffer.dat, i_swapbuffer, 8);
+	free(i_swapbuffer);
+	i_buffer.size=8;
+	
+	/* read in file with dynamic buffering (necessary for stdin) */
+	if( !strncmp(i_buffer.dat, "**TI83F*", 8) ) {
+		/* we're reading in an 8xp! */
+		operation_type_flag=0;
+		i_swapbuffer=realloc(i_buffer.dat, i_buffer.size+47);
+		if(i_swapbuffer == NULL) {
+			free_buffer(&i_buffer);
 			return 1;
 		}
-		swapchar=getc(i_file);
-		if(swapchar != EOF) {
-			i_buffer.dat[i_buffer.size]=(uint8_t)swapchar;
-			i_buffer.size++;
-		}
-		/* check if the input is in .8xp format */
-		if( !strncmp(i_buffer.dat, "**TI83F*", 8) && !(i_buffer.size-8) ) {
-			operation_type_flag=0;
-			for(j=0; j<45; j++) {
-				swapchar=getc(i_file);
-				i_buffer.dat[i_buffer.size]=(uint8_t)swapchar;
-				i_buffer.size++;
-			}
+		i_buffer.dat=i_swapbuffer;
+		
+		for(i=0; i<47; i++) {
 			swapchar=getc(i_file);
 			i_buffer.dat[i_buffer.size]=(uint8_t)swapchar;
-			k=(uint8_t)swapchar;
 			i_buffer.size++;
-			swapchar=getc(i_file);
-			i_buffer.dat[i_buffer.size]=(uint8_t)swapchar;
-			k+=((uint8_t)swapchar)*0x100;
-			i_buffer.size++;
-			
-			for(j=0; j<k; j++) {
-				swapchar=getc(i_file);
-				if(!realloc_check(&i_buffer)) {
-					fclose(i_file);
-					return 1;
-				}
-				i_buffer.dat[i_buffer.size]=(uint8_t)swapchar;
-				i_buffer.size++;
-			}
-			swapchar=EOF;
 		}
 		
-		if(i_buffer.size>=0x80000) {
-			fprintf(stderr, "err: obscene input file size\n");
+		j=(uint8_t)i_buffer.dat[i_buffer.size-2];
+		j+=((uint8_t)i_buffer.dat[i_buffer.size-1])*0x100;
+		
+		i_swapbuffer=realloc(i_buffer.dat, i_buffer.size+j);
+		if(i_swapbuffer == NULL) {
 			free_buffer(&i_buffer);
-			fclose(i_file);
 			return 1;
 		}
-	} while(swapchar != EOF);
+		i_buffer.dat=i_swapbuffer;
+		
+		for(i=0; i<j; i++) {
+			swapchar=getc(i_file);
+			i_buffer.dat[i_buffer.size]=(uint8_t)swapchar;
+			i_buffer.size++;
+		}
+		
+	} else {
+		i_swapbuffer=realloc(i_buffer.dat, 1024);
+		if(i_swapbuffer == NULL) {
+			free_buffer(&i_buffer);
+			return 1;
+		}
+		i_buffer.dat=i_swapbuffer;
+		
+		/* we're reading in a text file! */
+		do {
+			if(!realloc_check(&i_buffer)) {
+				fclose(i_file);
+				return 1;
+			}
+			swapchar=getc(i_file);
+			if(swapchar != EOF) {
+				i_buffer.dat[i_buffer.size]=(uint8_t)swapchar;
+				i_buffer.size++;
+			}
+			
+			if(i_buffer.size>=0x80000) {
+				fprintf(stderr, "err: obscene input file size\n");
+				free_buffer(&i_buffer);
+				fclose(i_file);
+				return 1;
+			}
+		} while(swapchar != EOF);
+	}
+	
+	
 	fclose(i_file);
 
 /* ----------------------[ FILE PARSING ]---------------------- */
@@ -286,9 +326,11 @@ int main(int argc, char **argv) {
 			return 1;
 		}
 		o_buffer=detokenise(a_t_set, &i_buffer);
+		free_buffer(&i_buffer);
 	} else {
 		
 		o_buffer=parse(a_t_set, &i_buffer, a_strip_cruft, a_ignore_errors);
+		free_buffer(&i_buffer);
 		
 		/* "pre-processor directives" here, post
 		 * the actual processing */
@@ -423,8 +465,8 @@ uint16_t get_list_length(tnode *list_head) {
 
 int realloc_check(buffer *b) {
 	char *bs;
-	if( !(b->size%2048) ) {
-		bs=realloc(b->dat, sizeof(char)*(b->size+2048));
+	if( !(b->size%1024) ) {
+		bs=realloc(b->dat, sizeof(char)*(b->size+1024));
 		if(bs == NULL) {
 			fprintf(stderr, "err: could not allocate memory. perhaps input is too large?\n");
 			free_buffer(b);
@@ -477,6 +519,5 @@ void free_buffer(buffer *b) {
 			free(b->rpath);
 		if(b->name != NULL)
 			free(b->name);
-		free(b);
 	}
 }
