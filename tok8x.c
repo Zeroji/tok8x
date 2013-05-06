@@ -181,6 +181,7 @@ int main(int argc, char **argv) {
 					puts("");
 					}
 				free_node(o_buffer);
+				o_buffer=NULL;
 				}
 			}
 			trav=trav->next;
@@ -429,6 +430,7 @@ int realloc_check(buffer *b) {
 		if(bs == NULL) {
 			fprintf(stderr, "err: could not allocate memory. perhaps input is too large?\n");
 			free_buffer(b);
+			b=NULL;
 			return 0;
 		}
 		b->dat=bs;
@@ -450,6 +452,7 @@ void free_list(node *list_head) {
 		temp=list_head;
 		list_head=list_head->next;
 		free_node(temp);
+		
 	}
 }
 

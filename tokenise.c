@@ -36,6 +36,7 @@ node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
 					return NULL;
 				}
 			} else {
+				list_head->next=NULL;
 				trav=list_head;
 				i+=strlen(trav->name);
 				column+=strlen(trav->name);
@@ -75,6 +76,7 @@ node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
 				}
 			} else {
 				trav=trav->next;
+				trav->next=NULL;
 				i+=strlen(trav->name);
 				column+=strlen(trav->name);
 				if( !strcmp(trav->name, "\n") ) {
@@ -113,6 +115,7 @@ node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
 						temp=trav->next;
 						trav->next=trav->next->next;
 						free_node(temp);
+						temp=NULL;
 					}
 					/* if next token is at an empty line */
 					if(trav->next->next) {
@@ -120,6 +123,7 @@ node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
 							temp=trav->next;
 							trav->next=trav->next->next;
 							free_node(temp);
+							temp=NULL;
 						}						
 				
 						if(set == AXE) {
@@ -131,9 +135,11 @@ node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
 									temp2=trav;
 									trav=trav->next;
 									free_node(temp2);
+									temp2=NULL;
 									if(trav->b_first == 0x3F) {
 										temp->next=trav->next;
 										free_node(trav);
+										trav=NULL;
 										trav=temp;
 										break;
 									}
@@ -145,14 +151,17 @@ node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
 								temp=trav;
 								trav=trav->next->next;
 								free_node(temp->next);
+								temp->next=NULL;
 								while(trav->next) {
 									temp2=trav;
 									trav=trav->next;
 									free_node(temp2);
+									temp2=NULL;
 									if(trav->next->b_first == 0x3f && trav->b_first == 0xBB && trav->b_second == 0xDB) {
 										temp->next=trav->next->next;
 										free_node(trav->next);
 										free_node(trav);
+										trav=NULL;
 										trav=temp;
 										break;
 									}
@@ -170,9 +179,11 @@ node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
 									temp2=trav;
 									trav=trav->next;
 									free_node(temp2);
+									temp2=NULL;
 									if(trav->b_first == 0x3F) {
 										temp->next=trav->next;
 										free_node(trav);
+										trav=NULL;
 										trav=temp;
 										break;
 									}
@@ -220,7 +231,6 @@ node* match_string(int set, char buff[], const uint32_t buff_size, uint32_t curs
 	}
 	
 	if(!match) {
-		free_node(rp);
 		return NULL;
 	}
 	 

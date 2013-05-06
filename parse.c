@@ -27,7 +27,7 @@ node* parse(int set, buffer *b, int strip_cruft, int ignore_errors) {
 buffer* define(buffer *b) {
 	uint32_t i=0, column=0, row=0, markc, markr, marki;
 	buffer *tempbuff;
-	node *list_head=NULL, *trav, *tempword;
+	node *list_head=NULL, *trav;
 	
 	if(!b)
 		return NULL;
@@ -71,12 +71,7 @@ buffer* define(buffer *b) {
 				b->size=b->size-(i-marki);
 				tempbuff=realloc(b->dat, b->size);
 				if(tempbuff == NULL) {
-					trav=list_head;
-					while(trav->next != NULL) {
-						tempword=trav;
-						trav=trav->next;
-						free_node(tempword);
-					}					
+					free_list(list_head);
 					return NULL;
 				}
 			} else {
