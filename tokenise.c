@@ -1,9 +1,9 @@
 #include "tokens.h"
 
 /* build a linked list from token matches */
-node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
+tnode* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
 	uint32_t i=0, column=0, row=0;
-	node *list_head=NULL, *trav, *temp, *temp2;
+	tnode *list_head=NULL, *trav, *temp, *temp2;
 	while(i < b->size-1) {
 		if(!list_head) {
 			list_head=match_string(PREPROC, b->dat, b->size, i);
@@ -36,6 +36,7 @@ node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
 					return NULL;
 				}
 			} else {
+				list_head->next=NULL;
 				trav=list_head;
 				i+=strlen(trav->name);
 				column+=strlen(trav->name);
@@ -70,11 +71,12 @@ node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
 					if(b->rpath)
 						fprintf(stderr, "%s", b->rpath);
 					fprintf(stderr, "%s:%u:%u: err: unrecognised token\n", b->name, row+1, column+1);
-					free_list(list_head);
+					free_tlist(list_head);
 					return NULL;
 				}
 			} else {
 				trav=trav->next;
+				trav->next=NULL;
 				i+=strlen(trav->name);
 				column+=strlen(trav->name);
 				if( !strcmp(trav->name, "\n") ) {
@@ -112,14 +114,16 @@ node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
 					if(trav->next->b_first == 0x29) {
 						temp=trav->next;
 						trav->next=trav->next->next;
-						free_node(temp);
+						free_tnode(temp);
+						temp=NULL;
 					}
 					/* if next token is at an empty line */
 					if(trav->next->next) {
 						if(trav->next->b_first == 0x3F && trav->next->next->b_first == 0x3F) {
 							temp=trav->next;
 							trav->next=trav->next->next;
-							free_node(temp);
+							free_tnode(temp);
+							temp=NULL;
 						}						
 				
 						if(set == AXE) {
@@ -130,10 +134,12 @@ node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
 								while(trav->next) {
 									temp2=trav;
 									trav=trav->next;
-									free_node(temp2);
+									free_tnode(temp2);
+									temp2=NULL;
 									if(trav->b_first == 0x3F) {
 										temp->next=trav->next;
-										free_node(trav);
+										free_tnode(trav);
+										trav=NULL;
 										trav=temp;
 										break;
 									}
@@ -144,15 +150,18 @@ node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
 							if(trav->next->b_first == 0x3F && trav->next->next->b_first == 0xBB && trav->next->next->b_second == 0xDB) {
 								temp=trav;
 								trav=trav->next->next;
-								free_node(temp->next);
+								free_tnode(temp->next);
+								temp->next=NULL;
 								while(trav->next) {
 									temp2=trav;
 									trav=trav->next;
-									free_node(temp2);
+									free_tnode(temp2);
+									temp2=NULL;
 									if(trav->next->b_first == 0x3f && trav->b_first == 0xBB && trav->b_second == 0xDB) {
 										temp->next=trav->next->next;
-										free_node(trav->next);
-										free_node(trav);
+										free_tnode(trav->next);
+										free_tnode(trav);
+										trav=NULL;
 										trav=temp;
 										break;
 									}
@@ -169,10 +178,12 @@ node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
 								while(trav->next) {
 									temp2=trav;
 									trav=trav->next;
-									free_node(temp2);
+									free_tnode(temp2);
+									temp2=NULL;
 									if(trav->b_first == 0x3F) {
 										temp->next=trav->next;
-										free_node(trav);
+										free_tnode(trav);
+										trav=NULL;
 										trav=temp;
 										break;
 									}
@@ -190,8 +201,8 @@ node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors) {
 	return list_head;
 }
 
-node* match_string(int set, char buff[], const uint32_t buff_size, uint32_t cursor) {
-	node *rp=malloc(sizeof(node));
+tnode* match_string(int set, char buff[], const uint32_t buff_size, uint32_t cursor) {
+	tnode *rp=malloc(sizeof(tnode));
 	strcpy(rp->name, "");
 	
 	/* match a token here */
@@ -220,7 +231,7 @@ node* match_string(int set, char buff[], const uint32_t buff_size, uint32_t curs
 	}
 	
 	if(!match) {
-		free_node(rp);
+		free_tnode(rp);
 		return NULL;
 	}
 	 

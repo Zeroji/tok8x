@@ -1,8 +1,8 @@
 #include "tokens.h"
 
-node* detokenise(int set, buffer* b) {
+tnode* detokenise(int set, buffer* b) {
 	uint32_t i, column=0, row=0;
-	node *list_head=NULL, *trav;
+	tnode *list_head=NULL, *trav;
 	int flag;
 	
 	if(b == NULL)
@@ -31,7 +31,7 @@ node* detokenise(int set, buffer* b) {
 				if((uint8_t)b->dat[i]<0x10)
 					fprintf(stderr, "0");
 				fprintf(stderr, "%X\"\n", (uint8_t)b->dat[i]);
-				free_node(list_head);
+				free_tnode(list_head);
 				return NULL;
 				/* end error */
 			}
@@ -75,7 +75,7 @@ node* detokenise(int set, buffer* b) {
 					}
 				}
 				fprintf(stderr, "\"\n");
-				free_list(list_head);
+				free_tlist(list_head);
 				return NULL;
 				/* end error! */
 			}
@@ -111,9 +111,9 @@ node* detokenise(int set, buffer* b) {
 	return list_head;
 }
 
-node* match_token(int set, char buff[], const uint32_t buff_size, uint32_t cursor) {
+tnode* match_token(int set, char buff[], const uint32_t buff_size, uint32_t cursor) {
 	int i;
-	node *rp=malloc(sizeof(node));
+	tnode *rp=malloc(sizeof(tnode));
 	rp->b_first=(uint8_t)buff[cursor];
 	rp->b_second=NONE;
 	
@@ -135,7 +135,7 @@ node* match_token(int set, char buff[], const uint32_t buff_size, uint32_t curso
 	
 	/* if no legitimate match was found, return NULL */
 	
-	free_node(rp);
+	free_tnode(rp);
 	return NULL;
 }
 

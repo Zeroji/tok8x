@@ -10,15 +10,15 @@ int main(int argc, char **argv) {
 	i_buffer.dat=NULL;
 	char *i_swapbuffer;
 	FILE *o_file;
-	node *o_buffer;
-	node *trav;
+	tnode *o_buffer;
+	tnode *trav;
 	int operation_type_flag=1; /* set to "tokenising" as default. if we later find that the
 								* input was an 8x file, we'll set it to "detokenising" */
 	
 	/* input argument vars */
 	char *a_ifilename=NULL;
 	char *a_ofilename=NULL;
-	node *a_token=NULL;
+	tnode *a_token=NULL;
 	int a_strip_cruft=0; /* axe one line comments start with \n., grammer with // 
 								axe multi-line comments use ... (be sure to ignore
 								conditional comments (...If, ...!If, ...Else ) */
@@ -39,23 +39,23 @@ int main(int argc, char **argv) {
 		if(strncmp(argv[i], "-", 1)) {
 			if( !(strlen(argv[i]) > 16) ) {
 				if(a_token) {
-					trav->next=malloc(sizeof(node));
+					trav->next=malloc(sizeof(tnode));
 					if(trav->next) {
 						trav=trav->next;
 						strcpy(trav->name, argv[i]);
 					} else {
 						fprintf(stderr, "err: could not allocate memory\n");
-						free_list(a_token);
+						free_tlist(a_token);
 						return 1;
 					}
 				} else {
-					a_token=malloc(sizeof(node));
+					a_token=malloc(sizeof(tnode));
 					if(a_token) {
 						trav=a_token;
 						strcpy(a_token->name, argv[i]);
 					} else {
 						fprintf(stderr, "err: could not allocate memory\n");
-						free_list(a_token);
+						free_tlist(a_token);
 						return 1;
 					}
 				}
@@ -180,12 +180,13 @@ int main(int argc, char **argv) {
 						}
 					puts("");
 					}
-				free_node(o_buffer);
+				free_tnode(o_buffer);
+				o_buffer=NULL;
 				}
 			}
 			trav=trav->next;
 		}
-		free_list(a_token);
+		free_tlist(a_token);
 		return 0;
 	}
 	
@@ -293,8 +294,7 @@ int main(int argc, char **argv) {
 		 * the actual processing */
 
 	}
-	if( !o_buffer ) {
-		free_buffer(&i_buffer);
+	if( o_buffer == NULL ) {
 		return 1;
 	}
 	
@@ -368,13 +368,12 @@ int main(int argc, char **argv) {
 		fclose(o_file);
 	}
 	
-	free_list(o_buffer);
-	free_buffer(&i_buffer);
+	free_tlist(o_buffer);
 
 	return 0;
 }
 
-void var_init(header *h, node *list_head, char *a_name, uint8_t a_archived) {
+void var_init(header *h, tnode *list_head, char *a_name, uint8_t a_archived) {
 	h->var.top=0x0D;
 	h->var.length=get_list_length(list_head)+0x02;
 	h->var.type=0x05; /* manually assign to program type */
@@ -384,7 +383,7 @@ void var_init(header *h, node *list_head, char *a_name, uint8_t a_archived) {
 	h->var.length3=h->var.length-0x02;
 }
 
-void header_init(header *h, node *list_head) {
+void header_init(header *h, tnode *list_head) {
 	uint16_t i;
 	uint8_t *p;
 	
@@ -401,7 +400,7 @@ void header_init(header *h, node *list_head) {
 		h->checksum+=p[i];
 	}
 	
-	node *trav=list_head;
+	tnode *trav=list_head;
 	while(trav) {	
 		h->checksum+=trav->b_first;
 		if(trav->b_second != NONE)
@@ -411,7 +410,7 @@ void header_init(header *h, node *list_head) {
 	
 }
 
-uint16_t get_list_length(node *list_head) {
+uint16_t get_list_length(tnode *list_head) {
 	uint16_t r_length=0;
 	while(list_head) {
 		if(list_head->b_second != NONE)
@@ -429,6 +428,7 @@ int realloc_check(buffer *b) {
 		if(bs == NULL) {
 			fprintf(stderr, "err: could not allocate memory. perhaps input is too large?\n");
 			free_buffer(b);
+			b=NULL;
 			return 0;
 		}
 		b->dat=bs;
@@ -436,7 +436,13 @@ int realloc_check(buffer *b) {
 	return 1;
 }
 
-void free_node(node *n) {
+void free_tnode(tnode *n) {
+	if(n != NULL) {
+		free(n);
+	}
+}
+
+void free_wnode(wnode *n) {
 	if(n != NULL) {
 		if(n->val != NULL)
 			free(n->val);
@@ -444,12 +450,23 @@ void free_node(node *n) {
 	}
 }
 
-void free_list(node *list_head) {
-	node *temp;
+void free_tlist(tnode *list_head) {
+	tnode *temp;
 	while(list_head) {
 		temp=list_head;
 		list_head=list_head->next;
-		free_node(temp);
+		free_tnode(temp);
+		
+	}
+}
+
+void free_wlist(wnode *list_head) {
+	wnode *temp;
+	while(list_head) {
+		temp=list_head;
+		list_head=list_head->next;
+		free_wnode(temp);
+		
 	}
 }
 

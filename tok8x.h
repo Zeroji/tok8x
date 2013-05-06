@@ -60,13 +60,17 @@ typedef struct token {
 
 /* struct for storing tokens in linked list. for single-byte
  * tokens, b_second will equal NONE */
-typedef struct node {
+typedef struct tnode {
 	uint8_t b_first;
 	uint8_t b_second;
-	char *val;
 	char name[16];
-	struct node *next;
-} node;
+	struct tnode *next;
+} tnode;
+
+typedef struct wnode {
+	char *val;
+	struct wnode *next;
+} wnode;
 
 /* will contain data for program vars */
 typedef struct variable {
@@ -89,23 +93,25 @@ typedef struct header {
 	uint32_t checksum;
 } header;
 
-extern void header_init(header *p, node *list_head);
-extern void var_init(header *p, node *list_head, char *a_name, uint8_t a_archived);
+extern void header_init(header *p, tnode *list_head);
+extern void var_init(header *p, tnode *list_head, char *a_name, uint8_t a_archived);
 
-extern node* parse(int set, buffer *b, int strip_cruft, int ignore_errors);
-extern node* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors);
-extern node* detokenise(int set, buffer *b);
+extern tnode* parse(int set, buffer *b, int strip_cruft, int ignore_errors);
+extern tnode* tokenise(int set, buffer *b, int strip_cruft, int ignore_errors);
+extern tnode* detokenise(int set, buffer *b);
 
-extern node* match_string(int set, char buffer[], const uint32_t buffer_size, uint32_t cursor);
-extern node* match_token(int set, char buffer[], const uint32_t buffer_size, uint32_t cursor);
+extern tnode* match_string(int set, char buffer[], const uint32_t buffer_size, uint32_t cursor);
+extern tnode* match_token(int set, char buffer[], const uint32_t buffer_size, uint32_t cursor);
 
-extern uint16_t get_list_length(node *list_head);
+extern uint16_t get_list_length(tnode *list_head);
 extern int realloc_check(buffer *b);
 
 extern const char* set_names[];
 
-extern void free_node(node *n);
-extern void free_list(node *list_head);
+extern void free_tnode(tnode *n);
+extern void free_wnode(wnode *n);
+extern void free_tlist(tnode *list_head);
+extern void free_wlist(wnode *list_head);
 extern void free_buffer(buffer *b);
 
 #endif

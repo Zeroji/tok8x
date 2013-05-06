@@ -6,8 +6,8 @@
  * "s to surround the name so that file names with spaces are
  * understood */
 
-node* parse(int set, buffer *b, int strip_cruft, int ignore_errors) {
-	node *t;
+tnode* parse(int set, buffer *b, int strip_cruft, int ignore_errors) {
+	tnode *t;
 
 	if(!b) {
 		return NULL;
@@ -27,7 +27,7 @@ node* parse(int set, buffer *b, int strip_cruft, int ignore_errors) {
 buffer* define(buffer *b) {
 	uint32_t i=0, column=0, row=0, markc, markr, marki;
 	buffer *tempbuff;
-	node *list_head=NULL, *trav, *tempword;
+	wnode *list_head=NULL, *trav;
 	
 	if(!b)
 		return NULL;
@@ -47,14 +47,14 @@ buffer* define(buffer *b) {
 					trav=list_head;
 					list_head->next=NULL;
 					if(list_head == NULL) {
-						free_node(list_head);
+						free_wnode(list_head);
 						return NULL;
 					}
 				} else {
 					trav->next=get_word(b, &i, markr, markc, "##define");
 					trav=trav->next;
 					if(trav == NULL) {
-						free_list(list_head);
+						free_wlist(list_head);
 						return NULL;
 					}
 					trav->next=NULL;
@@ -63,7 +63,7 @@ buffer* define(buffer *b) {
 				trav->next=get_word(b, &i, markr, markc, "##define");
 				trav=trav->next;
 				if(trav == NULL) {
-					free_list(list_head);
+					free_wlist(list_head);
 					return NULL;
 				}
 				/* cut the line out of the buffer */
@@ -71,12 +71,7 @@ buffer* define(buffer *b) {
 				b->size=b->size-(i-marki);
 				tempbuff=realloc(b->dat, b->size);
 				if(tempbuff == NULL) {
-					trav=list_head;
-					while(trav->next != NULL) {
-						tempword=trav;
-						trav=trav->next;
-						free_node(tempword);
-					}					
+					free_wlist(list_head);
 					return NULL;
 				}
 			} else {
@@ -97,29 +92,29 @@ buffer* define(buffer *b) {
 	
 	/* alrighty, now use the linked list of words to perform substitutions */
 	
-	free_list(list_head);
+	free_wlist(list_head);
 		
 	return b;
 }
 
-node* include(node *t) {
+tnode* include(tnode *t) {
 	if(!t)
 		return NULL;
 	return t;
 }
 
-node* conditional(node *t) {
+tnode* conditional(tnode *t) {
 	if(!t)
 		return NULL;
 	return t;
 }
 
 /* grab and return a pointer to a string between two "s */
-extern node* get_word(buffer *b, uint32_t *i, uint32_t row, uint32_t column, const char *opname) {
+extern wnode* get_word(buffer *b, uint32_t *i, uint32_t row, uint32_t column, const char *opname) {
 	uint32_t start;
-	node* r_word;
+	wnode* r_word;
 	
-	r_word=malloc(sizeof(node));
+	r_word=malloc(sizeof(tnode));
 	r_word->next=NULL;
 	
 	while(b->dat[*i] != '\"' && b->dat[*i] != '\n' && *i < b->size-1) {
