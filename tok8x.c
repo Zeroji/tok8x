@@ -456,7 +456,6 @@ void free_tlist(tnode *list_head) {
 		temp=list_head;
 		list_head=list_head->next;
 		free_tnode(temp);
-		
 	}
 }
 
@@ -465,8 +464,7 @@ void free_wlist(wnode *list_head) {
 	while(list_head) {
 		temp=list_head;
 		list_head=list_head->next;
-		free_wnode(temp);
-		
+		free_wnode(temp);		
 	}
 }
 

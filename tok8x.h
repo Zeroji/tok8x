@@ -55,7 +55,7 @@ typedef enum t_set {
 typedef struct token {
 	uint8_t b_first;
 	uint8_t b_second;
-	char name[16];
+	char name[20];
 } token;
 
 /* struct for storing tokens in linked list. for single-byte
@@ -63,7 +63,7 @@ typedef struct token {
 typedef struct tnode {
 	uint8_t b_first;
 	uint8_t b_second;
-	char name[16];
+	char name[20];
 	struct tnode *next;
 } tnode;
 
