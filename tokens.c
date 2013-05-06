@@ -693,6 +693,7 @@ token t_basic[] = {
 	{ 0xCC, NONE, "tanh(" },
 	{ 0xCD, NONE, "tanh^-1(" },
 	{ 0xCE, NONE, "If " },
+	{ 0xCF, NONE, "Then" },
 	{ 0xD0, NONE, "Else" },
 	{ 0xD1, NONE, "While " },
 	{ 0xD2, NONE, "Repeat " },
