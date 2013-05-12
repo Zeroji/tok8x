@@ -206,11 +206,11 @@ int main(int argc, char **argv) {
 			i_buffer.name=malloc(sizeof(a_ifilename));
 			strcpy(i_buffer.name, a_ifilename);
 		} else {
-			i_buffer.name=malloc(sizeof(a_ifilename)-(i_swapbuffer-a_ifilename)-1);
+			i_buffer.name=malloc(strlen(a_ifilename)-(i_swapbuffer-a_ifilename));
 			strcpy(i_buffer.name, i_swapbuffer+1);
-			i_buffer.bpath=malloc(i_swapbuffer-a_ifilename+1);
+			i_buffer.bpath=malloc(i_swapbuffer-a_ifilename+2);
 			strncpy(i_buffer.bpath, a_ifilename, i_swapbuffer-a_ifilename+1);
-		}		
+		}
 		
 		i_file=fopen(a_ifilename, "r");
 		if(!i_file) {

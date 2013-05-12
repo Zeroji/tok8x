@@ -15,7 +15,7 @@ tnode* parse(int set, buffer *b, int strip_cruft, int ignore_errors) {
 	//~ b=define(b);
 	if(!b)
 		return NULL;
-		
+			
 	t=tokenise(set, b, strip_cruft, ignore_errors);
 	
 	//~ t=conditional(t);
