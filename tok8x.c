@@ -67,7 +67,7 @@ int main(int argc, char **argv) {
 		}
 		
 		if( !(strcmp(argv[i], "-h") && strcmp(argv[i], "--help") )) {
-			fprintf(stderr, usage_message, argv[0]);
+			fprintf(stderr, usage_message, argv[0], argv[0]);
 			fprintf(stderr, help_message);
 			return 0;
 		}

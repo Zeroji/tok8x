@@ -9,9 +9,6 @@
 tnode* parse(int set, buffer *b, int strip_cruft, int ignore_errors) {
 	tnode *t;
 
-	if(!b) {
-		return NULL;
-	}
 	//~ b=define(b);
 	if(!b)
 		return NULL;
