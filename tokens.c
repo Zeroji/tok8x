@@ -303,6 +303,7 @@ token t_basic[] = {
 	{ 0x6F, NONE, "!=" },
 	{ 0x70, NONE, "+" },
 	{ 0x71, NONE, "-" },
+	{ 0x71, NONE, "\-" }, /* included to allow typing -> rather than → */
 	{ 0x72, NONE, "Ans" },
 	{ 0x73, NONE, "Fix " },
 	{ 0x74, NONE, "Horiz" },
