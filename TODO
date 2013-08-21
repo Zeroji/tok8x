@@ -25,13 +25,11 @@
 
 * complete pipeline support
 
-------------------[ TODO ]------------------
-
 * add a token set to mimic the actual
 * appearance as closely as possible (e.g.
 * using λ rather than lamdba)
-		||
-		VV
+
+------------------[ TODO ]------------------
 
 * add preprocessor directives (##include,
 * ##define, and ##if [##else] ##end)
