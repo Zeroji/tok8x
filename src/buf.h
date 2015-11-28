@@ -1,5 +1,5 @@
-#ifndef BUF_H
-#define BUF_H
+#ifndef TOK8X_BUF_H
+#define TOK8X_BUF_H
 
 #include <stdio.h>
 #include <string.h>
