@@ -20,6 +20,7 @@ void buf_push_nbyte(buf_t *b, uint8_t *y, int n);
 
 /* read in a buffer from a file or stream */
 void buf_read(buf_t *b, FILE *f);
+void buf_write(buf_t *b, FILE *f);
 
 buf_t* buf_new(void);
 void buf_free(buf_t *b);

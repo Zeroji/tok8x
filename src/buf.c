@@ -44,6 +44,15 @@ void buf_read(buf_t *b, FILE *f)
 	}
 }
 
+void buf_write(buf_t *b, FILE *f)
+{
+	EXIT_NULL(f);
+	EXIT_NULL(b);
+
+	fwrite(b->buf_content, sizeof(uint8_t),
+			b->buf_content_size, f);
+}
+
 buf_t* buf_new(void)
 {
 	buf_t *b = malloc(sizeof(buf_t));

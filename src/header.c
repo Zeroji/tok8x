@@ -26,7 +26,7 @@ struct variable_entry_s {
 	/* on-calc program inserted here */
 };
 
-buf_t* header_pack_buf(buf_t *bin, char *name, bool archived)
+buf_t* header_pack_buf(buf_t *bin, uint8_t name[8], bool archived)
 {
 	buf_t *bout;
 	int i;
@@ -50,13 +50,14 @@ buf_t* header_pack_buf(buf_t *bin, char *name, bool archived)
 	EXIT_NULL(bout);
 
 	/* calc header.length */
-	header.length = 17+(bin->buf_content_size);
+	header.length = 0x11+0x02+(bin->buf_content_size);
 
 	/* set variable_entry.(length|length_dupe) */
-	variable_entry.length = bin->buf_content_size;
+	variable_entry.length = bin->buf_content_size+0x02;
+	variable_entry.length_dupe = bin->buf_content_size+0x02;
 
 	/* set variable_entry.name */
-	memcpy(variable_entry.name, (unsigned char*)name, 8);
+	memcpy(variable_entry.name, name, 8);
 
 	/* set variable_entry.archived */
 	if(archived)
@@ -68,35 +69,35 @@ buf_t* header_pack_buf(buf_t *bin, char *name, bool archived)
 	buf_push_nbyte(bout, header.sig1, 8);
 	buf_push_nbyte(bout, header.sig2, 3);
 	buf_push_nbyte(bout, header.comment, 42);
-	buf_push_byte(bout, header.length >> 8);
-	buf_push_byte(bout, header.length & 0xFF);
+	buf_push_byte(bout, (uint8_t)(header.length & 0xFF) );
+	buf_push_byte(bout, (uint8_t)(header.length >> 8) );
 
 	/* push variable_entry */
-	buf_push_byte(bout, variable_entry.sig >> 8);
-	buf_push_byte(bout, variable_entry.sig & 0xFF);
-	buf_push_byte(bout, variable_entry.length >> 8);
-	buf_push_byte(bout, variable_entry.length & 0xFF);
+	buf_push_byte(bout, (uint8_t)(variable_entry.sig & 0xFF) );
+	buf_push_byte(bout, (uint8_t)(variable_entry.sig >> 8) );
+	buf_push_byte(bout, (uint8_t)(variable_entry.length & 0xFF) );
+	buf_push_byte(bout, (uint8_t)(variable_entry.length >> 8) );
 	buf_push_byte(bout, variable_entry.type);
 	buf_push_nbyte(bout, variable_entry.name, 8);
 	buf_push_byte(bout, variable_entry.version);
 	buf_push_byte(bout, variable_entry.archived);
-	buf_push_byte(bout, variable_entry.length_dupe >> 8);
-	buf_push_byte(bout, variable_entry.length_dupe & 0xFF);
+	buf_push_byte(bout, (uint8_t)(variable_entry.length_dupe & 0xFF) );
+	buf_push_byte(bout, (uint8_t)(variable_entry.length_dupe >> 8) );
 
 	/* push bin */
-	buf_push_byte(bout, bin->buf_content_size >> 8);
-	buf_push_byte(bout, bin->buf_content_size & 0xFF);
+	buf_push_byte(bout, (uint8_t)(bin->buf_content_size & 0xFF) );
+	buf_push_byte(bout, (uint8_t)(bin->buf_content_size >> 8) );
 	buf_push_nbyte(bout, bin->buf_content,
 			bin->buf_content_size);
 
 	/* calc header.checksum */
 	header.checksum = 0x0000;
-	for(i = 0; i < bin->buf_content_size; i++)
-		header.checksum += bin->buf_content[i];
+	for(i = 0x37; i < bout->buf_content_size; i++)
+		header.checksum += bout->buf_content[i];
 
 	/* push header.checksum */
-	buf_push_byte(bout, header.checksum >> 8);
-	buf_push_byte(bout, header.checksum & 0xFF);
+	buf_push_byte(bout, (uint8_t)(header.checksum & 0xFF) );
+	buf_push_byte(bout, (uint8_t)(header.checksum >> 8) );
 
 	return bout;
 }
