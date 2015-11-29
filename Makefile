@@ -1,6 +1,8 @@
 CC=gcc
-CFLAGS=-Wall
-LDFLAGS=-Wall
+CFLAGS=-Wall -O2
+CFLAGSDEBUG=-Wall -Wunreachable-code -ggdb3 -O0 -DDEBUG
+LDFLAGS=-Wall -O2
+LDFLAGSDEBUG=-Wall -Wunreachable-code -ggdb3 -O0 -DDEBUG
 SRCDIR=./src
 OBJDIR=./obj
 SRC=$(wildcard $(SRCDIR)/*.c)
@@ -20,5 +22,9 @@ $(OBJDIR):
 
 clean:
 	rm -rf $(OBJDIR) $(BIN)
+
+debug: CFLAGS=$(CFLAGSDEBUG)
+debug: LDFLAGS=$(LDFLAGSDEBUG)
+debug: all
 
 new: clean all
