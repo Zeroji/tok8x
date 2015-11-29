@@ -1,8 +1,5 @@
 #include "tok.h"
 
-/* i should probably be using trees here
- * to speed up search times, but meh */
-
 tok_t t_basic[] = {
 	{ 0x01, NONE, ">DMS" },
 	{ 0x02, NONE, ">Dec" },
@@ -1060,6 +1057,8 @@ tok_t t_pretty_grammer[] = {
 	{ 0x03, NONE, "►lFactor" },
 };
 
+/* collection arrays to be made visible
+ * externally */
 tok_t *t_lists[T_LIST_COUNT] = {
 	[BASIC] = t_basic,
 	[AXE] = t_axe,

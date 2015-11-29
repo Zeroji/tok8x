@@ -17,6 +17,7 @@ struct buf_s {
 /* append a byte to the end of a buffer */
 void buf_push_byte(buf_t *b, uint8_t y);
 void buf_push_nbyte(buf_t *b, uint8_t *y, int n);
+void buf_push_str(buf_t *b, char *s);
 
 /* read in a buffer from a file or stream */
 void buf_read(buf_t *b, FILE *f);
