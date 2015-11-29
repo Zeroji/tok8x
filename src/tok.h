@@ -11,7 +11,7 @@ struct tok_s {
 	uint8_t b1;
 	uint8_t b2;
 	char name[20];
-	UT_hash_handle hh;
+	UT_hash_handle hh1, hh2, hhs;
 };
 
 typedef enum {
