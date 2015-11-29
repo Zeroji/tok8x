@@ -1,29 +1,28 @@
 #include "buf.h"
 
-void buf_push_char(buf_t *b, char c)
+void buf_push_byte(buf_t *b, uint8_t y)
 {
 	EXIT_NULL(b);
 
 	/* increase buf_size if necessary */
 	if(b->buf_content_size+1 == b->buf_size) {
-		b->buf_content = realloc(b->buf_content, b->buf_size*2*sizeof(char));
+		b->buf_content = realloc(b->buf_content, b->buf_size*2*sizeof(uint8_t));
 		EXIT_NULL(b->buf_content);
 		b->buf_size *= 2;
 	}
 
-	b->buf_content[b->buf_content_size] = c;
+	b->buf_content[b->buf_content_size] = y;
 	b->buf_content_size++;
 }
 
-void buf_push_str(buf_t *b, char *s)
+void buf_push_nbyte(buf_t *b, uint8_t *y, int n)
 {
 	int i;
 
-	EXIT_NULL(s);
 	EXIT_NULL(b);
 
-	for(i = 0; i < strlen(s); i++) {
-		buf_push_char(b, s[i]);
+	for(i = 0; i < n; i++) {
+		buf_push_byte(b, y[i]);
 	}
 }
 
@@ -41,7 +40,7 @@ void buf_read(buf_t *b, FILE *f)
 		if(c == EOF)
 			break;
 
-		buf_push_char(b, c);
+		buf_push_byte(b, (uint8_t)c);
 	}
 }
 
@@ -50,7 +49,7 @@ buf_t* buf_new(void)
 	buf_t *b = malloc(sizeof(buf_t));
 	EXIT_NULL(b);
 
-	b->buf_content = malloc(32*sizeof(char));
+	b->buf_content = malloc(32*sizeof(uint8_t));
 	EXIT_NULL(b->buf_content);
 	b->buf_size = 32;
 	b->buf_content_size = 0;
