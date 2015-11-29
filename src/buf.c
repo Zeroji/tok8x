@@ -1,6 +1,6 @@
 #include "buf.h"
 
-void buf_push_char(char c, buf_t *b)
+void buf_push_char(buf_t *b, char c)
 {
 	EXIT_NULL(b);
 
@@ -15,7 +15,7 @@ void buf_push_char(char c, buf_t *b)
 	b->buf_content_size++;
 }
 
-void buf_push_str(char *s, buf_t *b)
+void buf_push_str(buf_t *b, char *s)
 {
 	int i;
 
@@ -23,11 +23,11 @@ void buf_push_str(char *s, buf_t *b)
 	EXIT_NULL(b);
 
 	for(i = 0; i < strlen(s); i++) {
-		buf_push_char(s[i], b);
+		buf_push_char(b, s[i]);
 	}
 }
 
-void buf_read(FILE *f, buf_t *b)
+void buf_read(buf_t *b, FILE *f)
 {
 	char c;
 
@@ -41,7 +41,7 @@ void buf_read(FILE *f, buf_t *b)
 		if(c == EOF)
 			break;
 
-		buf_push_char(c, b);
+		buf_push_char(b, c);
 	}
 }
 

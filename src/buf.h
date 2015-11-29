@@ -14,11 +14,11 @@ struct buf_s {
 };
 
 /* append a character to the end of a buffer */
-void buf_push_char(char c, buf_t *b);
-void buf_push_str(char *s, buf_t *b);
+void buf_push_char(buf_t *b, char c);
+void buf_push_str(buf_t *b, char *s);
 
 /* read in a buffer from a file or stream */
-void buf_read(FILE *f, buf_t *b);
+void buf_read(buf_t *b, FILE *f,);
 
 buf_t* buf_new(void);
 void buf_free(buf_t *b);
