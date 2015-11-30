@@ -1059,7 +1059,7 @@ tok_t t_pretty_grammer[] = {
 
 /* collection arrays to be made visible
  * externally */
-tok_t *t_lists[T_LIST_COUNT] = {
+tok_t *t_lists[LIST_COUNT] = {
 	[BASIC] = t_basic,
 	[AXE] = t_axe,
 	[GRAMMER] = t_grammer,
@@ -1068,7 +1068,7 @@ tok_t *t_lists[T_LIST_COUNT] = {
 	[PRETTY_GRAMMER] = t_pretty_grammer,
 };
 
-int t_list_lengths[T_LIST_COUNT] = {
+int t_list_lengths[LIST_COUNT] = {
 	[BASIC] = (int)(sizeof(t_basic)/sizeof(tok_t)),
 	[AXE] = (int)(sizeof(t_axe)/sizeof(tok_t)),
 	[GRAMMER] = (int)(sizeof(t_grammer)/sizeof(tok_t)),
@@ -1079,28 +1079,34 @@ int t_list_lengths[T_LIST_COUNT] = {
 
 /* list of values for determining, when converting
  * from tokens to plaintext, if the second byte
- * should be considered */
-uint8_t t_2byte_indicators[] = {
+ * should be considered. not using uthash because
+ * this is more efficient */
+static bool t_2byte_indicators[0xFF] = {
 	/* Matrices */
-	0x5C,
+	[0x5C] = true,
 	/* Lists */
-	0x5D,
+	[0x5D] = true,
 	/* Equations */
-	0x5E,
+	[0x5E] = true,
 	/* Pictures */
-	0x60,
+	[0x60] = true,
 	/* GDBs */
-	0x61,
+	[0x61] = true,
 	/* Strings */
-	0xAA,
+	[0xAA] = true,
 	/* Statistics */
-	0x62,
+	[0x62] = true,
 	/* Window and Finance */
-	0x63,
+	[0x63] = true,
 	/* Graph Format */
-	0x7E,
+	[0x7E] = true,
 	/* Miscellaneous */
-	0xBB,
+	[0xBB] = true,
 	/* 84+ only */
-	0xEF
+	[0xEF] = true,
 };
+
+bool t_is2byte(uint8_t y)
+{
+	return t_2byte_indicators[y];
+}
