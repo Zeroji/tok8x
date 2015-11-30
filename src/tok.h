@@ -19,7 +19,7 @@ struct tok_s {
 	char name[TOKLEN];
 	tok_t *subhash;
 	bool is_subhash;
-	UT_hash_handle hht, hhs;
+	UT_hash_handle hhb, hhs;
 };
 
 typedef enum {

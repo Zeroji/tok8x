@@ -57,7 +57,7 @@ static hash_t* hash_init_byte_sub(t_list_t list)
 		if( t_is2byte(t_lists[list][i].b1) ) {
 			/* check if the sub-hash exists and,
 			 * if not, create and add it */
-			HASH_FIND(hht, h, (&(t_lists[list][i].b1)),
+			HASH_FIND(hhb, h, (&(t_lists[list][i].b1)),
 					sizeof(uint8_t), tmp);
 
 			if(tmp == NULL) {
@@ -65,15 +65,15 @@ static hash_t* hash_init_byte_sub(t_list_t list)
 				tmp->b1 = t_lists[list][i].b1;
 				tmp->is_subhash = true;
 				tmp->subhash = NULL;
-				HASH_ADD(hht, h, b1, sizeof(uint8_t), tmp);
+				HASH_ADD(hhb, h, b1, sizeof(uint8_t), tmp);
 			}
 
 			/* add the 2byte tok to the subhash */
-			HASH_ADD(hht, tmp->subhash, b2, sizeof(uint8_t),
+			HASH_ADD(hhb, tmp->subhash, b2, sizeof(uint8_t),
 					(&(t_lists[list][i])) );
 		/* if not 2byte */
 		} else {
-			HASH_ADD(hht, h, b1, sizeof(uint8_t), (&(t_lists[list][i])) );
+			HASH_ADD(hhb, h, b1, sizeof(uint8_t), (&(t_lists[list][i])) );
 		}
 	}
 
@@ -106,20 +106,20 @@ static void hash_free(hash_t *h, bool is_tok)
 
 	EXIT_NULL(h);
 
-	/* have to split these up because hht/hhs are literal names */
+	/* have to split these up because hhb/hhs are literal names */
 	if(is_tok) {
-		HASH_ITER(hht, h, current1, tmp1) {
+		HASH_ITER(hhb, h, current1, tmp1) {
 			if(current1->is_subhash) {
 				puts("2 - entering subhash");
-				HASH_ITER(hht, current1->subhash, current2, tmp2) {
+				HASH_ITER(hhb, current1->subhash, current2, tmp2) {
 					printf("2 - deleting %s\n", current2->name);
-					HASH_DELETE(hht, current1->subhash, current2);
+					HASH_DELETE(hhb, current1->subhash, current2);
 				}
-				HASH_DELETE(hht, h, current1);
+				HASH_DELETE(hhb, h, current1);
 				free(current1);
 			} else {
 				printf("1 - deleting %s\n", current1->name);
-				HASH_DELETE(hht, h, current1);
+				HASH_DELETE(hhb, h, current1);
 			}
 		}
 	} else {
