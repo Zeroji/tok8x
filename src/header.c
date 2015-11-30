@@ -50,11 +50,11 @@ buf_t* header_pack_buf(buf_t *bin, uint8_t name[8], bool archived)
 	EXIT_NULL(bout);
 
 	/* calc header.length */
-	header.length = 0x11+0x02+(bin->buf_content_size);
+	header.length = 0x11+0x02+(bin->content_size);
 
 	/* set variable_entry.(length|length_dupe) */
-	variable_entry.length = bin->buf_content_size+0x02;
-	variable_entry.length_dupe = bin->buf_content_size+0x02;
+	variable_entry.length = bin->content_size+0x02;
+	variable_entry.length_dupe = bin->content_size+0x02;
 
 	/* set variable_entry.name */
 	memcpy(variable_entry.name, name, 8);
@@ -85,15 +85,15 @@ buf_t* header_pack_buf(buf_t *bin, uint8_t name[8], bool archived)
 	buf_push_byte(bout, (uint8_t)(variable_entry.length_dupe >> 8) );
 
 	/* push bin */
-	buf_push_byte(bout, (uint8_t)(bin->buf_content_size & 0xFF) );
-	buf_push_byte(bout, (uint8_t)(bin->buf_content_size >> 8) );
-	buf_push_nbyte(bout, bin->buf_content,
-			bin->buf_content_size);
+	buf_push_byte(bout, (uint8_t)(bin->content_size & 0xFF) );
+	buf_push_byte(bout, (uint8_t)(bin->content_size >> 8) );
+	buf_push_nbyte(bout, bin->content,
+			bin->content_size);
 
 	/* calc header.checksum */
 	header.checksum = 0x0000;
-	for(i = 0x37; i < bout->buf_content_size; i++)
-		header.checksum += bout->buf_content[i];
+	for(i = 0x37; i < bout->content_size; i++)
+		header.checksum += bout->content[i];
 
 	/* push header.checksum */
 	buf_push_byte(bout, (uint8_t)(header.checksum & 0xFF) );

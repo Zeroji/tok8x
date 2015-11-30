@@ -9,9 +9,9 @@
 /* contains input file content in mem */
 typedef struct buf_s buf_t;
 struct buf_s {
-	uint8_t *buf_content;
-	unsigned buf_size;
-	unsigned buf_content_size;
+	uint8_t *content;
+	unsigned size;
+	unsigned content_size;
 };
 
 /* append a byte to the end of a buffer */
