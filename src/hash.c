@@ -36,6 +36,7 @@ hash_pair_t* hash_init_str(t_list_t list, bool pretty)
 	hp->standard = NULL;
 	hp->pretty = NULL;
 	hp->list = list;
+	hp->is_tok = false;
 
 	hp->standard = hash_init_str_sub(list);
 
@@ -88,6 +89,7 @@ hash_pair_t* hash_init_byte(t_list_t list, bool pretty)
 	hp->standard = NULL;
 	hp->pretty = NULL;
 	hp->list = list;
+	hp->is_tok = true;
 
 	hp->standard = hash_init_byte_sub(list);
 
@@ -98,9 +100,33 @@ hash_pair_t* hash_init_byte(t_list_t list, bool pretty)
 	return hp;
 }
 
-void hash_free(hash_t *h)
+static void hash_free(hash_t *h, bool is_tok)
 {
+	tok_t *current1, *current2, *tmp1, *tmp2;
 
+	EXIT_NULL(h);
+
+	/* have to split these up because hht/hhs are literal names */
+	if(is_tok) {
+		HASH_ITER(hht, h, current1, tmp1) {
+			if(current1->is_subhash) {
+				puts("2 - entering subhash");
+				HASH_ITER(hht, current1->subhash, current2, tmp2) {
+					printf("2 - deleting %s\n", current2->name);
+					HASH_DELETE(hht, current1->subhash, current2);
+				}
+				HASH_DELETE(hht, h, current1);
+				free(current1);
+			} else {
+				printf("1 - deleting %s\n", current1->name);
+				HASH_DELETE(hht, h, current1);
+			}
+		}
+	} else {
+		HASH_ITER(hhs, h, current1, tmp1) {
+			HASH_DELETE(hhs, h, current1);
+		}
+	}
 }
 
 hash_pair_t* hash_pair_new(void)
@@ -112,7 +138,15 @@ hash_pair_t* hash_pair_new(void)
 	return hp;
 }
 
-void hash_pair_free(hash_pair_t *h)
+void hash_pair_free(hash_pair_t *hp)
 {
+	EXIT_NULL(hp);
+	EXIT_NULL(hp->standard);
 
+	hash_free(hp->standard, hp->is_tok);
+
+	if(hp->pretty != NULL)
+		hash_free(hp->pretty, hp->is_tok);
+
+	free(hp);
 }

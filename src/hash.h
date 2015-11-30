@@ -20,9 +20,7 @@ struct hash_pair_s {
 hash_pair_t* hash_init_str(t_list_t list, bool pretty);
 hash_pair_t* hash_init_byte(t_list_t list, bool pretty);
 
-void hash_free(hash_t *h);
-
 hash_pair_t* hash_pair_new(void);
-void hash_pair_free(hash_pair_t *h);
+void hash_pair_free(hash_pair_t *hp);
 
 #endif
