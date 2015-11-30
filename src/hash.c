@@ -110,15 +110,12 @@ static void hash_free(hash_t *h, bool is_tok)
 	if(is_tok) {
 		HASH_ITER(hhb, h, current1, tmp1) {
 			if(current1->is_subhash) {
-				puts("2 - entering subhash");
 				HASH_ITER(hhb, current1->subhash, current2, tmp2) {
-					printf("2 - deleting %s\n", current2->name);
 					HASH_DELETE(hhb, current1->subhash, current2);
 				}
 				HASH_DELETE(hhb, h, current1);
 				free(current1);
 			} else {
-				printf("1 - deleting %s\n", current1->name);
 				HASH_DELETE(hhb, h, current1);
 			}
 		}
