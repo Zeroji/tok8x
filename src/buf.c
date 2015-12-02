@@ -38,11 +38,11 @@ void buf_push_nbyte(buf_t *b, uint8_t *y, int n)
 	}
 }
 
-void buf_read(buf_t *b, FILE *f)
+buf_t* buf_read(FILE *f)
 {
 	char c;
+	buf_t *b = buf_new();
 
-	EXIT_NULL(f);
 	EXIT_NULL(b);
 
 	for(;;) {
@@ -54,6 +54,8 @@ void buf_read(buf_t *b, FILE *f)
 
 		buf_push_byte(b, (uint8_t)c);
 	}
+
+	return b;
 }
 
 void buf_write(buf_t *b, FILE *f)
