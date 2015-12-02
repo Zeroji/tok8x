@@ -8,9 +8,9 @@ static int name_sort(tok_t *a, tok_t *b)
 	lb = strlen(b->name);
 
 	if(la > lb)
-		return -1;
-	if(la < lb)
 		return 1;
+	if(la < lb)
+		return -1;
 	return strcmp(a->name, b->name);
 }
 
