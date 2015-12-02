@@ -101,3 +101,15 @@ buf_t* header_pack_buf(buf_t *bin, uint8_t name[8], bool archived)
 
 	return bout;
 }
+
+buf_t* header_unpack_buf(buf_t *bin)
+{
+	buf_t *bout = buf_new();
+
+	EXIT_NULL(bout);
+
+	buf_push_nbyte(bout, (bin->content) + 0x4A,
+			(bin->content_size) - 0x4C);
+
+	return bout;
+}
