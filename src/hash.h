@@ -2,8 +2,8 @@
 #define	TOK8X_HASH_H
 
 #include <uthash.h>
-#include "tok.h"
 #include "err.h"
+#include "tok.h"
 
 typedef tok_t hash_t;
 
@@ -17,8 +17,8 @@ struct hash_pair_s {
 	hash_t *pretty;
 };
 
-hash_pair_t* hash_init_str(t_list_t list, bool pretty);
 hash_pair_t* hash_init_byte(t_list_t list, bool pretty);
+hash_pair_t* hash_init_str(t_list_t list);
 
 hash_pair_t* hash_pair_new(void);
 void hash_pair_free(hash_pair_t *hp);

@@ -15,6 +15,17 @@ void buf_push_byte(buf_t *b, uint8_t y)
 	b->content_size++;
 }
 
+void buf_push_nbyte(buf_t *b, uint8_t *y, int n)
+{
+	int i;
+
+	EXIT_NULL(b);
+
+	for(i = 0; i < n; i++) {
+		buf_push_byte(b, y[i]);
+	}
+}
+
 void buf_push_str(buf_t *b, char *s)
 {
 	int i;
@@ -24,17 +35,6 @@ void buf_push_str(buf_t *b, char *s)
 
 	for(i = 0; i < strlen(s); i++) {
 		buf_push_byte(b, (uint8_t)(s[i]) );
-	}
-}
-
-void buf_push_nbyte(buf_t *b, uint8_t *y, int n)
-{
-	int i;
-
-	EXIT_NULL(b);
-
-	for(i = 0; i < n; i++) {
-		buf_push_byte(b, y[i]);
 	}
 }
 

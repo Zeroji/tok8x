@@ -1,8 +1,8 @@
 #ifndef	TOK8X_ERR_H
 #define	TOK8X_ERR_H
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #ifdef DEBUG /* DEBUG */
 

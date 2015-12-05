@@ -1,52 +1,5 @@
 #include "hash.h"
 
-static int name_sort(tok_t *a, tok_t *b)
-{
-	int la, lb;
-
-	la = strlen(a->name);
-	lb = strlen(b->name);
-
-	if(la > lb)
-		return 1;
-	if(la < lb)
-		return -1;
-	return strcmp(a->name, b->name);
-}
-
-static hash_t* hash_init_str_sub(t_list_t list)
-{
-	int i;
-	hash_t *h = NULL;
-
-	for(i = 0; i < t_list_lengths[list]; i++)
-		HASH_ADD(hhs, h, name, TOKLEN*sizeof(char), (&(t_lists[list][i])) );
-
-	HASH_SRT(hhs, h, name_sort);
-
-	return h;
-}
-
-hash_pair_t* hash_init_str(t_list_t list, bool pretty)
-{
-	hash_pair_t *hp = hash_pair_new();
-
-	EXIT_NULL(hp);
-	
-	hp->standard = NULL;
-	hp->pretty = NULL;
-	hp->list = list;
-	hp->is_tok = false;
-
-	hp->standard = hash_init_str_sub(list);
-
-	if(pretty) {
-		hp->pretty = hash_init_str_sub(list+(LIST_COUNT / 2));
-	}
-
-	return hp;
-}
-
 static hash_t* hash_init_byte_sub(t_list_t list)
 {
 	int i;
@@ -96,6 +49,50 @@ hash_pair_t* hash_init_byte(t_list_t list, bool pretty)
 	if(pretty) {
 		hp->pretty = hash_init_byte_sub(list+(LIST_COUNT / 2));
 	}
+
+	return hp;
+}
+
+static int name_sort(tok_t *a, tok_t *b)
+{
+	int la, lb;
+
+	la = strlen(a->name);
+	lb = strlen(b->name);
+
+	if(la > lb)
+		return -1;
+	if(la < lb)
+		return 1;
+	return strcmp(a->name, b->name);
+}
+
+static hash_t* hash_init_str_sub(t_list_t list)
+{
+	int i;
+	hash_t *h = NULL;
+
+	for(i = 0; i < t_list_lengths[list]; i++) {
+		HASH_ADD(hhs, h, name, TOKLEN*sizeof(char), (&(t_lists[list][i])) );
+	}
+
+	HASH_SRT(hhs, h, name_sort);
+
+	return h;
+}
+
+hash_pair_t* hash_init_str(t_list_t list)
+{
+	hash_pair_t *hp = hash_pair_new();
+
+	EXIT_NULL(hp);
+	
+	hp->standard = NULL;
+	hp->pretty = NULL;
+	hp->list = list;
+	hp->is_tok = false;
+
+	hp->standard = hash_init_str_sub(list);
 
 	return hp;
 }

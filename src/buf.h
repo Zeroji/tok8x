@@ -1,8 +1,8 @@
 #ifndef TOK8X_BUF_H
 #define TOK8X_BUF_H
 
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 #include "err.h"
 

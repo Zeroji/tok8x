@@ -1,8 +1,8 @@
 #ifndef TOK8X_TOK_H
 #define TOK8X_TOK_H
 
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <uthash.h>
 
 #define NONE 0xFF
@@ -17,6 +17,7 @@ struct tok_s {
 	uint8_t b1;
 	uint8_t b2;
 	char name[TOKLEN];
+	bool make_safe;
 	tok_t *subhash;
 	bool is_subhash;
 	UT_hash_handle hhb, hhs;

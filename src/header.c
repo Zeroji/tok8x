@@ -108,8 +108,8 @@ buf_t* header_unpack_buf(buf_t *bin)
 
 	EXIT_NULL(bout);
 
-	buf_push_nbyte(bout, (bin->content) + 0x4A,
-			(bin->content_size) - 0x4C);
+	buf_push_nbyte(bout, (bin->content) + HEADER_SIZE,
+			(bin->content_size) - (HEADER_SIZE + 0x02));
 
 	return bout;
 }
