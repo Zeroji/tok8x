@@ -26,6 +26,6 @@ tok_t* parse_str(buf_t *b, parse_context_t *pc, hash_pair_t *hp, bool single);
  * be converted back and forth without worrying about what were originally
  * literal strings being interpreted as tokens */
 buf_t* parse_buf_byte(buf_t *b, t_list_t list, char *fname, bool pretty, bool safe);
-buf_t* parse_buf_str (buf_t *b, t_list_t list, char *fname);
+buf_t* parse_buf_str(buf_t *b, t_list_t list, char *fname);
 
 #endif
