@@ -1,6 +1,7 @@
 #ifndef	TOK8X_ERR_H
 #define	TOK8X_ERR_H
 
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -18,7 +19,7 @@
 	do { \
 		if((val) == NULL) { \
 			PRINT_EXIT_CONTEXT(); \
-			exit(1); \
+			exit(errno); \
 		} \
 	} while(0)
 
@@ -26,7 +27,7 @@
 	do { \
 		if(ferror(file)) { \
 			PRINT_EXIT_CONTEXT(); \
-			exit(1); \
+			exit(errno); \
 		} \
 	} while(0)
 
@@ -35,14 +36,14 @@
 #define EXIT_NULL(val) \
 	do { \
 		if((val) == NULL) { \
-			exit(1); \
+			exit(errno); \
 		} \
 	} while(0)
 
 #define EXIT_FERROR(file) \
 	do { \
 		if(ferror(file)) { \
-			exit(1); \
+			exit(errno); \
 		} \
 	} while(0)
 

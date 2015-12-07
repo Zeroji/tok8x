@@ -23,7 +23,28 @@ of them (currently Axe and Grammer) is included as well.
 OPTIONS
 -------
 
-TODO
+`-h`, `--help`
+  display help dialogue
+
+`-t`, `--token_set`=(*axe*|*basic*|*grammer*)
+  define token set to be used
+
+`-o`, `--output`=*FILENAME*
+  define file to be written (defaults to stdout)
+
+`-n`, `--name`=*NAME*
+  define on-calc name (defaults to 'A')
+
+`-a`, `--archived`
+  generate archived program. valid only with 8xp output
+
+`-p`, `--pretty`
+  use "pretty" output, i.e. unicode approximations that more closely resemble
+  the true appearances. valid only with 8xp input
+
+`-s`, `--strip`
+  strip excess data (comments, spaces, empty lines, etc). valid only with 8xp
+  output
 
 BUGS
 ----

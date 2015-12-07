@@ -1,6 +1,7 @@
 #ifndef	TOK8X_HASH_H
 #define	TOK8X_HASH_H
 
+#include <stdlib.h>
 #include <uthash.h>
 #include "err.h"
 #include "tok.h"

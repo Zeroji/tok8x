@@ -1,4 +1,4 @@
-.TH tok8x 1 "Nov 2015" tok8x "User Manuals"
+.TH tok8x 1 "Dec 2015" tok8x "tok8x"
 .SH NAME
 .PP
 tok8x \- convert between plaintext files and tokenised files for the TI8x series
@@ -17,7 +17,34 @@ of them (currently Axe and Grammer) is included as well.
 
 .SH OPTIONS
 .PP
-TODO
+\fB\fC\-h\fR, \fB\fC\-\-help\fR
+  display help dialogue
+
+.PP
+\fB\fC\-t\fR, \fB\fC\-\-token\_set\fR=(\fIaxe\fP|\fIbasic\fP|\fIgrammer\fP)
+  define token set to be used
+
+.PP
+\fB\fC\-o\fR, \fB\fC\-\-output\fR=\fIFILENAME\fP
+  define file to be written (defaults to stdout)
+
+.PP
+\fB\fC\-n\fR, \fB\fC\-\-name\fR=\fINAME\fP
+  define on\-calc name (defaults to 'A')
+
+.PP
+\fB\fC\-a\fR, \fB\fC\-\-archived\fR
+  generate archived program. valid only with 8xp output
+
+.PP
+\fB\fC\-p\fR, \fB\fC\-\-pretty\fR
+  use "pretty" output, i.e. unicode approximations that more closely resemble
+  the true appearances. valid only with 8xp input
+
+.PP
+\fB\fC\-s\fR, \fB\fC\-\-strip\fR
+  strip excess data (comments, spaces, empty lines, etc). valid only with 8xp
+  output
 
 .SH BUGS
 .PP
