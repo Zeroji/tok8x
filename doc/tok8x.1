@@ -7,10 +7,16 @@
 \fBtok8x\fR \- convert between plaintext files and tokenised files for the TI8x series of calculators
 .
 .SH "SYNOPSIS"
-\fBtok8x\fR [\fIOPTION\fR]\.\.\. [\-i \fIFILE\fR] [\-o \fIFILE\fR]
+\fBtok8x\fR [\fIOPTION\fR]\.\.\. [\fIFILE\fR]\.\.\.
+.
+.br
+\fBtok8x\fR \-i [\-p] [\-t=\fItoken set\fR] [\fITOKEN\fR]\.\.\.
 .
 .SH "DESCRIPTION"
 \fBtok8x\fR is a utility for two\-way conversion between human\-readable text files and TI\'s \.8xp file format for storing TI\-BASIC calculator programs\. This format is also used by several user\-created calculator languages, so support for some of them (currently Axe and Grammer) is included as well\.
+.
+.P
+If no file names are provided, input is read from \fIstdin\fR\.
 .
 .SH "OPTIONS"
 .
@@ -19,12 +25,12 @@
 display help dialogue
 .
 .TP
-\fB\-t\fR, \fB\-\-token_set\fR=(\fIaxe\fR|\fIbasic\fR|\fIgrammer\fR)
-define token set to be used
+\fB\-i\fR, \fB\-\-info\fR
+rather than converting files, return information on one or more tokens provided either as their string names (i\.e\. ">DMS", "Asm(") or their hexadecimal values (i\.e\. "01", "BB6A")\. if none are provided, read from stdin\.
 .
 .TP
-\fB\-i\fR, \fB\-\-input\fR=\fIFILE\fR
-define file to be read (defaults to stdin)
+\fB\-t\fR, \fB\-\-token_set\fR=(\fIaxe\fR|\fIbasic\fR|\fIgrammer\fR)
+define token set to be used
 .
 .TP
 \fB\-o\fR, \fB\-\-output\fR=\fIFILE\fR
@@ -40,7 +46,7 @@ generate archived program (valid only with 8xp output)
 .
 .TP
 \fB\-p\fR, \fB\-\-pretty\fR
-use "pretty" output, i\.e\. unicode approximations that more closely resemble the true appearances (valid only with 8xp input)
+use "pretty" output, i\.e\. unicode approximations that more closely resemble the true appearances (valid only with 8xp input or when printing information)
 .
 .TP
 \fB\-s\fR, \fB\-\-strip\fR
