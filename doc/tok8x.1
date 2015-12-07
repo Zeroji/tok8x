@@ -1,57 +1,53 @@
-.TH tok8x 1 "Dec 2015" tok8x "tok8x"
-.SH NAME
-.PP
-tok8x \- convert between plaintext files and tokenised files for the TI8x series
-of calculators
-
-.SH SYNOPSIS
-.PP
-\fB\fCtok8x\fR [\fIOPTION\fP]... [\fI\-i=FILE\fP] [\fI\-o=FILE\fP]
-
-.SH DESCRIPTION
-.PP
-\fB\fCtok8x\fR is a utility for two\-way conversion between human\-readable text files
-and TI's .8xp file format for storing TI\-BASIC calculator programs. This format
-is also used by several user\-created calculator languages, so support for some
-of them (currently Axe and Grammer) is included as well.
-
-.SH OPTIONS
-.PP
-\fB\fC\-h\fR, \fB\fC\-\-help\fR
-  display help dialogue
-
-.PP
-\fB\fC\-t\fR, \fB\fC\-\-token\_set\fR=(\fIaxe\fP|\fIbasic\fP|\fIgrammer\fP)
-  define token set to be used
-
-.PP
-\fB\fC\-o\fR, \fB\fC\-\-output\fR=\fIFILENAME\fP
-  define file to be written (defaults to stdout)
-
-.PP
-\fB\fC\-n\fR, \fB\fC\-\-name\fR=\fINAME\fP
-  define on\-calc name (defaults to 'A')
-
-.PP
-\fB\fC\-a\fR, \fB\fC\-\-archived\fR
-  generate archived program. valid only with 8xp output
-
-.PP
-\fB\fC\-p\fR, \fB\fC\-\-pretty\fR
-  use "pretty" output, i.e. unicode approximations that more closely resemble
-  the true appearances. valid only with 8xp input
-
-.PP
-\fB\fC\-s\fR, \fB\fC\-\-strip\fR
-  strip excess data (comments, spaces, empty lines, etc). valid only with 8xp
-  output
-
-.SH BUGS
-.PP
-Please report any bugs to 
-\[la]https://github.com/shmibs/tok8x/issues\[ra]
-
-.SH AUTHOR
-.PP
-Katherine Martin 
-\[la]shmibs@shmibbles.me\[ra]
+.\" generated with Ronn/v0.7.3
+.\" http://github.com/rtomayko/ronn/tree/0.7.3
+.
+.TH "TOK8X" "1" "December 2015" "" ""
+.
+.SH "NAME"
+\fBtok8x\fR \- convert between plaintext files and tokenised files for the TI8x series of calculators
+.
+.SH "SYNOPSIS"
+\fBtok8x\fR [\fIOPTION\fR]\.\.\. [\-i \fIFILE\fR] [\-o \fIFILE\fR]
+.
+.SH "DESCRIPTION"
+\fBtok8x\fR is a utility for two\-way conversion between human\-readable text files and TI\'s \.8xp file format for storing TI\-BASIC calculator programs\. This format is also used by several user\-created calculator languages, so support for some of them (currently Axe and Grammer) is included as well\.
+.
+.SH "OPTIONS"
+.
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+display help dialogue
+.
+.TP
+\fB\-t\fR, \fB\-\-token_set\fR=(\fIaxe\fR|\fIbasic\fR|\fIgrammer\fR)
+define token set to be used
+.
+.TP
+\fB\-i\fR, \fB\-\-input\fR=\fIFILE\fR
+define file to be read (defaults to stdin)
+.
+.TP
+\fB\-o\fR, \fB\-\-output\fR=\fIFILE\fR
+define file to be written (defaults to stdout)
+.
+.TP
+\fB\-n\fR, \fB\-\-name\fR=\fINAME\fR
+define on\-calc name (defaults to \'A\'\. valid only with 8xp output)
+.
+.TP
+\fB\-a\fR, \fB\-\-archived\fR
+generate archived program (valid only with 8xp output)
+.
+.TP
+\fB\-p\fR, \fB\-\-pretty\fR
+use "pretty" output, i\.e\. unicode approximations that more closely resemble the true appearances (valid only with 8xp input)
+.
+.TP
+\fB\-s\fR, \fB\-\-strip\fR
+strip excess data (comments, spaces, empty lines, etc\. valid only with 8xp output)
+.
+.SH "BUGS"
+Please report any bugs to https://github\.com/shmibs/tok8x/issues
+.
+.SH "AUTHOR"
+Katherine Martin \fIshmibs@shmibbles\.me\fR
