@@ -38,12 +38,70 @@ void buf_push_str(buf_t *b, char *s)
 	}
 }
 
-buf_t* buf_read(FILE *f)
+bool buf_read(buf_t *b, FILE *f)
 {
 	char c;
-	buf_t *b = buf_new();
+	uint8_t swap[HEADER_SIZE];
+	int i;
+	bool is_8xp;
 
-	EXIT_NULL(b);
+	for(i = 0; i < HEADER_SIZE; i++) {
+		c = getc(f);
+		EXIT_FERROR(f);
+		/* EOF this early means definitely not 8xp */
+		if(c == EOF) {
+			buf_push_nbyte(b, swap, i+1);
+			return false;
+		}
+		swap[i] = (uint8_t)c;
+	}
+
+	/* if 8xp, discard header */
+	if( !memcmp(swap, (uint8_t*)"**TI83F*", 8*sizeof(uint8_t)) ) {
+		is_8xp = true;
+	} else {
+		buf_push_nbyte(b, swap, HEADER_SIZE);
+		is_8xp = false;
+	}
+
+	/* if 8xp, there will be, at fewest, 2 more bytes to be read (the checksum) */
+	if(is_8xp) {
+		c = getc(f);
+		EXIT_FERROR(f);
+		if(c == EOF) {
+			printf("\e[1mtok8x:\e[0m"
+					"\e[1;31merror:\e[0m %s\n",
+					"malformed .8xp input"
+					);
+			exit(EIO);
+		}
+
+		swap[0] = (uint8_t)c;
+		c = getc(f);
+		EXIT_FERROR(f);
+		if(c == EOF) {
+			printf("\e[1mtok8x:\e[0m"
+					"\e[1;31merror:\e[0m %s\n",
+					"malformed .8xp input"
+					);
+			exit(EIO);
+		}
+		swap[1] = (uint8_t)c;
+
+		for(;;) {
+			c = getc(f);
+			EXIT_FERROR(f);
+
+			if(c == EOF)
+				break;
+
+			buf_push_byte(b, swap[0]);
+			swap[0] = swap[1];
+			swap[1] = (uint8_t)c;
+		}
+		
+		return true;
+	}
 
 	for(;;) {
 		c = getc(f);
@@ -55,7 +113,7 @@ buf_t* buf_read(FILE *f)
 		buf_push_byte(b, (uint8_t)c);
 	}
 
-	return b;
+	return false;
 }
 
 void buf_write(buf_t *b, FILE *f)
