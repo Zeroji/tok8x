@@ -1,7 +1,6 @@
-CC=gcc
-CFLAGS=-Wall -O2 $(shell pkg-config --cflags popt)
+CFLAGS+=-Wall -O2 $(shell pkg-config --cflags popt)
 CFLAGSDEBUG=-Wall -Wunreachable-code -ggdb3 -O0 -DDEBUG $(shell pkg-config --cflags popt)
-LDFLAGS=-Wall -O2 $(shell pkg-config --libs popt)
+LDFLAGS+=-Wall -O2 $(shell pkg-config --libs popt)
 LDFLAGSDEBUG=-Wall -Wunreachable-code -ggdb3 -O0 -DDEBUG $(shell pkg-config --libs popt)
 SRCDIR=./src
 OBJDIR=./obj
