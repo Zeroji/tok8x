@@ -11,6 +11,49 @@ enum {
 	OPT_STRIP = 8,
 };
 
+#define OPT_ERR(format, ...) \
+	do { \
+		fprintf(stderr, "\e[1mtok8x:\e[0m "); \
+		fprintf(stderr, "\e[1;31merror:\e[0m " format "\n", ##__VA_ARGS__); \
+		opt_free(o); \
+		poptFreeContext(context); \
+		exit(EINVAL); \
+	} while(0)
+
+const char* set_names[] = {
+	"BASIC",
+	"Axe",
+	"Grammer",
+};
+
+/* returns LIST_COUNT if not found. ensures the string
+ * has proper casing if found */
+static t_list_t list_name2list(char *s)
+{
+	t_list_t l;
+	int i;
+
+	l = BASIC;
+	while(l < LIST_COUNT / 2) {
+		i = 0;
+		while(s[i] != '\0' && set_names[l][i] != '\0') {
+			if( tolower(s[i]) != tolower(set_names[l][i]) ) {
+				break;
+			}
+			i++;
+		}
+
+		if(s[i] == '\0' && set_names[l][i] == '\0') {
+			strcpy(s, set_names[l]);
+			return l;
+		}
+
+		l++;
+	}
+
+	return LIST_COUNT;
+}
+
 opt_t* opt_read(int argc, const char *argv[])
 {
 	int r, i;
@@ -43,7 +86,7 @@ opt_t* opt_read(int argc, const char *argv[])
 			.longName = "token_set",
 			.shortName = 't',
 			.argInfo = POPT_ARG_STRING,
-			.arg = &(o->token_set),
+			.arg = &(o->list_string),
 			.val = OPT_TOKEN_SET,
 			.descrip = "define token set to be used",
 			.argDescrip = "<axe|basic|grammer>"
@@ -101,42 +144,37 @@ opt_t* opt_read(int argc, const char *argv[])
 	while( (r = poptGetNextOpt(context)) != -1) {
 		switch(r) {
 			case OPT_TOKEN_SET:
+				o->list = list_name2list(o->list_string);
+				if(o->list == LIST_COUNT) {
+					OPT_ERR("unrecognised token set \"%s\"",
+							o->list_string
+						   );
+				}
 				break;
 
 			case OPT_INFO:
 				o->info = true;
-				if(o->output || o->name || o->archived || o->strip) {
-					printf("\e[1mtok8x:\e[0m"
-							"\e[1;31merror:\e[0m %s\n",
-							"conflicting arguments"
-							);
+				if(o->output != NULL || o->name != NULL || o->archived
+						|| o->strip) {
+					OPT_ERR("-i cannot be used with -o, -n, -a, or -s");
 				}
 				break;
 
 			case OPT_OUTPUT:
 				if(o->info) {
-					printf("\e[1mtok8x:\e[0m"
-							"\e[1;31merror:\e[0m %s\n",
-							"conflicting arguments"
-							);
+					OPT_ERR("-i cannot be used with -o, -n, -a, or -s");
 				}
 				break;
 
 			case OPT_NAME:
 				if(o->info) {
-					printf("\e[1mtok8x:\e[0m"
-							"\e[1;31merror:\e[0m %s\n",
-							"conflicting arguments"
-							);
+					OPT_ERR("-i cannot be used with -o, -n, -a, or -s");
 				}
 				break;
 
 			case OPT_ARCHIVED:
 				if(o->info) {
-					printf("\e[1mtok8x:\e[0m"
-							"\e[1;31merror:\e[0m %s\n",
-							"conflicting arguments"
-							);
+					OPT_ERR("-i cannot be used with -o, -n, -a, or -s");
 				}
 				o->archived = true;
 				break;
@@ -147,33 +185,23 @@ opt_t* opt_read(int argc, const char *argv[])
 
 			case OPT_STRIP:
 				if(o->info) {
-					printf("\e[1mtok8x:\e[0m"
-							"\e[1;31merror:\e[0m %s\n",
-							"conflicting arguments"
-							);
+					OPT_ERR("-i cannot be used with -o, -n, -a, or -s");
 				}
 				o->strip = true;
 				break;
 
 			default:
 				if(r != OPT_HELP) {
-					printf("\e[1mtok8x:\e[0m"
-							"\e[1;31merror:\e[0m \e[1m%s\e[0m: %s\n",
+					OPT_ERR("\e[1m%s\e[0m: %s",
 							poptBadOption(context, 0),
 							poptStrerror(r)
-							);
-				} else {
-					poptPrintHelp(context, stdout, 0);
+						   );
 				}
 
-				poptFreeContext(context);
-
-				if(r == OPT_HELP)
-					exit(0);
-
+				poptPrintHelp(context, stdout, 0);
 				opt_free(o);
-
-				exit(EINVAL);
+				poptFreeContext(context);
+				exit(0);
 		}
 	}
 
@@ -203,8 +231,8 @@ void opt_free(opt_t *o)
 {
 	int i;
 
-	if(o->token_set != NULL)
-		free(o->token_set);
+	if(o->list_string != NULL)
+		free(o->list_string);
 	
 	if(o->output != NULL)
 		free(o->output);

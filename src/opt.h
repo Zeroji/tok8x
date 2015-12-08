@@ -1,16 +1,19 @@
 #ifndef TOK8X_OPT_H
 #define TOK8X_OPT_H
 
+#include <ctype.h>
 #include <errno.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <popt.h>
 #include "err.h"
+#include "tok.h"
 
 typedef struct opt_s opt_t;
 struct opt_s {
-	char *token_set;
+	char *list_string;
+	t_list_t list;
 	char *output;
 	char *name;
 	bool info;

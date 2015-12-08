@@ -38,12 +38,11 @@ void buf_push_str(buf_t *b, char *s)
 	}
 }
 
-bool buf_read(buf_t *b, FILE *f)
+void buf_read(buf_t *b, FILE *f)
 {
 	char c;
 	uint8_t swap[HEADER_SIZE];
 	int i;
-	bool is_8xp;
 
 	for(i = 0; i < HEADER_SIZE; i++) {
 		c = getc(f);
@@ -51,21 +50,21 @@ bool buf_read(buf_t *b, FILE *f)
 		/* EOF this early means definitely not 8xp */
 		if(c == EOF) {
 			buf_push_nbyte(b, swap, i+1);
-			return false;
+			b->is_8xp = false;
 		}
 		swap[i] = (uint8_t)c;
 	}
 
 	/* if 8xp, discard header */
 	if( !memcmp(swap, (uint8_t*)"**TI83F*", 8*sizeof(uint8_t)) ) {
-		is_8xp = true;
+		b->is_8xp = true;
 	} else {
 		buf_push_nbyte(b, swap, HEADER_SIZE);
-		is_8xp = false;
+		b->is_8xp = false;
 	}
 
 	/* if 8xp, there will be, at fewest, 2 more bytes to be read (the checksum) */
-	if(is_8xp) {
+	if(b->is_8xp) {
 		c = getc(f);
 		EXIT_FERROR(f);
 		if(c == EOF) {
@@ -100,9 +99,10 @@ bool buf_read(buf_t *b, FILE *f)
 			swap[1] = (uint8_t)c;
 		}
 		
-		return true;
+		return;
 	}
 
+	/* if not 8xp, just read what's left */
 	for(;;) {
 		c = getc(f);
 		EXIT_FERROR(f);
@@ -112,8 +112,6 @@ bool buf_read(buf_t *b, FILE *f)
 
 		buf_push_byte(b, (uint8_t)c);
 	}
-
-	return false;
 }
 
 void buf_write(buf_t *b, FILE *f)
