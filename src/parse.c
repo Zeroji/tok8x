@@ -159,7 +159,6 @@ buf_t* parse_buf_byte(buf_t *bin, t_list_t list, char *fname, bool pretty, bool 
 	return bout;
 }
 
-/* TODO */
 static void parse_buf_str_err(buf_t *bin, parse_context_t *pc, char *fname)
 {
 	unsigned int i, j, line_length, offleft, offright, width = 80;
