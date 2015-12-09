@@ -1,7 +1,7 @@
-CFLAGS+=-Wall -O2 $(shell pkg-config --cflags popt)
-CFLAGSDEBUG=-Wall -Wunreachable-code -ggdb3 -O0 -DDEBUG $(shell pkg-config --cflags popt)
-LDFLAGS+=-Wall -O2 $(shell pkg-config --libs popt)
-LDFLAGSDEBUG=-Wall -Wunreachable-code -ggdb3 -O0 -DDEBUG $(shell pkg-config --libs popt)
+CFLAGS+=-Wall -D_XOPEN_SOURCE=700 -O2 $(shell pkg-config --cflags popt)
+CFLAGSDEBUG=-Wall -D_XOPEN_SOURCE=700 -ggdb3 -O0 -DDEBUG $(shell pkg-config --cflags popt)
+LDFLAGS+=-Wall -D_XOPEN_SOURCE=700 -O2 $(shell pkg-config --libs popt)
+LDFLAGSDEBUG=-Wall -D_XOPEN_SOURCE=700 -ggdb3 -O0 -DDEBUG $(shell pkg-config --libs popt)
 SRCDIR=./src
 OBJDIR=./obj
 SRC=$(wildcard $(SRCDIR)/*.c)

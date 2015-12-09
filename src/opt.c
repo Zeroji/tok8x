@@ -8,7 +8,9 @@ enum {
 	OPT_NAME = 5,
 	OPT_ARCHIVED = 6,
 	OPT_PRETTY = 7,
-	OPT_STRIP = 8,
+	OPT_SAFE = 8,
+	OPT_CONDENSE = 9,
+	OPT_EXPAND = 10,
 };
 
 #define OPT_ERR(format, ...) \
@@ -128,12 +130,30 @@ opt_t* opt_read(int argc, const char *argv[])
 			.argDescrip = NULL
 		},
 		{
-			.longName = "strip",
+			.longName = "safe",
 			.shortName = 's',
 			.argInfo = POPT_ARG_NONE,
 			.arg = NULL,
-			.val = OPT_STRIP,
-			.descrip = "strip excess data",
+			.val = OPT_SAFE,
+			.descrip = "insert escapes to avoid ambiguity",
+			.argDescrip = NULL
+		},
+		{
+			.longName = "condense",
+			.shortName = 'c',
+			.argInfo = POPT_ARG_NONE,
+			.arg = NULL,
+			.val = OPT_CONDENSE,
+			.descrip = "strip excess whitespace",
+			.argDescrip = NULL
+		},
+		{
+			.longName = "expand",
+			.shortName = 'e',
+			.argInfo = POPT_ARG_NONE,
+			.arg = NULL,
+			.val = OPT_EXPAND,
+			.descrip = "insert whitespace for readability",
 			.argDescrip = NULL
 		},
 		{ NULL, 0, 0, NULL, 0 }
@@ -146,7 +166,7 @@ opt_t* opt_read(int argc, const char *argv[])
 			case OPT_TOKEN_SET:
 				o->list = list_name2list(o->list_string);
 				if(o->list == LIST_COUNT) {
-					OPT_ERR("unrecognised token set \"%s\"",
+					OPT_ERR("\e[1m-t\e[0m: unrecognised token set \"%s\"",
 							o->list_string
 						   );
 				}
@@ -155,26 +175,29 @@ opt_t* opt_read(int argc, const char *argv[])
 			case OPT_INFO:
 				o->info = true;
 				if(o->output != NULL || o->name != NULL || o->archived
-						|| o->strip) {
-					OPT_ERR("-i cannot be used with -o, -n, -a, or -s");
+						|| o->safe || o->condense || o->expand) {
+					OPT_ERR("-i cannot be used with -o, -n, -a, -s, -c, or -e");
 				}
 				break;
 
 			case OPT_OUTPUT:
 				if(o->info) {
-					OPT_ERR("-i cannot be used with -o, -n, -a, or -s");
+					OPT_ERR("-i cannot be used with -o, -n, -a, -s, -c, or -e");
 				}
 				break;
 
 			case OPT_NAME:
 				if(o->info) {
-					OPT_ERR("-i cannot be used with -o, -n, -a, or -s");
+					OPT_ERR("-i cannot be used with -o, -n, -a, -s, -c, or -e");
+				}
+				if(strlen(o->name) > 8) {
+					OPT_ERR("\e[1m-n\e[0m: name \"%s\" too long", o->name);
 				}
 				break;
 
 			case OPT_ARCHIVED:
 				if(o->info) {
-					OPT_ERR("-i cannot be used with -o, -n, -a, or -s");
+					OPT_ERR("-i cannot be used with -o, -n, -a, -s, -c, or -e");
 				}
 				o->archived = true;
 				break;
@@ -183,11 +206,25 @@ opt_t* opt_read(int argc, const char *argv[])
 				o->pretty = true;
 				break;
 
-			case OPT_STRIP:
+			case OPT_SAFE:
 				if(o->info) {
-					OPT_ERR("-i cannot be used with -o, -n, -a, or -s");
+					OPT_ERR("-i cannot be used with -o, -n, -a, -s, -c, or -e");
 				}
-				o->strip = true;
+				o->safe = true;
+				break;
+
+			case OPT_CONDENSE:
+				if(o->info) {
+					OPT_ERR("-i cannot be used with -o, -n, -a, -s, -c, or -e");
+				}
+				o->condense = true;
+				break;
+
+			case OPT_EXPAND:
+				if(o->info) {
+					OPT_ERR("-i cannot be used with -o, -n, -a, -s, -c, or -e");
+				}
+				o->expand = true;
 				break;
 
 			default:

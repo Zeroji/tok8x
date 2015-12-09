@@ -10,13 +10,16 @@
 \fBtok8x\fR [\fIOPTION\fR]\.\.\. [\fIFILE\fR]\.\.\.
 .
 .br
-\fBtok8x\fR \-i [\-p] [\-t=\fItoken set\fR] [\fITOKEN\fR]\.\.\.
+\fBtok8x\fR \-i [\-p] [\-t=\fItoken set\fR] \fITOKEN\fR\.\.\.
 .
 .SH "DESCRIPTION"
 \fBtok8x\fR is a utility for two\-way conversion between human\-readable text files and TI\'s \.8xp file format for storing TI\-BASIC calculator programs\. This format is also used by several user\-created calculator languages, so support for some of them (currently Axe and Grammer) is included as well\.
 .
 .P
-If no file names are provided, input is read from \fIstdin\fR\.
+By default, input is read for the designated files, or \fIstdin\fR if no file names are provided, converted based on the type of the input data (if input is in 8xp format, output will be plain textl if input is plaintext, output will be 8xp), and written to the designated output file, or \fIstdout\fR if none is provided\. If options are passed which do not apply to the current input and output formats, they will be ignored\.
+.
+.P
+If the \fB\-i\fR option is designated, arguments should be representations of tokens provided either as their string names (i\.e\. ">DMS", "Asm(") or their hexadecimal values (i\.e\. "01", "BB6A")\.
 .
 .SH "OPTIONS"
 .
@@ -26,7 +29,7 @@ display help dialogue
 .
 .TP
 \fB\-i\fR, \fB\-\-info\fR
-rather than converting files, return information on one or more tokens provided either as their string names (i\.e\. ">DMS", "Asm(") or their hexadecimal values (i\.e\. "01", "BB6A")\. if none are provided, read from stdin\.
+rather than converting files, return information on one or more tokens provided either as their string names (i\.e\. ">DMS", "Asm(") or their hexadecimal values (i\.e\. "01", "BB6A")\.
 .
 .TP
 \fB\-t\fR, \fB\-\-token_set\fR=(\fIaxe\fR|\fIbasic\fR|\fIgrammer\fR)
@@ -38,19 +41,27 @@ define file to be written (defaults to stdout)
 .
 .TP
 \fB\-n\fR, \fB\-\-name\fR=\fINAME\fR
-define on\-calc name (defaults to \'A\'\. valid only with 8xp output)
+define on\-calc name (defaults to \'A\'\. affects only 8xp output)
 .
 .TP
 \fB\-a\fR, \fB\-\-archived\fR
-generate archived program (valid only with 8xp output)
+generate archived program (affects only 8xp output)
 .
 .TP
 \fB\-p\fR, \fB\-\-pretty\fR
-use "pretty" output, i\.e\. unicode approximations that more closely resemble the true appearances (valid only with 8xp input or when printing information)
+use "pretty" output, i\.e\. unicode approximations that more closely resemble the true appearances (affects plaintext output or printing information with \-i)
 .
 .TP
-\fB\-s\fR, \fB\-\-strip\fR
-strip excess data (comments, spaces, empty lines, etc\. valid only with 8xp output)
+\fB\-s\fR, \fB\-\-safe\fR
+when outputting to plain text, insert backslashes before single\-character strings which could be misconstrued as the beginning of a token name to ensure they will remain distinct tokens if converted back to 8xp (affects only plaintext output)
+.
+.TP
+\fB\-c\fR, \fB\-\-condense\fR
+strip excess whitespace to reduce on\-calc size (affects only 8xp output)
+.
+.TP
+\fB\-e\fR, \fB\-\-expand\fR
+insert whitespace to make output more easily human readable (affects only plaintext output)
 .
 .SH "BUGS"
 Please report any bugs to https://github\.com/shmibs/tok8x/issues

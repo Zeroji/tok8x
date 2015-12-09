@@ -26,7 +26,7 @@ struct variable_entry_s {
 	/* on-calc program inserted here */
 };
 
-buf_t* header_pack_buf(buf_t *bin, uint8_t name[8], bool archived)
+buf_t* header_pack_buf(buf_t *bin, char *name, bool archived)
 {
 	buf_t *bout;
 	int i;
@@ -57,7 +57,8 @@ buf_t* header_pack_buf(buf_t *bin, uint8_t name[8], bool archived)
 	variable_entry.length_dupe = bin->content_size+0x02;
 
 	/* set variable_entry.name */
-	memcpy(variable_entry.name, name, 8);
+	for(i = 0; i < strlen(name); i++)
+		variable_entry.name[i] = (uint8_t)(name[i]);
 
 	/* set variable_entry.archived */
 	if(archived)

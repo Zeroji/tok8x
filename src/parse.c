@@ -125,14 +125,12 @@ static void parse_buf_byte_err(buf_t *bin, parse_context_t *pc, char *fname)
 	fprintf(stderr, "\e[1;32m^\e[0m\n");
 }
 
-buf_t* parse_buf_byte(buf_t *bin, t_list_t list, char *fname, bool pretty, bool safe)
+buf_t* parse_buf_byte(buf_t *bin, buf_t *bout, t_list_t list, char *fname, bool pretty, bool safe)
 {
-	buf_t *bout = buf_new();
 	hash_pair_t *hp = hash_init_byte(list, pretty);
 	parse_context_t pc = { 0 };
 	tok_t *current;
 
-	EXIT_NULL(bout);
 	EXIT_NULL(hp);
 
 	for(;;) {
@@ -230,14 +228,12 @@ static void parse_buf_str_err(buf_t *bin, parse_context_t *pc, char *fname)
 	free(line);
 }
 
-buf_t* parse_buf_str(buf_t *bin, t_list_t list, char *fname)
+buf_t* parse_buf_str(buf_t *bin, buf_t *bout, t_list_t list, char *fname)
 {
-	buf_t *bout = buf_new();
 	hash_pair_t *hp = hash_init_str(list);
 	parse_context_t pc = { 0 };
 	tok_t *current;
 
-	EXIT_NULL(bout);
 	EXIT_NULL(hp);
 
 	for(;;) {

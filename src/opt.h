@@ -19,7 +19,9 @@ struct opt_s {
 	bool info;
 	bool archived;
 	bool pretty;
-	bool strip;
+	bool safe;
+	bool condense;
+	bool expand;
 	char **extra_args;
 };
 

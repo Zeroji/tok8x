@@ -38,11 +38,14 @@ void buf_push_str(buf_t *b, char *s)
 	}
 }
 
-void buf_read(buf_t *b, FILE *f)
+buf_t* buf_read(FILE *f)
 {
 	char c;
+	buf_t *b = buf_new();
 	uint8_t swap[HEADER_SIZE];
 	int i;
+
+	EXIT_NULL(b);
 
 	for(i = 0; i < HEADER_SIZE; i++) {
 		c = getc(f);
@@ -51,6 +54,7 @@ void buf_read(buf_t *b, FILE *f)
 		if(c == EOF) {
 			buf_push_nbyte(b, swap, i+1);
 			b->is_8xp = false;
+			return b;
 		}
 		swap[i] = (uint8_t)c;
 	}
@@ -99,7 +103,7 @@ void buf_read(buf_t *b, FILE *f)
 			swap[1] = (uint8_t)c;
 		}
 		
-		return;
+		return b;
 	}
 
 	/* if not 8xp, just read what's left */
@@ -112,6 +116,8 @@ void buf_read(buf_t *b, FILE *f)
 
 		buf_push_byte(b, (uint8_t)c);
 	}
+
+	return b;
 }
 
 void buf_write(buf_t *b, FILE *f)
