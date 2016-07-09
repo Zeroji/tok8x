@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <wchar.h>
 #include <uthash.h>
 
 #define NONE 0xFF
@@ -16,7 +17,7 @@ typedef struct tok_s tok_t;
 struct tok_s {
 	uint8_t b1;
 	uint8_t b2;
-	char name[TOKLEN];
+	wchar_t name[TOKLEN];
 	bool make_safe;
 	tok_t *subhash;
 	bool is_subhash;

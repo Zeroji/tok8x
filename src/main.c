@@ -38,11 +38,9 @@ static void sub_convert(opt_t *o)
 	bool is_8xp;
 	int i;
 
-	/* if files provided as arguments */
+	/* if files provided as arguments, loop through them */
 	if(o->extra_args != NULL) {
-		bswap = buf_new();
 		i = 0;
-		EXIT_NULL(o->extra_args[0]);
 		while(o->extra_args[i] != NULL) {
 			/* read file */
 			f = fopen(o->extra_args[i], "r");
@@ -50,23 +48,31 @@ static void sub_convert(opt_t *o)
 				MAIN_ERR_CONV(errno, "could not open file \"%s\" for reading",
 						o->extra_args[i]);
 			}
+
 			b = buf_read(f);
 			fclose(f);
-			if(i == 0)
+
+			/* ensure input formats are consistent */
+			if(i == 0) {
 				is_8xp = b->is_8xp;
-			else {
+			} else {
 				if(is_8xp != b->is_8xp)
-					MAIN_ERR_CONV(EPERM, "inconsistent input file types");
+					MAIN_ERR_CONV(EPERM, "inconsistent input file formats");
 			}
 
 			/* convert file and append to bswap */
 			if(is_8xp) {
 				/* TODO: expand */
+				if(bswap == NULL)
+					bswap = buf_new(false);
 				bswap = parse_buf_byte(b, bswap, o->list, o->extra_args[i],
 						o->pretty, o->safe);
 			} else {
+				if(bswap == NULL)
+					bswap = buf_new(true);
 				bswap = parse_buf_str(b, bswap, o->list, o->extra_args[i]);
 			}
+
 			buf_free(b);
 			b = NULL;
 
@@ -78,16 +84,18 @@ static void sub_convert(opt_t *o)
 
 			i++;
 		}
+	/* else read a single file from stdin */
 	} else {
-		/* read from stdin */
 		b = buf_read(stdin);
 		is_8xp = b->is_8xp;
 
 		/* convert stdin */
 		if(is_8xp) {
+			bswap = buf_new(true);
 			bswap = parse_buf_byte(b, bswap, o->list, "stdin",
 					o->pretty, o->safe);
 		} else {
+			bswap = buf_new(false);
 			bswap = parse_buf_str(b, bswap, o->list, "stdin");
 		}
 		buf_free(b);

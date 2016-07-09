@@ -57,14 +57,14 @@ static int name_sort(tok_t *a, tok_t *b)
 {
 	int la, lb;
 
-	la = strlen(a->name);
-	lb = strlen(b->name);
+	la = wcslen(a->name);
+	lb = wcslen(b->name);
 
 	if(la > lb)
 		return -1;
 	if(la < lb)
 		return 1;
-	return strcmp(a->name, b->name);
+	return wcscmp(a->name, b->name);
 }
 
 static hash_t* hash_init_str_sub(t_list_t list)

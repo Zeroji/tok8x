@@ -2,6 +2,7 @@
 #define	TOK8X_HASH_H
 
 #include <stdlib.h>
+#include <wchar.h>
 #include <uthash.h>
 #include "err.h"
 #include "tok.h"

@@ -1,0 +1,3 @@
+[submodule "test/simple-test"]
+	path = test/simple-test
+	url = https://github.com/shmibs/simple-test.git

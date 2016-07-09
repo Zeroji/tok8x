@@ -2,7 +2,6 @@
 
 typedef struct header_s header_t;
 typedef struct variable_entry_s variable_entry_t;
-typedef struct program_s program_t;
 
 /* header for computer file */
 struct header_s {
@@ -45,7 +44,7 @@ buf_t* header_pack_buf(buf_t *bin, char *name, bool archived)
 
 	EXIT_NULL(bin);
 
-	bout = buf_new();
+	bout = buf_new(true);
 
 	EXIT_NULL(bout);
 
@@ -88,13 +87,12 @@ buf_t* header_pack_buf(buf_t *bin, char *name, bool archived)
 	/* push bin */
 	buf_push_byte(bout, (uint8_t)(bin->content_size & 0xFF) );
 	buf_push_byte(bout, (uint8_t)(bin->content_size >> 8) );
-	buf_push_nbyte(bout, bin->content,
-			bin->content_size);
+	buf_push_wstr(bout, bin->content);
 
 	/* calc header.checksum */
 	header.checksum = 0x0000;
 	for(i = 0x37; i < bout->content_size; i++)
-		header.checksum += bout->content[i];
+		header.checksum += ((uint8_t*)(bout->content))[i];
 
 	/* push header.checksum */
 	buf_push_byte(bout, (uint8_t)(header.checksum & 0xFF) );
