@@ -1,4 +1,8 @@
-#CURRENTLY INCOMPLETE
+# CURRENTLY UNMAINTAINTED
+
+and not being worked on. interest == lost since not using those calculators any
+more. poke me if you want to take over or something; otherwise it'll just be
+sitting here
 
 tok8x
 =====
