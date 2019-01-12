@@ -9,7 +9,7 @@ OBJ=$(patsubst $(SRCDIR)%.c,$(OBJDIR)%.o,$(SRC))
 BIN=tok8x
 
 all: $(OBJ)
-	$(CC) $(LDFLAGS) -o $(BIN) $^
+	$(CC) -o $(BIN) $^ $(LDFLAGS)
 
 $(OBJ): | $(OBJDIR)
 
